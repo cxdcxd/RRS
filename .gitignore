@@ -2,13 +2,13 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Mm]emoryCaptures/
+rrs_unity/Library/
+rrs_unity/Temp/
+rrs_unity/obj/
+rrs_unity/[Bb]uild/
+rrs_unity/[Bb]uilds/
+rrs_unity/Logs/
+rrs_unity/[Mm]emoryCaptures/
 /rrs_ros/consul/consul
 
 # Never ignore Asset meta data
