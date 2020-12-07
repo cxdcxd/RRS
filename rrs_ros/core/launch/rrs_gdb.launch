@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="rrs_ros" type="rrs_node" name="rrs_ros" output="screen" launch-prefix="xterm -e gdb --args"/>
+</launch>
