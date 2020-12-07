@@ -24,6 +24,14 @@
     consul_network_port: 8500                //consul network port
     
 # Settings (rrs_unity)
-
+    <?xml version="1.0" encoding="utf-8"?>
+    <Config xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <consul_network_address>192.168.92.138</consul_network_address>
+      <local_network_address>192.168.92.1</local_network_address>
+      <consul_network_port>8500</consul_network_port>
+      <consul_network_mask>255.255.255.0</consul_network_mask>
+      <ntp_server_host_name>8500</ntp_server_host_name>
+      <use_relative_origin>false</use_relative_origin>
+    </Config>
     
     
