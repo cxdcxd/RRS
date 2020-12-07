@@ -32,7 +32,7 @@
       <local_network_address>192.168.92.1</local_network_address>
       <consul_network_port>8500</consul_network_port>
       <consul_network_mask>255.255.255.0</consul_network_mask>
-      <ntp_server_host_name>8500</ntp_server_host_name>
+      <ntp_server_host_name>test</ntp_server_host_name>
       <use_relative_origin>false</use_relative_origin>
     </Config>
     
