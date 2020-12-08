@@ -137,9 +137,31 @@ namespace roboland
     sub_cmd_vel = nh.subscribe("cmd_vel",1, &Net2TestROS::chatterCallbackCMD, this);
     sub_navigation_status = nh.subscribe("navigation/status",1, &Net2TestROS::chatterCallbackNavigationStatus, this);
     sub_rrs_command = nh.subscribe("rrs/command",1, &Net2TestROS::chatterCallbackRRSCommand, this);
+    sub_joint_command = nh.subscribe("joint_command",1, &Net2TestROS::chatterCallbackJointCommand, this);
     sub_markers = nh.subscribe("visualization_marker_steps",1,&Net2TestROS::chatterCallbackMarker, this);
     sub_markers_goal_arrow = nh.subscribe("visualization_marker_goals_arrow",1,&Net2TestROS::chatterCallbackMarkerGoalArrow, this);
     sub_markers_goal = nh.subscribe("visualization_marker_goals",1,&Net2TestROS::chatterCallbackMarkerGoal, this);
+  }
+  
+  void Net2TestROS::chatterCallbackJointCommand(const movo_msgs::JacoJointCmd::ConstPtr& msg)
+  {
+    ROS_INFO("Send Joint Command");
+
+    RRSJointCommand cmd;
+    int size = msg->joint_cmds.size();
+   
+    for ( int i = 0 ; i < size ; i++)
+    {
+      cmd.add_goal(msg->joint_cmds[i]);
+
+      ROS_INFO_STREAM("Set " << msg->joint_cmds[i]);
+    }
+
+    int bsize = cmd.ByteSize();
+    char buffer[bsize];
+    cmd.SerializeToArray(buffer,bsize);
+
+    publisher_joint_command->send(buffer,bsize,1);
   }
 
   void Net2TestROS::chatterCallbackMarker(const visualization_msgs::Marker::ConstPtr& msg)
@@ -585,17 +607,12 @@ void Net2TestROS::publishJointState(char* data, int size)
 
   sensor_msgs::JointState ros_state_msg;
   
-  for ( int i = 0 ; i < 19 ; i++)
+  for ( int i = 0 ; i < 10 ; i++)
   {
     ros_state_msg.name.push_back(state_msg.name(i));
     ros_state_msg.position.push_back(state_msg.position(i));
     ros_state_msg.velocity.push_back(state_msg.velocity(i));
     ros_state_msg.effort.push_back(state_msg.effort(i));
-
-    if ( i >= 2 && i <= 8)
-    {
-      //ROS_INFO_STREAM("JOINT " << (i - 2) << " Value " << state_msg.position(i));
-    }
   }
 
   pub_joint_state.publish(ros_state_msg);
@@ -701,10 +718,7 @@ void Net2TestROS::publishTF(char* data, int size)
   RRSTF tf_msg;
   tf_msg.ParseFromArray(data,size);
 
- 
-  
-
-  for ( int i = 0; i < 28; i++)
+  for ( int i = 0; i < 14; i++)
   {
 
   tf::Transform transform;
@@ -713,11 +727,11 @@ void Net2TestROS::publishTF(char* data, int size)
   transform.setOrigin( tf::Vector3(tf_msg.transforms(i).position().x(), tf_msg.transforms(i).position().y(), tf_msg.transforms(i).position().z()) );
   transform.setRotation(q);
 
-  if ( tf_msg.names(i) != "base_link")
+  if ( tf_msg.names(i) != "odom_link" )
   {
       //ROS_WARN_STREAM("GET " << tf_msg.names(i));
-        tf_broadcasters[i].sendTransform(tf::StampedTransform(transform, ros::Time::now(), tf_msg.parents(i), tf_msg.names(i)));
-        std::string name = tf_msg.names(i);
+      tf_broadcasters[i].sendTransform(tf::StampedTransform(transform, ros::Time::now(), tf_msg.parents(i), tf_msg.names(i)));
+      std::string name = tf_msg.names(i);
      
   }
 

@@ -59,6 +59,8 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
+#include "movo_msgs/JacoJointCmd.h"
+
 #include <yaml-cpp/yaml.h>
 #include <mutex>
 
@@ -106,6 +108,7 @@ public:
   std::vector<char> callbackDataIMU(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataOdometry(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataTF(std::vector<char> buffer, unsigned int priority, std::string sender);
+  
 
   std::shared_ptr<Net2Publisher> publisher_cmd_vel;
   std::shared_ptr<Net2Publisher> publisher_planner_viz;
@@ -149,6 +152,7 @@ public:
   ros::Subscriber sub_markers_goal_arrow;
   ros::Subscriber sub_navigation_status;
   ros::Subscriber sub_rrs_command;
+  ros::Subscriber sub_joint_command;
 
   std::shared_ptr<Net2Service> service;
   std::shared_ptr<Net2Client> client;
@@ -162,6 +166,7 @@ public:
   void chatterCallbackMarkerGoalArrow(const visualization_msgs::Marker::ConstPtr& msg);
   void chatterCallbackMarkerGoal(const visualization_msgs::Marker::ConstPtr& msg);
   void chatterCallbackCMD(const geometry_msgs::Twist::ConstPtr& msg);
+  void chatterCallbackJointCommand(const movo_msgs::JacoJointCmd::ConstPtr& msg);
 
   void publishLidar1(char* data, int size);
   void publishLidar2(char* data, int size);

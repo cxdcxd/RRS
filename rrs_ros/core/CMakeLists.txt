@@ -17,6 +17,12 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   pcl_conversions
   pcl_ros
+  movo_msgs
+  hardware_interface
+  controller_manager
+  joint_limits_interface
+  control_msgs
+  transmission_interface
   )
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -72,7 +78,7 @@ add_executable(rrs_node
 
             src/rrs_node.cpp 
 	    src/rrs_ros.cpp 
-            src/rrs_net_test.cpp  
+            src/rrs_net_test.cpp
 	    
 	    )
 

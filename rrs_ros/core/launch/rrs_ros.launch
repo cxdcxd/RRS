@@ -1,4 +1,13 @@
-<launch>
+<?xml version="1.0"?>
+ <launch>
 	<node pkg="rrs_ros" type="rrs_node" name="rrs_ros" output="screen"/>
         <node pkg="rrs_ros" type="net2_node" name="net2_node" output="screen"/>
+	
+	<!-- Load the default controllers >
+	<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+  	output="screen" args="right_shoulder_pan_joint
+                                    right_shoulder_lift_joint
+                                    right_arm_half_joint
+				    right_elbow_joint right_wrist_spherical_1_joint right_wrist_spherical_2_joint right_wrist_3_joint
+                                    " /-->
 </launch>
