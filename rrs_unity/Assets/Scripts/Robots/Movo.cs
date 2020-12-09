@@ -12,38 +12,28 @@ public class Movo : MonoBehaviour
 {
     public enum Links
     {
-        left_finger_1_link,
-        left_finger_2_link,
-        left_finger_3_link,
-        right_finger_1_link,
-        right_finger_2_link,
-        right_finger_3_link,
-        left_arm_main_link,
-        left_arm_1_link,
-        left_arm_2_link,
-        left_arm_3_link,
-        left_arm_4_link,
-        left_arm_5_link,
-        left_arm_6_link,
-        left_arm_7_link,
-        linear_link,
-        pan_link,
-        right_arm_main_link,
-        right_arm_1_link,
-        right_arm_2_link,
-        right_arm_3_link,
-        right_arm_4_link,
-        right_arm_5_link,
-        right_arm_6_link,
-        right_arm_7_link,
-        tilt_link,
-        camera_link,
-        lidar_1_link,
-        lidar_2_link,
-        imu_link,
-        base_link,
-        map_link,
-        odom        
+        left_arm_half_joint, 
+        left_elbow_joint, 
+        left_gripper_finger1_joint, 
+        left_shoulder_lift_joint,
+        left_shoulder_pan_joint, 
+        left_wrist_3_joint,
+        left_wrist_spherical_1_joint,
+        left_wrist_spherical_2_joint,
+
+        linear_joint, 
+        pan_joint, 
+
+        right_arm_half_joint, 
+        right_elbow_joint, 
+        right_gripper_finger1_joint,
+        right_shoulder_lift_joint, 
+        right_shoulder_pan_joint, 
+        right_wrist_3_joint, 
+        right_wrist_spherical_1_joint,
+        right_wrist_spherical_2_joint, 
+
+        tilt_joint
     }
 
     #region Net2
@@ -70,8 +60,8 @@ public class Movo : MonoBehaviour
 
     #endregion
 
-    public float fps_status = 10;
-    public float fps_motor_update = 10;
+    public float fps_status = 50;
+    public float fps_motor_update = 50;
     public float fps_nav_path_update = 3;
 
     public GameObject target;
@@ -201,7 +191,7 @@ public class Movo : MonoBehaviour
         for ( int i = 0; i < 7; i++)
         {
             //print("Rotate to " + i.ToString() + " Value : " + d_right_arm[i]);
-            //RotateTo(d_right_arm[i], i);
+            RotateTo(d_right_arm[i], i);
         }
 
     }
@@ -416,7 +406,7 @@ public class Movo : MonoBehaviour
     {
         //sendGroundtruth();
         sendJointState();
-        sendJointTF();
+        //sendJointTF();
         //sendOdometry();
     }
 
@@ -460,10 +450,10 @@ public class Movo : MonoBehaviour
 
     void sendJointTF()
     {
-        RRSTF tf_msg = new RRSTF();
-        tf_msg.names = new string[14];
-        tf_msg.parents = new string[14];
-        tf_msg.transforms = new RRSTransform[14];
+        //RRSTF tf_msg = new RRSTF();
+        //tf_msg.names = new string[14];
+        //tf_msg.parents = new string[14];
+        //tf_msg.transforms = new RRSTransform[14];
 
         //tf_msg.names[0] = Links.pan_link.ToString();
         //tf_msg.parents[0] = Links.linear_link.ToString();
@@ -484,142 +474,114 @@ public class Movo : MonoBehaviour
         //tf_msg.names[4] = Links.lidar_2_link.ToString();
         //tf_msg.parents[4] = Links.base_link.ToString();
         //tf_msg.transforms[4] = getRRSTransform(sensor_lidar_2.transform, Links.lidar_2_link);
-        int i = 0;
+        //int i = 0;
 
-        tf_msg.names[i] = Links.odom.ToString();
-        tf_msg.parents[i] = Links.map_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(transform, Links.odom);
+        //tf_msg.names[i] = Links.odom.ToString();
+        //tf_msg.parents[i] = Links.map_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(transform, Links.odom);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.base_link.ToString();
-        tf_msg.parents[i] = Links.odom.ToString();
-        tf_msg.transforms[i] = getRRSTransform(transform, Links.base_link);
+        //tf_msg.names[i] = Links.base_link.ToString();
+        //tf_msg.parents[i] = Links.odom.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(transform, Links.base_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.linear_link.ToString();
-        tf_msg.parents[i] = Links.base_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(linear_joint.transform, Links.linear_link);
+        //tf_msg.names[i] = Links.linear_link.ToString();
+        //tf_msg.parents[i] = Links.base_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(linear_joint.transform, Links.linear_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.right_arm_main_link.ToString();
-        tf_msg.parents[i] = Links.linear_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(right_arm_joints[0].transform, Links.right_arm_main_link);
+        //tf_msg.names[i] = Links.right_base_link.ToString();
+        //tf_msg.parents[i] = Links.linear_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[0].transform, Links.right_arm_main_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.right_arm_1_link.ToString();
-        tf_msg.parents[i] = Links.right_arm_main_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(right_arm_joints[1].transform, Links.right_arm_1_link);
+        //tf_msg.names[i] = Links.right_shoulder_link.ToString();
+        //tf_msg.parents[i] = Links.right_base_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[1].transform, Links.right_arm_1_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.right_arm_2_link.ToString();
-        tf_msg.parents[i] = Links.right_arm_1_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(right_arm_joints[2].transform, Links.right_arm_2_link);
+        //tf_msg.names[i] = Links.right_arm_half_1_link.ToString();
+        //tf_msg.parents[i] = Links.right_shoulder_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[1].transform, Links.right_arm_1_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.right_arm_3_link.ToString();
-        tf_msg.parents[i] = Links.right_arm_2_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(right_arm_joints[3].transform, Links.right_arm_3_link);
+        //tf_msg.names[i] = Links.right_arm_half_2_link.ToString();
+        //tf_msg.parents[i] = Links.right_arm_half_1_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[2].transform, Links.right_arm_2_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.right_arm_4_link.ToString();
-        tf_msg.parents[i] = Links.right_arm_3_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(right_arm_joints[4].transform, Links.right_arm_4_link);
+        //tf_msg.names[i] = Links.right_forearm_link.ToString();
+        //tf_msg.parents[i] = Links.right_arm_half_2_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[3].transform, Links.right_arm_3_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.right_arm_5_link.ToString();
-        tf_msg.parents[i] = Links.right_arm_4_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(right_arm_joints[5].transform, Links.right_arm_5_link);
+        //tf_msg.names[i] = Links.right_wrist_spherical_1_link.ToString();
+        //tf_msg.parents[i] = Links.right_forearm_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[4].transform, Links.right_arm_4_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.right_arm_6_link.ToString();
-        tf_msg.parents[i] = Links.right_arm_5_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(right_arm_joints[6].transform, Links.right_arm_6_link);
+        //tf_msg.names[i] = Links.right_wrist_spherical_2_link.ToString();
+        //tf_msg.parents[i] = Links.right_wrist_spherical_1_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[5].transform, Links.right_arm_5_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.right_arm_7_link.ToString();
-        tf_msg.parents[i] = Links.right_arm_6_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(right_arm_joints[7].transform, Links.right_arm_7_link);
+        //tf_msg.names[i] = Links.right_gripper_base_link.ToString();
+        //tf_msg.parents[i] = Links.right_wrist_spherical_2_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[6].transform, Links.right_arm_6_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.right_finger_1_link.ToString();
-        tf_msg.parents[i] = Links.right_arm_7_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(right_finger_joints[0].transform, Links.right_finger_1_link);
+        //tf_msg.names[i] = Links.right_gripper_finger1_knuckle_link.ToString();
+        //tf_msg.parents[i] = Links.right_gripper_base_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[7].transform, Links.right_arm_7_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.right_finger_2_link.ToString();
-        tf_msg.parents[i] = Links.right_arm_7_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(right_finger_joints[1].transform, Links.right_finger_2_link);
+        //tf_msg.names[i] = Links.right_gripper_finger2_knuckle_link.ToString();
+        //tf_msg.parents[i] = Links.right_gripper_base_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_finger_joints[0].transform, Links.right_finger_1_link);
 
-        i++;
+        //i++;
 
-        tf_msg.names[i] = Links.right_finger_3_link.ToString();
-        tf_msg.parents[i] = Links.right_arm_7_link.ToString();
-        tf_msg.transforms[i] = getRRSTransform(right_finger_joints[2].transform, Links.right_finger_3_link);
+        //tf_msg.names[i] = Links.right_gripper_finger3_knuckle_link.ToString();
+        //tf_msg.parents[i] = Links.right_gripper_base_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_finger_joints[1].transform, Links.right_finger_2_link);
 
+        //i++;
 
+        //tf_msg.names[i] = Links.right_gripper_finger1_finger_tip_link.ToString();
+        //tf_msg.parents[i] = Links.right_gripper_finger1_knuckle_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_finger_joints[2].transform, Links.right_finger_3_link);
 
-        //tf_msg.names[17] = Links.left_arm_1_link.ToString();
-        //tf_msg.parents[17] = Links.linear_link.ToString();
-        //tf_msg.transforms[17] = getRRSTransform(left_arm_joints[0].transform, Links.left_arm_1_link);
+        //i++;
 
-        //tf_msg.names[18] = Links.left_arm_2_link.ToString();
-        //tf_msg.parents[18] = Links.left_arm_1_link.ToString();
-        //tf_msg.transforms[18] = getRRSTransform(left_arm_joints[1].transform, Links.left_arm_2_link);
+        //tf_msg.names[i] = Links.right_gripper_finger2_finger_tip_link.ToString();
+        //tf_msg.parents[i] = Links.right_gripper_finger2_knuckle_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_finger_joints[2].transform, Links.right_finger_3_link);
 
-        //tf_msg.names[19] = Links.left_arm_3_link.ToString();
-        //tf_msg.parents[19] = Links.left_arm_2_link.ToString();
-        //tf_msg.transforms[19] = getRRSTransform(left_arm_joints[2].transform, Links.left_arm_3_link);
+        //i++;
 
-        //tf_msg.names[20] = Links.left_arm_4_link.ToString();
-        //tf_msg.parents[20] = Links.left_arm_3_link.ToString();
-        //tf_msg.transforms[20] = getRRSTransform(left_arm_joints[3].transform, Links.left_arm_4_link);
+        //tf_msg.names[i] = Links.right_gripper_finger3_finger_tip_link.ToString();
+        //tf_msg.parents[i] = Links.right_gripper_finger3_knuckle_link.ToString();
+        //tf_msg.transforms[i] = getRRSTransform(right_finger_joints[2].transform, Links.right_finger_3_link);
 
-        //tf_msg.names[21] = Links.left_arm_5_link.ToString();
-        //tf_msg.parents[21] = Links.left_arm_4_link.ToString();
-        //tf_msg.transforms[21] = getRRSTransform(left_arm_joints[4].transform, Links.left_arm_5_link);
+        //MemoryStream ms = new MemoryStream();
+        //Serializer.Serialize<RRSTF>(ms, tf_msg);
+        //byte[] data = ms.ToArray();
 
-        //tf_msg.names[22] = Links.left_arm_6_link.ToString();
-        //tf_msg.parents[22] = Links.left_arm_5_link.ToString();
-        //tf_msg.transforms[22] = getRRSTransform(left_arm_joints[5].transform, Links.left_arm_6_link);
-
-        //tf_msg.names[23] = Links.left_arm_7_link.ToString();
-        //tf_msg.parents[23] = Links.left_arm_6_link.ToString();
-        //tf_msg.transforms[23] = getRRSTransform(left_arm_joints[6].transform, Links.left_arm_7_link);
-
-        //tf_msg.names[24] = Links.left_finger_1_link.ToString();
-        //tf_msg.parents[24] = Links.left_arm_7_link.ToString();
-        //tf_msg.transforms[24] = getRRSTransform(left_finger_joints[0].transform, Links.left_finger_1_link);
-
-        //tf_msg.names[25] = Links.left_finger_2_link.ToString();
-        //tf_msg.parents[25] = Links.left_arm_7_link.ToString();
-        //tf_msg.transforms[25] = getRRSTransform(left_finger_joints[1].transform, Links.left_finger_2_link);
-
-        //tf_msg.names[26] = Links.left_finger_3_link.ToString();
-        //tf_msg.parents[26] = Links.left_arm_7_link.ToString();
-        //tf_msg.transforms[26] = getRRSTransform(left_finger_joints[2].transform, Links.left_finger_3_link);
-
-        //tf_msg.names[27] = Links.imu_link.ToString();
-        //tf_msg.parents[27] = Links.base_link.ToString();
-        //tf_msg.transforms[27] = getRRSTransform(sensor_imu.transform, Links.imu_link);
-
-        MemoryStream ms = new MemoryStream();
-        Serializer.Serialize<RRSTF>(ms, tf_msg);
-        byte[] data = ms.ToArray();
-
-        //print("publish tf");
-        publisher_tf.Send(data);
+        ////print("publish tf");
+        //publisher_tf.Send(data);
     }
 
     void sendOdometry()
@@ -691,7 +653,7 @@ public class Movo : MonoBehaviour
         index++;
         //print("Get Current Rotation " + index);
         var articulation = right_arm_joints[index].GetComponent<ArticulationBody>();
-        float currentRotationRads = articulation.jointPosition[0];
+        float currentRotationRads = articulation.jointPosition[0] * -1;
         float currentRotation = currentRotationRads;
         return currentRotation;
     }
@@ -700,52 +662,33 @@ public class Movo : MonoBehaviour
     {
         RRSJointState joint_state_msg = new RRSJointState();
 
-        joint_state_msg.name = new string[10];
-        joint_state_msg.position = new float[10];
-        joint_state_msg.velocity = new float[10];
-        joint_state_msg.effort = new float[10];
+        joint_state_msg.name = new string[19];
+        joint_state_msg.position = new float[19];
+        joint_state_msg.velocity = new float[19];
+        joint_state_msg.effort = new float[19];
 
-        //joint_state_msg.name[0] = Links.pan_link.ToString();
-        //joint_state_msg.name[1] = Links.tilt_link.ToString();
+        joint_state_msg.name[0] = Links.right_shoulder_pan_joint.ToString();
+        joint_state_msg.name[1] = Links.right_shoulder_lift_joint.ToString();
+        joint_state_msg.name[2] = Links.right_arm_half_joint.ToString();
+        joint_state_msg.name[3] = Links.right_elbow_joint.ToString();
+        joint_state_msg.name[4] = Links.right_wrist_spherical_1_joint.ToString();
+        joint_state_msg.name[5] = Links.right_wrist_spherical_2_joint.ToString();
+        joint_state_msg.name[6] = Links.right_wrist_3_joint.ToString();
+        joint_state_msg.name[7] = Links.right_gripper_finger1_joint.ToString();
 
-        joint_state_msg.name[0] = Links.right_arm_1_link.ToString();
-        joint_state_msg.name[1] = Links.right_arm_2_link.ToString();
-        joint_state_msg.name[2] = Links.right_arm_3_link.ToString();
-        joint_state_msg.name[3] = Links.right_arm_4_link.ToString();
-        joint_state_msg.name[4] = Links.right_arm_5_link.ToString();
-        joint_state_msg.name[5] = Links.right_arm_6_link.ToString();
-        joint_state_msg.name[6] = Links.right_arm_7_link.ToString();
-        joint_state_msg.name[7] = Links.right_finger_1_link.ToString();
-        joint_state_msg.name[8] = Links.right_finger_2_link.ToString();
-        joint_state_msg.name[9] = Links.right_finger_3_link.ToString();
+        joint_state_msg.name[8] = Links.left_shoulder_pan_joint.ToString();
+        joint_state_msg.name[9] = Links.left_shoulder_lift_joint.ToString();
+        joint_state_msg.name[10] = Links.left_elbow_joint.ToString();
+        joint_state_msg.name[11] = Links.left_arm_half_joint.ToString();
+        joint_state_msg.name[12] = Links.left_wrist_spherical_1_joint.ToString();
+        joint_state_msg.name[13] = Links.left_wrist_spherical_2_joint.ToString();
+        joint_state_msg.name[14] = Links.left_wrist_3_joint.ToString();
+        joint_state_msg.name[15] = Links.left_gripper_finger1_joint.ToString();
 
-        //joint_state_msg.name[12] = Links.left_arm_1_link.ToString();
-        //joint_state_msg.name[13] = Links.left_arm_2_link.ToString();
-        //joint_state_msg.name[14] = Links.left_arm_3_link.ToString();
-        //joint_state_msg.name[15] = Links.left_arm_4_link.ToString();
-        //joint_state_msg.name[16] = Links.left_arm_5_link.ToString();
-        //joint_state_msg.name[17] = Links.left_arm_6_link.ToString();
-        //joint_state_msg.name[18] = Links.left_arm_7_link.ToString();
-        //joint_state_msg.name[19] = Links.left_finger_1_link.ToString();
-        //joint_state_msg.name[20] = Links.left_finger_2_link.ToString();
-        //joint_state_msg.name[21] = Links.left_finger_3_link.ToString();
-
-        //joint_state_msg.name[22] = Links.linear_link.ToString();
-
-        //joint_state_msg.position[0] = head_joints[0].transform.localRotation.eulerAngles.y;
-        //joint_state_msg.position[1] = head_joints[1].transform.localRotation.eulerAngles.x;
-
-        //joint_state_msg.position[0] = right_arm_joints[0].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[1] = right_arm_joints[1].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[2] = right_arm_joints[2].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[3] = right_arm_joints[3].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[4] = right_arm_joints[4].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[5] = right_arm_joints[5].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[6] = right_arm_joints[6].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[7] = right_finger_joints[0].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[8] = right_finger_joints[1].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[9] = right_finger_joints[2].transform.localRotation.eulerAngles.x;
-
+        joint_state_msg.name[16] = Links.linear_joint.ToString();
+        joint_state_msg.name[17] = Links.pan_joint.ToString();
+        joint_state_msg.name[18] = Links.tilt_joint.ToString();
+      
         joint_state_msg.position[0] = CurrentPrimaryAxisRotation(0);
         joint_state_msg.position[1] = CurrentPrimaryAxisRotation(1);
         joint_state_msg.position[2] = CurrentPrimaryAxisRotation(2);
@@ -756,21 +699,18 @@ public class Movo : MonoBehaviour
         joint_state_msg.position[7] = 0;
         joint_state_msg.position[8] = 0;
         joint_state_msg.position[9] = 0;
+        joint_state_msg.position[10] = 0;
+        joint_state_msg.position[11] = 0;
+        joint_state_msg.position[12] = 0;
+        joint_state_msg.position[13] = 0;
+        joint_state_msg.position[14] = 0;
+        joint_state_msg.position[15] = 0;
+        joint_state_msg.position[16] = 0;
+        joint_state_msg.position[17] = 0;
+        joint_state_msg.position[18] = 0;
 
-        //joint_state_msg.position[12] = left_arm_joints[0].transform.localRotation.eulerAngles.y;
-        //joint_state_msg.position[13] = left_arm_joints[1].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[14] = left_arm_joints[2].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[15] = left_arm_joints[3].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[16] = left_arm_joints[4].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[17] = left_arm_joints[5].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[18] = left_arm_joints[6].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[19] = left_finger_joints[0].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[20] = left_finger_joints[1].transform.localRotation.eulerAngles.x;
-        //joint_state_msg.position[21] = left_finger_joints[2].transform.localRotation.eulerAngles.x;
 
-        //joint_state_msg.position[22] = linear_joint.transform.localPosition.y;
-
-        for ( int i = 0; i < 10; i++)
+        for ( int i = 0; i < 19; i++)
         {
             joint_state_msg.velocity[i] = 0;
             joint_state_msg.effort[i] = 0;
@@ -781,11 +721,7 @@ public class Movo : MonoBehaviour
         byte[] data = ms.ToArray();
 
         publisher_joint_state.Send(data);
-
-        //print("Joint publish done");
     }
-
-   
 
     Vector3[] generatePoints(Vector3[] keyPoints, int segments = 100)
     {
@@ -922,17 +858,17 @@ public class Movo : MonoBehaviour
 
             if ( timer_status > (1 / fps_status))
             {
-                sendState();
+               
                 timer_status = 0;
             }
 
-
+            sendState();
         }
+
+       
            
-
-
-            if (path_updated && current_path != null)
-                setPath(current_path);
+        if (path_updated && current_path != null)
+             setPath(current_path);
         
 
         if (Manager.inited && !inited)
