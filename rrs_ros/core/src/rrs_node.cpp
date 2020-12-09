@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
   boost::shared_ptr<roboland::Net2TestROS> node(new roboland::Net2TestROS(nh,pnh,argc,argv));
   //boost::shared_ptr<roboland::RRSNetTest> node(new roboland::RRSNetTest(nh,pnh,argc,argv));
 
-  ros::Rate loop(10);
+  ros::Rate loop(100); //100 Hz
 
   while (ros::ok())
   {

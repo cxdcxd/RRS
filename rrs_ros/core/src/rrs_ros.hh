@@ -159,6 +159,8 @@ public:
   std::shared_ptr<Net2AsyncClient> async_client;
 
   RRSRobot robot_protocol;
+  movo_msgs::JacoJointCmd test_joint_command;
+  double a = 0;
 
   void chatterCallbackMarker(const visualization_msgs::Marker::ConstPtr& msg);
   void chatterCallbackRRSCommand(const std_msgs::String::ConstPtr& msg);

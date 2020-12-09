@@ -141,6 +141,11 @@ namespace roboland
     sub_markers = nh.subscribe("visualization_marker_steps",1,&Net2TestROS::chatterCallbackMarker, this);
     sub_markers_goal_arrow = nh.subscribe("visualization_marker_goals_arrow",1,&Net2TestROS::chatterCallbackMarkerGoalArrow, this);
     sub_markers_goal = nh.subscribe("visualization_marker_goals",1,&Net2TestROS::chatterCallbackMarkerGoal, this);
+
+    for ( int i = 0 ; i < 7 ; i++)
+    {
+      test_joint_command.joint_cmds.push_back(0);
+    }
   }
   
   void Net2TestROS::chatterCallbackJointCommand(const movo_msgs::JacoJointCmd::ConstPtr& msg)
@@ -878,9 +883,33 @@ std::vector<char> Net2TestROS::callbackDataTF(std::vector<char> buffer, unsigned
 //   return result;
 // }
 
+
+
 void Net2TestROS::update()
 {
+    // a += 0.001;
+    // test_joint_command.joint_cmds[0] = sin(a) / 2;
+    // test_joint_command.joint_cmds[1] = sin(a) / 2;
+    // test_joint_command.joint_cmds[2] = sin(a) / 2;
 
+    // ROS_INFO_STREAM("Set " << test_joint_command.joint_cmds[0] << " " << a);
+ 
+
+    // RRSJointCommand cmd;
+    // int size = test_joint_command.joint_cmds.size();
+   
+    // for ( int i = 0 ; i < size ; i++)
+    // {
+    //   cmd.add_goal(test_joint_command.joint_cmds[i]);
+
+    //   //ROS_INFO_STREAM("Set " << test_joint_command.joint_cmds[i]);
+    // }
+
+    // int bsize = cmd.ByteSize();
+    // char buffer[bsize];
+    // cmd.SerializeToArray(buffer,bsize);
+
+    // publisher_joint_command->send(buffer,bsize,1);
 }
 
 void Net2TestROS::kill()
