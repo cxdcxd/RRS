@@ -132,7 +132,7 @@ namespace roboland
     pub_desire_points = nh.advertise<rrs_ros::PointList>("points",1);
     pub_tag_points = nh.advertise<rrs_ros::PointList>("tags",1);
     pub_navigation_goal = nh.advertise<geometry_msgs::PoseStamped>("goal",1);
-    pub_joint_state = nh.advertise<sensor_msgs::JointState>("jointstate",1);
+    pub_joint_state = nh.advertise<sensor_msgs::JointState>("joint_states",1);
 
     sub_cmd_vel = nh.subscribe("cmd_vel",1, &Net2TestROS::chatterCallbackCMD, this);
     sub_navigation_status = nh.subscribe("navigation/status",1, &Net2TestROS::chatterCallbackNavigationStatus, this);
@@ -150,7 +150,7 @@ namespace roboland
   
   void Net2TestROS::chatterCallbackJointCommand(const movo_msgs::JacoJointCmd::ConstPtr& msg)
   {
-    ROS_INFO("Send Joint Command");
+    //ROS_INFO("Send Joint Command");
 
     RRSJointCommand cmd;
     int size = msg->joint_cmds.size();
@@ -159,7 +159,7 @@ namespace roboland
     {
       cmd.add_goal(msg->joint_cmds[i]);
 
-      ROS_INFO_STREAM("Set " << msg->joint_cmds[i]);
+      //ROS_INFO_STREAM("Set " << msg->joint_cmds[i]);
     }
 
     int bsize = cmd.ByteSize();
@@ -612,7 +612,7 @@ void Net2TestROS::publishJointState(char* data, int size)
 
   sensor_msgs::JointState ros_state_msg;
   
-  for ( int i = 0 ; i < 10 ; i++)
+  for ( int i = 0 ; i < 19 ; i++)
   {
     ros_state_msg.name.push_back(state_msg.name(i));
     ros_state_msg.position.push_back(state_msg.position(i));
@@ -650,7 +650,7 @@ void Net2TestROS::publishOdometry(char* data, int size)
   odom_trans.transform.rotation = odom_quat;
 
   //send the transform
-  odom_broadcaster.sendTransform(odom_trans);
+  //odom_broadcaster.sendTransform(odom_trans);
 
   //-
 
@@ -735,7 +735,7 @@ void Net2TestROS::publishTF(char* data, int size)
   if ( tf_msg.names(i) != "odom_link" )
   {
       //ROS_WARN_STREAM("GET " << tf_msg.names(i));
-      tf_broadcasters[i].sendTransform(tf::StampedTransform(transform, ros::Time::now(), tf_msg.parents(i), tf_msg.names(i)));
+      //tf_broadcasters[i].sendTransform(tf::StampedTransform(transform, ros::Time::now(), tf_msg.parents(i), tf_msg.names(i)));
       std::string name = tf_msg.names(i);
      
   }

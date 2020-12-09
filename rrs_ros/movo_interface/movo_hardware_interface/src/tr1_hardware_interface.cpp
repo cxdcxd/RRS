@@ -183,7 +183,7 @@ namespace tr1_hardware_interface
 		// 	tr1.setJoint(joint);
 		// }
 
-		ROS_INFO_STREAM("READ LOOP DONE");
+		//ROS_INFO_STREAM("READ LOOP DONE");
 	}
 
 	void TR1HardwareInterface::write(ros::Duration elapsed_time)
@@ -223,7 +223,7 @@ namespace tr1_hardware_interface
 
 	    pub_joint_command.publish(cmd);
 
-		ROS_INFO_STREAM("WRITE LOOP DONE");
+		//ROS_INFO_STREAM("WRITE LOOP DONE");
 	}
 }
 

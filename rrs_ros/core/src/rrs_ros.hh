@@ -185,8 +185,8 @@ public:
   void publishJointState(char* data, int size);
   void publishTF(char* data, int size);
 
-  tf::TransformBroadcaster tf_broadcasters[28];
-  tf::TransformBroadcaster odom_broadcaster;
+  //tf::TransformBroadcaster tf_broadcasters[28];
+  //tf::TransformBroadcaster odom_broadcaster;
 
   bool is_file_exist(const char *fileName);
   bool loadYaml();
