@@ -33,7 +33,10 @@ public class Movo : MonoBehaviour
         right_wrist_spherical_1_joint,
         right_wrist_spherical_2_joint, 
 
-        tilt_joint
+        tilt_joint,
+
+        base_link,
+        odom
     }
 
     #region Net2
@@ -112,15 +115,14 @@ public class Movo : MonoBehaviour
     public float right_arm_6 = 0;
     public float right_arm_7 = 0;
 
-    public float[] d_right_arm;
+    public float[] d_joints;
 
     //public float right_arm_8 = 0;
 
     void init()
     {
-        d_right_arm = new float[7];
+        d_joints = new float[19];
 
-       
         publisher_joint_state = Net2.Publisher("joint_state");
         //publisher_lidar_1 = Net2.Publisher("lidar_1");
         //publisher_lidar_2 = Net2.Publisher("lidar_2");
@@ -128,9 +130,9 @@ public class Movo : MonoBehaviour
         //publisher_camera_info = Net2.Publisher("camera_info");
         //publisher_camera_depth = Net2.Publisher("camera_depth");
         //publisher_camera_segment = Net2.Publisher("camera_segment");
-        //publisher_groundtruth = Net2.Publisher("groundtruth");
+        publisher_groundtruth = Net2.Publisher("groundtruth");
         //publisher_imu = Net2.Publisher("imu");
-        //publisher_odometry = Net2.Publisher("odometry");
+        publisher_odometry = Net2.Publisher("odometry");
         publisher_tf = Net2.Publisher("tf");
 
         //subscriber_cmd_vel = Net2.Subscriber("rrs_ros-cmd_vel");
@@ -166,32 +168,26 @@ public class Movo : MonoBehaviour
 
     void moveHead()
     {
-        ik_head_target.transform.Translate(speed_head.x / 1000, speed_head.y / 1000, 0, Space.Self);
+        
     }
 
     void moveLeftHand()
     {
-        //ik_left_hand_target.transform.Translate(speed_left_hand.x / 1000, speed_left_hand.y / 1000, speed_left_hand.z / 1000, Space.Self);
+        if (d_joints.Length == 0) return;
+
+        for (int i = 0; i < 7; i++)
+        {
+            RotateToLeft(d_joints[i + 8], i);
+        }
     }
 
     void moveRightHand()
     {
-        if (d_right_arm.Length == 0) return;
-        //ik_right_hand_target.transform.Translate(speed_right_hand.x / 1000, speed_right_hand.y / 1000, speed_right_hand.z / 1000, Space.Self);
-
-        //right_arm_joints[0].transform.localRotation = Quaternion.Euler(right_arm_1 - 90, 90, -90);
-        //right_arm_joints[1].transform.localRotation = Quaternion.Euler(right_arm_2, 0, -90);
-        //right_arm_joints[2].transform.localRotation = Quaternion.Euler(right_arm_3, 0, 90);
-        //right_arm_joints[3].transform.localRotation = Quaternion.Euler(right_arm_4, 0, 90);
-        //right_arm_joints[4].transform.localRotation = Quaternion.Euler(right_arm_5, -180, 90);
-        //right_arm_joints[5].transform.localRotation = Quaternion.Euler(right_arm_6, 0, 90);
-        //right_arm_joints[6].transform.localRotation = Quaternion.Euler(right_arm_7, -180, 90);
-        //right_arm_joints[0].transform.localRotation = Quaternion.Euler(right_arm_8, 0, 0);
+        if (d_joints.Length == 0) return;
 
         for ( int i = 0; i < 7; i++)
         {
-            //print("Rotate to " + i.ToString() + " Value : " + d_right_arm[i]);
-            RotateTo(d_right_arm[i], i);
+            RotateToRight(d_joints[i], i);
         }
 
     }
@@ -208,16 +204,15 @@ public class Movo : MonoBehaviour
 
     void updateMotors()
     {
-        //Navigation
-        //locomotion();
-        //moveHead();
-        //moveLeftHand();
+        locomotion();
+
+        moveHead();
+       
         moveRightHand();
         rightGripper();
-        //leftGripper();
 
-        //Joints (Torque + Dynamics) (PhysX 4.0)
-        //Later
+        moveLeftHand();
+        leftGripper();
     }
     #endregion
 
@@ -338,10 +333,17 @@ public class Movo : MonoBehaviour
     }
     #endregion
 
-    void RotateTo(float primaryAxisRotation, int index)
+    void RotateToRight(float primaryAxisRotation, int index)
     {
-        index++;
-        var articulation = right_arm_joints[index].GetComponent<ArticulationBody>();
+        var articulation = right_arm_joints[++index].GetComponent<ArticulationBody>();
+        var drive = articulation.xDrive;
+        drive.target = primaryAxisRotation;
+        articulation.xDrive = drive;
+    }
+
+    void RotateToLeft(float primaryAxisRotation, int index)
+    {
+        var articulation = left_arm_joints[++index].GetComponent<ArticulationBody>();
         var drive = articulation.xDrive;
         drive.target = primaryAxisRotation;
         articulation.xDrive = drive;
@@ -349,11 +351,7 @@ public class Movo : MonoBehaviour
 
     private void Subscriber_rrs_joint_command_delegateNewData(ulong sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
     {
-        //Movo Joint update 
-        //print("Get Movo Joint Command");
-
         MemoryStream ms = new MemoryStream(buffer);
-
         RRSJointCommand cmd = Serializer.Deserialize<RRSJointCommand>(ms);
 
         print("Get Goal");
@@ -361,15 +359,8 @@ public class Movo : MonoBehaviour
 
         for ( int i = 0; i < cmd.goal.Length; i++)
         {
-            //RotateTo(cmd.goal[i] , i);
-            d_right_arm[i] = cmd.goal[i] * Mathf.Rad2Deg * -1;
-            //print("Joint Command Goal " + cmd.goal[i]);
-            //break;
-         }
-
-
-
-
+            d_joints[i] = cmd.goal[i] * Mathf.Rad2Deg * -1;
+        }
     }
 
     private void Subscriber_rrs_command_delegateNewData(ulong sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
@@ -404,10 +395,10 @@ public class Movo : MonoBehaviour
 
     private void sendState()
     {
-        //sendGroundtruth();
+        sendGroundtruth();
         sendJointState();
-        //sendJointTF();
-        //sendOdometry();
+        sendOdometry();
+        sendJointTF();
     }
 
     private void Subscriber_cmd_vel_delegateNewData(ulong sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
@@ -450,138 +441,21 @@ public class Movo : MonoBehaviour
 
     void sendJointTF()
     {
-        //RRSTF tf_msg = new RRSTF();
-        //tf_msg.names = new string[14];
-        //tf_msg.parents = new string[14];
-        //tf_msg.transforms = new RRSTransform[14];
+        RRSTF tf_msg = new RRSTF();
+        tf_msg.names = new string[1];
+        tf_msg.parents = new string[1];
+        tf_msg.transforms = new RRSTransform[1];
 
-        //tf_msg.names[0] = Links.pan_link.ToString();
-        //tf_msg.parents[0] = Links.linear_link.ToString();
-        //tf_msg.transforms[0] = getRRSTransform(head_joints[0].transform, Links.pan_link);
+        tf_msg.names[0] = Links.base_link.ToString();
+        tf_msg.parents[0] = Links.odom.ToString();
+        tf_msg.transforms[0] = getRRSTransform(transform, Links.base_link);
 
-        //tf_msg.names[1] = Links.tilt_link.ToString();
-        //tf_msg.parents[1] = Links.pan_link.ToString();
-        //tf_msg.transforms[1] = getRRSTransform(head_joints[1].transform, Links.tilt_link);
-
-        //tf_msg.names[2] = Links.camera_link.ToString();
-        //tf_msg.parents[2] = Links.tilt_link.ToString();
-        //tf_msg.transforms[2] = getRRSTransform(sensor_kinect.transform, Links.camera_link);
-
-        //tf_msg.names[3] = Links.lidar_1_link.ToString();
-        //tf_msg.parents[3] = Links.base_link.ToString();
-        //tf_msg.transforms[3] = getRRSTransform(sensor_lidar_1.transform, Links.lidar_1_link);
-
-        //tf_msg.names[4] = Links.lidar_2_link.ToString();
-        //tf_msg.parents[4] = Links.base_link.ToString();
-        //tf_msg.transforms[4] = getRRSTransform(sensor_lidar_2.transform, Links.lidar_2_link);
-        //int i = 0;
-
-        //tf_msg.names[i] = Links.odom.ToString();
-        //tf_msg.parents[i] = Links.map_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(transform, Links.odom);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.base_link.ToString();
-        //tf_msg.parents[i] = Links.odom.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(transform, Links.base_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.linear_link.ToString();
-        //tf_msg.parents[i] = Links.base_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(linear_joint.transform, Links.linear_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_base_link.ToString();
-        //tf_msg.parents[i] = Links.linear_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[0].transform, Links.right_arm_main_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_shoulder_link.ToString();
-        //tf_msg.parents[i] = Links.right_base_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[1].transform, Links.right_arm_1_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_arm_half_1_link.ToString();
-        //tf_msg.parents[i] = Links.right_shoulder_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[1].transform, Links.right_arm_1_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_arm_half_2_link.ToString();
-        //tf_msg.parents[i] = Links.right_arm_half_1_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[2].transform, Links.right_arm_2_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_forearm_link.ToString();
-        //tf_msg.parents[i] = Links.right_arm_half_2_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[3].transform, Links.right_arm_3_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_wrist_spherical_1_link.ToString();
-        //tf_msg.parents[i] = Links.right_forearm_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[4].transform, Links.right_arm_4_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_wrist_spherical_2_link.ToString();
-        //tf_msg.parents[i] = Links.right_wrist_spherical_1_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[5].transform, Links.right_arm_5_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_gripper_base_link.ToString();
-        //tf_msg.parents[i] = Links.right_wrist_spherical_2_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[6].transform, Links.right_arm_6_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_gripper_finger1_knuckle_link.ToString();
-        //tf_msg.parents[i] = Links.right_gripper_base_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_arm_joints[7].transform, Links.right_arm_7_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_gripper_finger2_knuckle_link.ToString();
-        //tf_msg.parents[i] = Links.right_gripper_base_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_finger_joints[0].transform, Links.right_finger_1_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_gripper_finger3_knuckle_link.ToString();
-        //tf_msg.parents[i] = Links.right_gripper_base_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_finger_joints[1].transform, Links.right_finger_2_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_gripper_finger1_finger_tip_link.ToString();
-        //tf_msg.parents[i] = Links.right_gripper_finger1_knuckle_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_finger_joints[2].transform, Links.right_finger_3_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_gripper_finger2_finger_tip_link.ToString();
-        //tf_msg.parents[i] = Links.right_gripper_finger2_knuckle_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_finger_joints[2].transform, Links.right_finger_3_link);
-
-        //i++;
-
-        //tf_msg.names[i] = Links.right_gripper_finger3_finger_tip_link.ToString();
-        //tf_msg.parents[i] = Links.right_gripper_finger3_knuckle_link.ToString();
-        //tf_msg.transforms[i] = getRRSTransform(right_finger_joints[2].transform, Links.right_finger_3_link);
-
-        //MemoryStream ms = new MemoryStream();
-        //Serializer.Serialize<RRSTF>(ms, tf_msg);
-        //byte[] data = ms.ToArray();
+        MemoryStream ms = new MemoryStream();
+        Serializer.Serialize<RRSTF>(ms, tf_msg);
+        byte[] data = ms.ToArray();
 
         ////print("publish tf");
-        //publisher_tf.Send(data);
+        publisher_tf.Send(data);
     }
 
     void sendOdometry()
@@ -603,16 +477,16 @@ public class Movo : MonoBehaviour
         t.orientation.w = convertr.w;
 
         t.linear_speed = new SVector3();
-        var convertlv = Helper.Unity2Ros(imu.linVel);
-        t.linear_speed.x = convertlv.x;
-        t.linear_speed.y = convertlv.y;
-        t.linear_speed.z = convertlv.z;
+        //var convertlv = Helper.Unity2Ros(imu.linVel);
+        //t.linear_speed.x = convertlv.x;
+        //t.linear_speed.y = convertlv.y;
+        //t.linear_speed.z = convertlv.z;
 
         t.angular_speed = new SVector3();
-        var convertav = Helper.Unity2Ros(imu.angVel);
-        t.angular_speed.x = convertav.x;
-        t.angular_speed.y = convertav.y; 
-        t.angular_speed.z = convertav.z; 
+        //var convertav = Helper.Unity2Ros(imu.angVel);
+        //t.angular_speed.x = convertav.x;
+        //t.angular_speed.y = convertav.y; 
+        //t.angular_speed.z = convertav.z; 
 
         MemoryStream ms = new MemoryStream();
         Serializer.Serialize<RRSOdom>(ms, t);
@@ -648,15 +522,48 @@ public class Movo : MonoBehaviour
         publisher_groundtruth.Send(data);
     }
 
-    float CurrentPrimaryAxisRotation(int index)
+    float CurrentPrimaryAxisRotationRight(int index)
     {
-        index++;
-        //print("Get Current Rotation " + index);
-        var articulation = right_arm_joints[index].GetComponent<ArticulationBody>();
-        float currentRotationRads = articulation.jointPosition[0] * -1;
-        float currentRotation = currentRotationRads;
+        float currentRotation = 0;
+        if (index >= 0 && index <= 7)
+        {
+            var articulation = right_arm_joints[++index].GetComponent<ArticulationBody>();
+            if (articulation.jointPosition.dofCount == 1)
+            {
+                float currentRotationRads = articulation.jointPosition[0] * -1;
+                currentRotation = currentRotationRads;
+            }
+        }
         return currentRotation;
     }
+
+    float CurrentPrimaryAxisRotationLeft(int index)
+    {
+        float currentRotation = 0;
+        if (index >= 0 && index <= 7)
+        {
+            var articulation = left_arm_joints[++index].GetComponent<ArticulationBody>();
+            if (articulation.jointPosition.dofCount == 1)
+            {
+                float currentRotationRads = articulation.jointPosition[0] * -1;
+                currentRotation = currentRotationRads;
+            }
+        }
+        return currentRotation;
+    }
+
+    float CurrentPrimaryAxisRotationHead(int index)
+    {
+        float currentRotation = 0;
+        return currentRotation;
+    }
+
+    float CurrentPrimaryAxisRotationLinear()
+    {
+        float currentRotation = 0;
+        return currentRotation;
+    }
+
 
     void sendJointState()
     {
@@ -689,26 +596,27 @@ public class Movo : MonoBehaviour
         joint_state_msg.name[17] = Links.pan_joint.ToString();
         joint_state_msg.name[18] = Links.tilt_joint.ToString();
       
-        joint_state_msg.position[0] = CurrentPrimaryAxisRotation(0);
-        joint_state_msg.position[1] = CurrentPrimaryAxisRotation(1);
-        joint_state_msg.position[2] = CurrentPrimaryAxisRotation(2);
-        joint_state_msg.position[3] = CurrentPrimaryAxisRotation(3);
-        joint_state_msg.position[4] = CurrentPrimaryAxisRotation(4);
-        joint_state_msg.position[5] = CurrentPrimaryAxisRotation(5);
-        joint_state_msg.position[6] = CurrentPrimaryAxisRotation(6);
+        joint_state_msg.position[0] = CurrentPrimaryAxisRotationRight(0);
+        joint_state_msg.position[1] = CurrentPrimaryAxisRotationRight(1);
+        joint_state_msg.position[2] = CurrentPrimaryAxisRotationRight(2);
+        joint_state_msg.position[3] = CurrentPrimaryAxisRotationRight(3);
+        joint_state_msg.position[4] = CurrentPrimaryAxisRotationRight(4);
+        joint_state_msg.position[5] = CurrentPrimaryAxisRotationRight(5);
+        joint_state_msg.position[6] = CurrentPrimaryAxisRotationRight(6);
         joint_state_msg.position[7] = 0;
-        joint_state_msg.position[8] = 0;
-        joint_state_msg.position[9] = 0;
-        joint_state_msg.position[10] = 0;
-        joint_state_msg.position[11] = 0;
-        joint_state_msg.position[12] = 0;
-        joint_state_msg.position[13] = 0;
-        joint_state_msg.position[14] = 0;
-        joint_state_msg.position[15] = 0;
-        joint_state_msg.position[16] = 0;
-        joint_state_msg.position[17] = 0;
-        joint_state_msg.position[18] = 0;
 
+        joint_state_msg.position[8] = CurrentPrimaryAxisRotationLeft(0);
+        joint_state_msg.position[9] = CurrentPrimaryAxisRotationLeft(1);
+        joint_state_msg.position[10] = CurrentPrimaryAxisRotationLeft(2);
+        joint_state_msg.position[11] = CurrentPrimaryAxisRotationLeft(3);
+        joint_state_msg.position[12] = CurrentPrimaryAxisRotationLeft(4);
+        joint_state_msg.position[13] = CurrentPrimaryAxisRotationLeft(5);
+        joint_state_msg.position[14] = CurrentPrimaryAxisRotationLeft(6);
+        joint_state_msg.position[15] = 0;
+
+        joint_state_msg.position[16] = CurrentPrimaryAxisRotationLinear();
+        joint_state_msg.position[17] = CurrentPrimaryAxisRotationHead(0);
+        joint_state_msg.position[18] = CurrentPrimaryAxisRotationHead(1);
 
         for ( int i = 0; i < 19; i++)
         {
@@ -850,26 +758,12 @@ public class Movo : MonoBehaviour
 
         if (inited)
         {
-            if (timer_motor_update > (1 / fps_motor_update))
-            {
-                updateMotors();
-                timer_motor_update = 0;
-            }
-
-            if ( timer_status > (1 / fps_status))
-            {
-               
-                timer_status = 0;
-            }
-
+            updateMotors();
             sendState();
         }
-
-       
-           
+  
         if (path_updated && current_path != null)
              setPath(current_path);
-        
 
         if (Manager.inited && !inited)
         {
