@@ -45,7 +45,6 @@ namespace tr1_hardware_interface
 			std::mutex mtx_status;
 
 		protected:
-			//tr1cpp::TR1 tr1;
 			ros::NodeHandle nh_;
 			ros::Timer non_realtime_loop_;
 			ros::Duration control_period_;

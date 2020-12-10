@@ -196,7 +196,7 @@ void Net2Consul::mThread()
               }
               else
               {
-                ROS_INFO_STREAM("Service is ok : " << target_name << " " << diff );
+                //ROS_INFO_STREAM("Service is ok : " << target_name << " " << diff );
               }
 
 

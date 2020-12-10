@@ -15,7 +15,6 @@ find_package(catkin REQUIRED COMPONENTS
   urdf
   control_toolbox
   joint_limits_interface
-  tr1cpp
   movo_msgs
   sensor_msgs
 )
@@ -34,10 +33,8 @@ catkin_package(
     urdf
     control_toolbox
     joint_limits_interface
-		tr1cpp
   LIBRARIES 
     tr1_hardware_interface
-		tr1cpp
 )
 
 include_directories(
@@ -50,9 +47,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
   PATTERN ".svn" EXCLUDE)
 
 add_library(tr1_hardware_interface src/tr1_hardware_interface.cpp)
-add_dependencies(tr1_hardware_interface tr1cpp)
 target_link_libraries(tr1_hardware_interface
-	${tr1cpp_LIBRARIES}
 	${catkin_LIBRARIES})
 
 add_executable(tr1_hardware_interface_node src/tr1_hardware_interface_node.cpp)

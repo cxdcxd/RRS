@@ -718,30 +718,18 @@ void Net2TestROS::publishIMU(char* data, int size)
 
 void Net2TestROS::publishTF(char* data, int size)
 {
-
-  //14
   RRSTF tf_msg;
   tf_msg.ParseFromArray(data,size);
 
-  for ( int i = 0; i < 14; i++)
-  {
-
   tf::Transform transform;
   
-  tf::Quaternion q(tf_msg.transforms(i).orientation().x(),tf_msg.transforms(i).orientation().y(),tf_msg.transforms(i).orientation().z(),tf_msg.transforms(i).orientation().w());
-  transform.setOrigin( tf::Vector3(tf_msg.transforms(i).position().x(), tf_msg.transforms(i).position().y(), tf_msg.transforms(i).position().z()) );
+  tf::Quaternion q(tf_msg.transforms(0).orientation().x(),tf_msg.transforms(0).orientation().y(),tf_msg.transforms(0).orientation().z(),tf_msg.transforms(0).orientation().w());
+  transform.setOrigin( tf::Vector3(tf_msg.transforms(0).position().x(), tf_msg.transforms(0).position().y(), tf_msg.transforms(0).position().z()) );
   transform.setRotation(q);
 
-  if ( tf_msg.names(i) != "odom_link" )
-  {
-      //ROS_WARN_STREAM("GET " << tf_msg.names(i));
-      //tf_broadcasters[i].sendTransform(tf::StampedTransform(transform, ros::Time::now(), tf_msg.parents(i), tf_msg.names(i)));
-      std::string name = tf_msg.names(i);
-     
-  }
-
-
-  }
+  //ROS_WARN_STREAM("GET " << tf_msg.names(i));
+  tf_broadcasters[0].sendTransform(tf::StampedTransform(transform, ros::Time::now(), tf_msg.parents(0), tf_msg.names(0)));
+  std::string name = tf_msg.names(0);   
  }
 
 std::vector<char> Net2TestROS::callbackDataLidar1(std::vector<char> buffer, unsigned int priority, std::string sender)

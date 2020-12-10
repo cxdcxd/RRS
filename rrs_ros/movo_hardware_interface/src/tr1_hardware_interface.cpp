@@ -46,22 +46,13 @@ namespace tr1_hardware_interface
 
 	void TR1HardwareInterface::init()
 	{
-		//joint_mode_ = 3; // ONLY EFFORT FOR NOW
-		// Get joint names
-
-		// char *joint_names_[7] = {"right_shoulder_pan_joint",
-		// 						"right_shoulder_lift_joint"
-       	// 						"right_arm_half_joint"
-		// 						"right_elbow_joint"
-		// 						"right_wrist_spherical_1_joint"
-		// 						"right_wrist_spherical_2_joint"
-		// 						"right_wrist_3_joint"};
-
 		nh_.getParam("/movo/hardware_interface/joints", joint_names_);
-		if (joint_names_.size() == 0)
+
+		if (joint_names_.size() == 19)
 		{
 		  ROS_FATAL_STREAM_NAMED("init","No joints found on parameter server for controller. Did you load the proper yaml file?");
 		}
+
 		num_joints_ = joint_names_.size();
 
 		ROS_INFO_STREAM("Found " << num_joints_ << " Joints");
@@ -74,56 +65,25 @@ namespace tr1_hardware_interface
 		joint_velocity_command_.resize(num_joints_);
 		joint_effort_command_.resize(num_joints_);
 
-		// // Initialize controller
+		// Initialize controller
 		for (int i = 0; i < num_joints_; i++)
 		{
 			ROS_INFO_STREAM("Joint Name " << joint_names_[i]);
-		// 	tr1cpp::Joint joint = tr1.getJoint(joint_names_[i]);
-
-		//    ROS_DEBUG_STREAM_NAMED("constructor","Loading joint name: " << joint.name);
-
-		//  	nh_.getParam("/tr1/joint_offsets/" + joint.name, joint.angleOffset);
-		//  	nh_.getParam("/tr1/joint_read_ratio/" + joint.name, joint.readRatio);
-
-		// 	tr1.setJoint(joint);
-
-		//   // Create joint state interface
+		
+		    // Create joint state interface
 		 	JointStateHandle jointStateHandle(joint_names_[i], &joint_position_[i], &joint_velocity_[i], &joint_effort_[i]);
 		    joint_state_interface_.registerHandle(jointStateHandle);
 
-		//   // Create position joint interface
+		    // Create position joint interface
 		 	JointHandle jointPositionHandle(jointStateHandle, &joint_position_command_[i]);
 			position_joint_interface_.registerHandle(jointPositionHandle);
-		 	JointLimits limits;
- 	   	    //SoftJointLimits softLimits;
-
-			// if (getJointLimits(joint.name, nh_, limits) == false) 
-			// {
-		 	// 	ROS_ERROR_STREAM("Cannot set joint limits for " << joint.name);
-	     	// } 
-			//  else 
-			//  {
-			// 	PositionJointSoftLimitsHandle jointLimitsHandle(jointPositionHandle, limits, softLimits);
-		 	// 	positionJointSoftLimitsInterface.registerHandle(jointLimitsHandle);r
-		//JointHandle jointVelocityHandle(jointStateHandle, &joint_velocity_command_[i]);
-		//   //effort_joint_interface_.registerHandle(jointVelocityHandle);
-
-		//   // Create effort joint interface
-		// 	JointHandle jointEffortHandle(jointStateHandle, &joint_effort_command_[i]);
-		//   effort_joint_interface_.registerHandle(jointEffortHandle);
-
-		
 		}
 
 		ROS_INFO("Registering interfaces... ");
-
 		
 		registerInterface(&position_joint_interface_);
 		registerInterface(&joint_state_interface_);
-		registerInterface(&velocity_joint_interface_);
-		registerInterface(&effort_joint_interface_);
-		//registerInterface(&positionJointSoftLimitsInterface);
-
+		
 		ROS_INFO_STREAM("Init Done");
 	}
 
