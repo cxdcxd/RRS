@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+	
+<node pkg="si_utils" type="timed_roslaunch"
+        args="1 movo_7dof_moveit_config move_group.launch sim:=true info:=true"
+        name="moveit_bringup" output="screen"/>
+</launch>

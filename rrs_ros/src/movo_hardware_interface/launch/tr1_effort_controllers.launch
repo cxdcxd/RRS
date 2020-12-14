@@ -1,0 +1,46 @@
+<launch>
+
+  <!-- GDB functionality -->
+  <arg name="debug" default="false" />
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+  <arg name="robot_name" default="tr1"/>
+
+  <rosparam file="$(find tr1_hardware_interface)/config/hardware.yaml" command="load"/>
+  <rosparam file="$(find tr1_hardware_interface)/config/controllers.yaml" command="load"/>
+  <rosparam file="$(find tr1_hardware_interface)/config/joint_limits.yaml" command="load"/>
+  <rosparam file="$(find tr1_hardware_interface)/config/joint_offsets.yaml" command="load"/>
+	<param name="robot_description" command="cat $(find tr1_description)/urdf/tr1.urdf" />
+
+  <node name="tr1_hardware_interface" pkg="tr1_hardware_interface" type="tr1_hardware_interface_node"
+        output="screen" launch-prefix="$(arg launch_prefix)"/>
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/"
+		args="
+
+			/tr1/controller/state
+			/tr1/controller/effort/JointRightShoulderPan
+			/tr1/controller/effort/JointRightShoulderTilt
+			/tr1/controller/effort/JointRightUpperArmRoll
+			/tr1/controller/effort/JointRightElbowFlex
+			/tr1/controller/effort/JointRightForearmRoll
+			/tr1/controller/effort/JointRightWristFlex
+			/tr1/controller/effort/JointRightWristRoll
+			/tr1/controller/effort/JointRightGripper
+			/tr1/controller/effort/JointBaseWheelFR
+			/tr1/controller/effort/JointBaseWheelFL
+     			/tr1/controller/effort/JointBaseWheelBR
+			/tr1/controller/effort/JointBaseWheelBL
+			/tr1/controller/effort/JointTorsoExtension
+			/tr1/controller/effort/neck_base_to_neck
+			/tr1/controller/effort/neck_to_head
+			/tr1/controller/effort/JointLeftShoulderPan
+			/tr1/controller/effort/JointLeftShoulderTilt
+			/tr1/controller/effort/JointLeftUpperArmRoll
+			/tr1/controller/effort/JointLeftElbowFlex
+			/tr1/controller/effort/JointLeftForearmRoll
+			/tr1/controller/effort/JointLeftWristFlex
+			/tr1/controller/effort/JointLeftWristRoll
+			/tr1/controller/effort/JointLeftGripper
+		"/>
+
+</launch>

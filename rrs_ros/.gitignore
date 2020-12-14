@@ -1,1 +1,4 @@
-consul/consul
+src/consul/consul
+build/
+devel/
+.catkin_workspace

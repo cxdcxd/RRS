@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<package>
+  <name>rrs_ros</name>
+  <version>1.0.0</version>
+  <description>rrs ros bridge</description>
+
+  <maintainer email="edwin.babaians@tum.de">edwin babaians</maintainer>
+
+  <license>TUM</license>
+
+  <url type="website">www.tum.de/lmt</url> 
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>message_generation</build_depend>
+  
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>roboland_msgs</build_depend>
+  <build_depend>bridge_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>movo_msgs</build_depend>
+  <build_depend>roslib</build_depend>
+  <build_depend>hardware_interface</build_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>roboland_msgs</run_depend>
+  <run_depend>bridge_msgs</run_depend>
+  <run_depend>roslib</run_depend>
+  <run_depend>message_runtime</run_depend>  
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>movo_msgs</run_depend>
+  <run_depend>hardware_interface</run_depend>
+
+</package>

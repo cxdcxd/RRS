@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+ <launch>
+
+  <rosparam file="$(find tr1_hardware_interface)/config/hardware.yaml" command="load"/>
+
+  <rosparam file="$(find tr1_hardware_interface)/config/right_arm_7dof_controller.yaml" command="load"/>
+  <rosparam file="$(find tr1_hardware_interface)/config/right_gripper_controller.yaml" command="load"/>
+  <rosparam file="$(find tr1_hardware_interface)/config/left_arm_7dof_controller.yaml" command="load"/>
+  <rosparam file="$(find tr1_hardware_interface)/config/left_gripper_controller.yaml" command="load"/>
+  <rosparam file="$(find tr1_hardware_interface)/config/torso_controller.yaml" command="load"/>
+  <rosparam file="$(find tr1_hardware_interface)/config/head_controller.yaml" command="load"/>
+
+  <rosparam file="$(find tr1_hardware_interface)/config/joint_state_controller.yaml" command="load"/>
+  <rosparam file ="$(find tr1_hardware_interface)/config/controllers.yaml" command="load"/>
+  
+  <node name="tr1_hardware_interface" pkg="tr1_hardware_interface" type="tr1_hardware_interface_node" output="screen"/>
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/"
+		args="movo/right_arm_controller
+		      movo/left_arm_controller 
+		      movo/head_controller
+		      movo/torso_controller
+		      movo/left_gripper_controller
+ 		      movo/right_gripper_controller
+                      joint_state_controller
+		"/>
+
+</launch>
