@@ -27,9 +27,8 @@ namespace tr1_hardware_interface
 
 		ROS_INFO_NAMED("hardware_interface", "Loaded movo_hardware_interface.");
 
-		pub_joint_command = nh.advertise<movo_msgs::JacoJointCmd>("joint_command",1);
-		sub_joint_state = nh.subscribe("jointstate",1,&TR1HardwareInterface::chatterCallbackJointState, this);
-
+		pub_joint_command = nh.advertise<movo_msgs::JacoJointCmd>("rrs/joint_command",1);
+		sub_joint_state = nh.subscribe("rrs/joint_states",1,&TR1HardwareInterface::chatterCallbackJointState, this);
 	}
 
 	TR1HardwareInterface::~TR1HardwareInterface()
@@ -89,15 +88,6 @@ namespace tr1_hardware_interface
 
 	void TR1HardwareInterface::update(const ros::TimerEvent& e)
 	{
-		//_logInfo = "\n";
-		//_logInfo += "Joint Position Command:\n";
-		// for (int i = 0; i < num_joints_; i++)
-		// {
-		// 	std::ostringstream jointPositionStr;
-		// 	jointPositionStr << joint_position_command_[i];
-		// 	//_logInfo += "  " + joint_names_[i] + ": " + jointPositionStr.str() + "\n";
-		// }
-
 		elapsed_time_ = ros::Duration(e.current_real - e.last_real);
 
 		read();
@@ -117,10 +107,10 @@ namespace tr1_hardware_interface
 		{
 			for (int i = 0; i < num_joints_; i++)
 			{
-
+				
 			joint_position_[i] = current_joint_state.position[i];
-			joint_position_[i] = current_joint_state.velocity[i];
-			joint_position_[i] = current_joint_state.effort[i];
+			joint_velocity_[i] = current_joint_state.velocity[i];
+			joint_effort_[i] = current_joint_state.effort[i];
 
 			}
 		}
@@ -151,33 +141,10 @@ namespace tr1_hardware_interface
 
         movo_msgs::JacoJointCmd cmd;
 
-		//positionJointSoftLimitsInterface.enforceLimits(elapsed_time);
-		// _logInfo += "Joint Effort Command:\n";
-
-
 		for (int i = 0; i < num_joints_; i++)
 		{
            
 		   cmd.joint_cmds.push_back( joint_position_command_[i]);
-               
-		// 	tr1cpp::Joint joint = tr1.getJoint(joint_names_[i]);
-		// 	//if (joint_effort_command_[i] > 1) joint_effort_command_[i] = 1;
-		// 	//if (joint_effort_command_[i] < -1) joint_effort_command_[i] = -1;
-
-		// 	double effort = joint_effort_command_[i];
-		// 	uint8_t duration = 15;
-
-		// 	if (joint.getActuatorType() == 1) { // servo
-		// 		double previousEffort = joint.getPreviousEffort();
-		// 		effort += previousEffort;
-		// 	}
-			
-		// 	joint.actuate(effort, duration);
-
-		// 	std::ostringstream jointEffortStr;
-		// 	jointEffortStr << joint_effort_command_[i];
-		// 	_logInfo += "  " + joint.name + ": " + jointEffortStr.str() + "\n";
-
 
 		}
 

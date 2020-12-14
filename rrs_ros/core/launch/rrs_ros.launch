@@ -12,6 +12,7 @@
 		<param name="tf_prefix" type="string" value="" />
 	</node>
 
+        
         <rosparam file="$(find tr1_hardware_interface)/config/hardware.yaml" command="load"/>
 
   <rosparam file="$(find tr1_hardware_interface)/config/right_arm_7dof_controller.yaml" command="load"/>
@@ -36,5 +37,6 @@
 		"/>
 
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find movo_viz)/rviz/robot_7dof_.rviz" output="screen"/>
+
 
 </launch>

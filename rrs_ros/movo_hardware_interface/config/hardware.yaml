@@ -1,6 +1,6 @@
 movo:
   hardware_interface:
-     loop_hz: 20
+     loop_hz: 100
      joints:
        - right_shoulder_pan_joint
        - right_shoulder_lift_joint
