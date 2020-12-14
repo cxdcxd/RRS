@@ -1,5 +1,0 @@
-ntp_server_host_name: test
-local_network_address: 192.168.92.139
-consul_network_address: 192.168.92.139
-consul_network_mask: 255.255.255.0
-consul_network_port: 8500

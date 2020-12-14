@@ -1,6 +1,0 @@
-Header header
-uint32  battery_status
-float32 battery_soc
-float32 battery_voltage_VDC
-float32 battery_current_A0pk
-float32 battery_temperature_degC
