@@ -2,16 +2,27 @@
 
 ![Alt text](sample.png?raw=true "Title")
 
-# Unity Version
-    2020.1.f1
-    
-# ROS Version
-    Ubuntu 18.04
-    ROS Melodic
+| OS  | ROS Version | Unity Version
+| --- | ----------- | ------------ |
+| Ubuntu 18.04 | Melodic | 2020.1.17f1
 
-# Installation
-    1) https://github.com/oliora/ppconsul
-    2) https://www.consul.io/ (1.8.4)
+<!--# Unity Version
+    2020.1.17f1-->
+    
+<!--# ROS Version
+    Ubuntu 18.04
+    ROS Melodic-->
+
+# Seutp and Installation
+1) https://github.com/oliora/ppconsul
+2) https://www.consul.io/ (1.8.4)
+
+1) Download [Unity](https://unity3d.com/get-unity/download/archive) 2020.1.17
+2) Install [ROS](http://wiki.ros.org/ROS/Installation)
+3) Clone this Repository with `git clone https://github.com/cxdcxd/RRS.git`
+4) Open Unity Hub and go to `Projects`, click `ADD` and then browse the folder `rrs_unity` from the downloaded repository and launch it. Make sure the `Unity Version` is set to `2020.1.17f1`
+5) Open the repository in a new terminal and type `cd rrs_ros` and build the workspace: `catkin_make`
+6) Source the workspace: `setup ~/rrs_ros/devel/setup.bash`
 
 # Run
     1) consul.sh
