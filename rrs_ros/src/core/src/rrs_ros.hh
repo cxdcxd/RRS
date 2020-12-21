@@ -99,6 +99,7 @@ public:
   std::vector<char> callbackDataGroundtruth(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataCameraColor(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataCameraDepth(std::vector<char> buffer, unsigned int priority, std::string sender);
+  std::vector<char> callbackDataCameraNormal(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataCameraSegment(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataCameraInfo(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataTags(std::vector<char> buffer, unsigned int priority, std::string sender);
@@ -109,7 +110,6 @@ public:
   std::vector<char> callbackDataOdometry(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataTF(std::vector<char> buffer, unsigned int priority, std::string sender);
   
-
   std::shared_ptr<Net2Publisher> publisher_cmd_vel;
   std::shared_ptr<Net2Publisher> publisher_planner_viz;
   std::shared_ptr<Net2Publisher> publisher_navigation_state;
@@ -121,6 +121,7 @@ public:
   std::shared_ptr<Net2Subscriber> subscriber_camera_color;
   std::shared_ptr<Net2Subscriber> subscriber_camera_depth;
   std::shared_ptr<Net2Subscriber> subscriber_camera_segment;
+  std::shared_ptr<Net2Subscriber> subscriber_camera_normal;
   std::shared_ptr<Net2Subscriber> subscriber_camera_info;
   std::shared_ptr<Net2Subscriber> subscriber_groundtruth;
   std::shared_ptr<Net2Subscriber> subscriber_tag_points;
@@ -134,6 +135,7 @@ public:
   ros::Publisher pub_lidar_1;
   ros::Publisher pub_lidar_2;
   ros::Publisher pub_camera_color;
+  ros::Publisher pub_camera_normal;
   ros::Publisher pub_camera_depth;
   ros::Publisher pub_camera_segment;
   ros::Publisher pub_camera_info;
@@ -178,6 +180,7 @@ public:
   void publishCameraColor(char* data, int size);
   void publishCameraInfo(char* data, int size);
   void publishCameraSegment(char* data, int size);
+  void publishCameraNormal(char* data, int size);
   void publishGroundtruth(char* data, int size);
   void publishMapTags(char* data, int size);
   void publishMapPoints(char* data, int size);

@@ -48,11 +48,11 @@ namespace roboland
     //RRS High Performance Bridge
     subscriber_lidar_1 = net2->subscriber();
     subscriber_lidar_1->delegateNewData = std::bind(&Net2TestROS::callbackDataLidar1, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
-    ProcessResult<int> result1 = subscriber_lidar_1->Start("rrs-lidar_1");
+    ProcessResult<int> result1 = subscriber_lidar_1->Start("rrs-lidar_front");
 
     subscriber_lidar_2 = net2->subscriber();
     subscriber_lidar_2->delegateNewData = std::bind(&Net2TestROS::callbackDataLidar2, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
-    ProcessResult<int> result2 = subscriber_lidar_2->Start("rrs-lidar_2");
+    ProcessResult<int> result2 = subscriber_lidar_2->Start("rrs-lidar_rear");
 
     subscriber_camera_color = net2->subscriber();
     subscriber_camera_color->delegateNewData = std::bind(&Net2TestROS::callbackDataCameraColor, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
@@ -61,6 +61,10 @@ namespace roboland
     subscriber_camera_depth = net2->subscriber();
     subscriber_camera_depth->delegateNewData = std::bind(&Net2TestROS::callbackDataCameraDepth, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     ProcessResult<int> result4 = subscriber_camera_depth->Start("rrs-camera_depth");
+
+    subscriber_camera_normal = net2->subscriber();
+    subscriber_camera_normal->delegateNewData = std::bind(&Net2TestROS::callbackDataCameraNormal, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    ProcessResult<int> result44 = subscriber_camera_normal->Start("rrs-camera_normal");
 
     subscriber_camera_info = net2->subscriber();
     subscriber_camera_info->delegateNewData = std::bind(&Net2TestROS::callbackDataCameraInfo, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
@@ -118,12 +122,13 @@ namespace roboland
     publisher_navigation_state->Start();
 
     //ROS
-    pub_lidar_1 = nh.advertise<sensor_msgs::LaserScan>("scan", 1);
-    pub_lidar_2 = nh.advertise<sensor_msgs::LaserScan>("scan/2", 1);
-    pub_camera_color = nh.advertise<sensor_msgs::Image>("camera", 1);
+    pub_lidar_1 = nh.advertise<sensor_msgs::LaserScan>("scan/front", 1);
+    pub_lidar_2 = nh.advertise<sensor_msgs::LaserScan>("scan/rear", 1);
+    pub_camera_color = nh.advertise<sensor_msgs::Image>("camera/image_raw", 1);
     pub_camera_info = nh.advertise<sensor_msgs::CameraInfo>("camera/camera_info", 1);
-    pub_camera_depth = nh.advertise<sensor_msgs::Image>("depth", 1);
-    pub_camera_segment = nh.advertise<sensor_msgs::Image>("segment", 1);
+    pub_camera_depth = nh.advertise<sensor_msgs::Image>("camera/depth_raw", 1);
+    pub_camera_normal = nh.advertise<sensor_msgs::Image>("camera/normal_raw", 1);
+    pub_camera_segment = nh.advertise<sensor_msgs::Image>("camera/segment_raw", 1);
     pub_odometry = nh.advertise<nav_msgs::Odometry>("odometry",1);
     pub_imu = nh.advertise<sensor_msgs::Imu>("imu",1);
     pub_camera_point = nh.advertise<pcl::PCLPointCloud2>("camera/points", 1);
@@ -136,7 +141,7 @@ namespace roboland
 
     sub_cmd_vel = nh.subscribe("cmd_vel",1, &Net2TestROS::chatterCallbackCMD, this);
     sub_navigation_status = nh.subscribe("navigation/status",1, &Net2TestROS::chatterCallbackNavigationStatus, this);
-    //sub_rrs_command = nh.subscribe("rrs/command",1, &Net2TestROS::chatterCallbackRRSCommand, this);
+    sub_rrs_command = nh.subscribe("rrs/scene/command",1, &Net2TestROS::chatterCallbackRRSCommand, this);
     sub_joint_command = nh.subscribe("rrs/joint_command",1, &Net2TestROS::chatterCallbackJointCommand, this);
     sub_markers = nh.subscribe("visualization_marker_steps",1,&Net2TestROS::chatterCallbackMarker, this);
     sub_markers_goal_arrow = nh.subscribe("visualization_marker_goals_arrow",1,&Net2TestROS::chatterCallbackMarkerGoalArrow, this);
@@ -198,7 +203,7 @@ namespace roboland
 
   void Net2TestROS::chatterCallbackRRSCommand(const std_msgs::String::ConstPtr& msg)
   {
-    //Send Command to RRS
+    //Send Scene Command to RRS
   }
 
   void Net2TestROS::chatterCallbackNavigationStatus(const std_msgs::String::ConstPtr& msg)
@@ -300,7 +305,7 @@ void Net2TestROS::publishLidar1(char* data, int size)
  sensor_msgs::LaserScan scan_msg;
 
  scan_msg.header.stamp = ros::Time::now();
- scan_msg.header.frame_id = "laser_link"; //TODO
+ scan_msg.header.frame_id = "front_laser_link";
 
  scan_msg.angle_min =  laser_msg.angel_min();
  scan_msg.angle_max =  laser_msg.angel_max();
@@ -335,7 +340,7 @@ void Net2TestROS::publishLidar2(char* data, int size)
  sensor_msgs::LaserScan scan_msg;
 
  scan_msg.header.stamp = ros::Time::now();
- scan_msg.header.frame_id = "laser_2_link";
+ scan_msg.header.frame_id = "rear_laser_link";
 
  scan_msg.angle_min =  laser_msg.angel_min();
  scan_msg.angle_max =  laser_msg.angel_max();
@@ -401,6 +406,20 @@ void Net2TestROS::publishCameraDepth(char* data, int size)
 
    pub_camera_point.publish(point_cloud2);
 
+}
+
+void Net2TestROS::publishCameraNormal(char* data, int size)
+{
+  //4
+  std::vector<unsigned char> data_byte;
+  data_byte.assign(data,data + size);
+  cv::Mat image(cv::imdecode(data_byte,1));
+  cv_bridge::CvImage out_msg;
+  out_msg.encoding = sensor_msgs::image_encodings::BGR8;
+  out_msg.image = image;
+  out_msg.header.stamp = ros::Time::now();
+  out_msg.header.frame_id = "camera_link";
+  pub_camera_normal.publish(out_msg.toImageMsg());
 }
 
 
@@ -762,6 +781,15 @@ std::vector<char> Net2TestROS::callbackDataCameraDepth(std::vector<char> buffer,
   std::vector<char> result;
   if ( priority == 10 ) return result;
   publishCameraDepth(&buffer[0],buffer.size());
+  return result;
+}
+
+std::vector<char> Net2TestROS::callbackDataCameraNormal(std::vector<char> buffer, unsigned int priority, std::string sender)
+{
+  //4r
+  std::vector<char> result;
+  if ( priority == 10 ) return result;
+  publishCameraNormal(&buffer[0],buffer.size());
   return result;
 }
 
