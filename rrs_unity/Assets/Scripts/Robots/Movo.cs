@@ -20,10 +20,8 @@ public class Movo : MonoBehaviour
         left_wrist_3_joint,
         left_wrist_spherical_1_joint,
         left_wrist_spherical_2_joint,
-
         linear_joint, 
         pan_joint, 
-
         right_arm_half_joint, 
         right_elbow_joint, 
         right_gripper_finger1_joint,
@@ -32,9 +30,7 @@ public class Movo : MonoBehaviour
         right_wrist_3_joint, 
         right_wrist_spherical_1_joint,
         right_wrist_spherical_2_joint, 
-
         tilt_joint,
-
         base_link,
         odom
     }
@@ -42,12 +38,13 @@ public class Movo : MonoBehaviour
     #region Net2
 
     //PUBS
-    Net2.Net2HandlerPublisher publisher_lidar_1;
-    Net2.Net2HandlerPublisher publisher_lidar_2; //Later
+    Net2.Net2HandlerPublisher publisher_lidar_front;
+    Net2.Net2HandlerPublisher publisher_lidar_rear;
     Net2.Net2HandlerPublisher publisher_camera_color;
     Net2.Net2HandlerPublisher publisher_camera_info;
     Net2.Net2HandlerPublisher publisher_camera_depth;
     Net2.Net2HandlerPublisher publisher_camera_segment;
+    Net2.Net2HandlerPublisher publisher_camera_normal;
     Net2.Net2HandlerPublisher publisher_joint_state;
     Net2.Net2HandlerPublisher publisher_imu;
     Net2.Net2HandlerPublisher publisher_odometry;
@@ -69,9 +66,6 @@ public class Movo : MonoBehaviour
 
     public GameObject target;
     public Camera sensor_kinect;
-    public GameObject sensor_lidar_1;
-    public GameObject sensor_lidar_2;
-    public GameObject sensor_imu;
     public GameObject tag_test;
     public GameObject[] head_joints;
     public GameObject[] left_arm_joints;
@@ -80,10 +74,12 @@ public class Movo : MonoBehaviour
     public GameObject[] right_finger_joints;
     public GameObject linear_joint;
 
-    public Lidar lidar;
+    public Lidar lidar_front;
+    public Lidar lidar_rear;
     public ColorCamera color_camera;
-    public DepthCamera depth_camera;
-    public SegmentCamera segment_camera;
+    public ColorCamera depth_camera;
+    public ColorCamera segment_camera;
+    public ColorCamera normal_camera;
     public IMU imu;
 
     private RVector3[] current_path = null;
@@ -107,56 +103,51 @@ public class Movo : MonoBehaviour
     public GameObject ik_right_hand_target;
     public GameObject ik_left_hand_target;
 
-    public float right_arm_1 = 0;
-    public float right_arm_2 = 0;
-    public float right_arm_3 = 0;
-    public float right_arm_4 = 0;
-    public float right_arm_5 = 0;
-    public float right_arm_6 = 0;
-    public float right_arm_7 = 0;
-
     public float[] d_joints;
-
-    //public float right_arm_8 = 0;
 
     void init()
     {
         d_joints = new float[19];
 
         publisher_joint_state = Net2.Publisher("joint_state");
-        //publisher_lidar_1 = Net2.Publisher("lidar_1");
-        //publisher_lidar_2 = Net2.Publisher("lidar_2");
-        //publisher_camera_color = Net2.Publisher("camera_color");
-        //publisher_camera_info = Net2.Publisher("camera_info");
-        //publisher_camera_depth = Net2.Publisher("camera_depth");
-        //publisher_camera_segment = Net2.Publisher("camera_segment");
+        publisher_lidar_front = Net2.Publisher("lidar_front");
+        publisher_lidar_rear = Net2.Publisher("lidar_rear");
+        publisher_camera_color = Net2.Publisher("camera_color");
+        publisher_camera_info = Net2.Publisher("camera_info");
+        publisher_camera_depth = Net2.Publisher("camera_depth");
+        publisher_camera_segment = Net2.Publisher("camera_segment");
+        publisher_camera_normal = Net2.Publisher("camera_normal");
         publisher_groundtruth = Net2.Publisher("groundtruth");
-        //publisher_imu = Net2.Publisher("imu");
+        publisher_imu = Net2.Publisher("imu");
         publisher_odometry = Net2.Publisher("odometry");
         publisher_tf = Net2.Publisher("tf");
 
-        //subscriber_cmd_vel = Net2.Subscriber("rrs_ros-cmd_vel");
-        //subscriber_cmd_vel.delegateNewData += Subscriber_cmd_vel_delegateNewData;
+        subscriber_cmd_vel = Net2.Subscriber("rrs_ros-cmd_vel");
+        subscriber_cmd_vel.delegateNewData += Subscriber_cmd_vel_delegateNewData;
 
-        //subscriber_planner_viz = Net2.Subscriber("rrs_ros-planner_viz");
-        //subscriber_planner_viz.delegateNewData += Subscriber_planner_viz_delegateNewData;
+        subscriber_planner_viz = Net2.Subscriber("rrs_ros-planner_viz");
+        subscriber_planner_viz.delegateNewData += Subscriber_planner_viz_delegateNewData;
 
-        //subscriber_navigation_state = Net2.Subscriber("rrs_ros-navigation_state");
-        //subscriber_navigation_state.delegateNewData += Subscriber_navigation_state_delegateNewData;
-
-        //subscriber_rrs_command = Net2.Subscriber("rrs_ros-rrs_command");
-        //subscriber_rrs_command.delegateNewData += Subscriber_rrs_command_delegateNewData;
+        subscriber_rrs_command = Net2.Subscriber("rrs_ros-rrs_command");
+        subscriber_rrs_command.delegateNewData += Subscriber_rrs_command_delegateNewData;
 
         subscriber_rrs_joint_command = Net2.Subscriber("rrs_ros-joint_command");
         subscriber_rrs_joint_command.delegateNewData += Subscriber_rrs_joint_command_delegateNewData;
 
         //Sensors
-        //color_camera.delegateCameraDataChanged += Color_camera_delegateCameraDataChanged;
-        //depth_camera.delegateCameraDataChanged += Depth_camera_delegateCameraDataChanged;
-        //segment_camera.delegateCameraDataChanged += Segment_camera_delegateCameraDataChanged;
-        //imu.delegateIMUDataChanged += Imu_delegateIMUDataChanged;
-        //lidar.delegateLidarDataChanged += Lidar_delegateLidarDataChanged;
-        
+        color_camera.delegateCameraDataChanged += Color_camera_delegateCameraDataChanged;
+        depth_camera.delegateCameraDataChanged += Depth_camera_delegateCameraDataChanged;
+        segment_camera.delegateCameraDataChanged += Segment_camera_delegateCameraDataChanged;
+        normal_camera.delegateCameraDataChanged += Normal_camera_delegateCameraDataChanged;
+
+        imu.delegateIMUDataChanged += Imu_delegateIMUDataChanged;
+        lidar_front.delegateLidarDataChanged += Lidar_front_delegateLidarDataChanged;
+        lidar_rear.delegateLidarDataChanged += Lidar_rear_delegateLidarDataChanged;
+    }
+
+    private void Normal_camera_delegateCameraDataChanged(byte[] buffer)
+    {
+        publisher_camera_normal.Send(buffer);
     }
 
     #region MotorControl
@@ -168,7 +159,7 @@ public class Movo : MonoBehaviour
 
     void moveHead()
     {
-        
+        //@TODO
     }
 
     void moveLeftHand()
@@ -194,12 +185,12 @@ public class Movo : MonoBehaviour
 
     void rightGripper()
     {
-      //later
+      //@TODO
     }
 
     void leftGripper()
     {
-      //later
+      //@TODO
     }
 
     void updateMotors()
@@ -217,9 +208,15 @@ public class Movo : MonoBehaviour
     #endregion
 
     #region SensorFeedbak
-    private void Lidar_delegateLidarDataChanged(byte[] buffer)
+    private void Lidar_front_delegateLidarDataChanged(byte[] buffer)
     {
-        publisher_lidar_1.Send(buffer);
+        //print("Send Lidar Front");
+        publisher_lidar_front.Send(buffer);
+    }
+
+    private void Lidar_rear_delegateLidarDataChanged(byte[] buffer)
+    {
+        publisher_lidar_rear.Send(buffer);
     }
 
     private void Imu_delegateIMUDataChanged(byte[] buffer)
@@ -327,6 +324,7 @@ public class Movo : MonoBehaviour
         Serializer.Serialize<RRSCameraInfo>(ms, info_msg);
 
         byte[] data = ms.ToArray();
+
         publisher_camera_info.Send(data);
 
 
@@ -354,8 +352,8 @@ public class Movo : MonoBehaviour
         MemoryStream ms = new MemoryStream(buffer);
         RRSJointCommand cmd = Serializer.Deserialize<RRSJointCommand>(ms);
 
-        print("Get Goal");
-        print(cmd.goal.Length);
+        //print("Get Goal");
+        //print(cmd.goal.Length);
 
         for ( int i = 0; i < cmd.goal.Length; i++)
         {
@@ -563,7 +561,6 @@ public class Movo : MonoBehaviour
         float currentRotation = 0;
         return currentRotation;
     }
-
 
     void sendJointState()
     {

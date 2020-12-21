@@ -15,7 +15,7 @@ public class Robot : MonoBehaviour
     Net2.Net2HandlerSubscriber subscriber_cmd_vel;
 
     public Lidar lidar;
-    public ColorCamera color_camera;
+    //public ColorCamera color_camera;
 
     bool inited = false;
 
@@ -36,7 +36,7 @@ public class Robot : MonoBehaviour
         subscriber_cmd_vel.delegateNewData += Subscriber_cmd_vel_delegateNewData;
 
         //Sensors
-        color_camera.delegateCameraDataChanged += Color_camera_delegateCameraDataChanged;
+        //color_camera.delegateCameraDataChanged += Color_camera_delegateCameraDataChanged;
         lidar.delegateLidarDataChanged += Lidar_delegateLidarDataChanged;
     }
 

@@ -185,7 +185,6 @@ public class ImageSynthesis : MonoBehaviour
 
     }
 
-
     public void OnSceneChange()
     {
         var renderers = Object.FindObjectsOfType<Renderer>();
@@ -200,98 +199,6 @@ public class ImageSynthesis : MonoBehaviour
             mpb.SetColor("_CategoryColor", ColorEncoding.EncodeLayerAsColor(layer));
             r.SetPropertyBlock(mpb);
         }
-    }
-
-    public void Save(string filename, int width = -1, int height = -1, string path = "")
-    {
-        if (width <= 0 || height <= 0)
-        {
-            width = Screen.width;
-            height = Screen.height;
-        }
-
-        var filenameExtension = System.IO.Path.GetExtension(filename);
-        if (filenameExtension == "")
-            filenameExtension = ".png";
-        var filenameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
-
-        var pathWithoutExtension = Path.Combine(path, filenameWithoutExtension);
-
-        // execute as coroutine to wait for the EndOfFrame before starting capture
-        StartCoroutine(
-            WaitForEndOfFrameAndSave(pathWithoutExtension, filenameExtension, width, height));
-    }
-
-    private IEnumerator WaitForEndOfFrameAndSave(string filenameWithoutExtension, string filenameExtension, int width, int height)
-    {
-        yield return new WaitForEndOfFrame();
-        Save(filenameWithoutExtension, filenameExtension, width, height);
-    }
-
-    private void Save(string filenameWithoutExtension, string filenameExtension, int width, int height)
-    {
-        foreach (var pass in capturePasses)
-        {
-            // Perform a check to make sure that the capture pass should be saved
-            if (
-                (pass.name == "_img" && saveImage) ||
-                (pass.name == "_id" && saveIdSegmentation) ||
-                (pass.name == "_layer" && saveLayerSegmentation) ||
-                (pass.name == "_depth" && saveDepth) ||
-                (pass.name == "_normals" && saveNormals) ||
-                (pass.name == "_flow" && saveOpticalFlow)
-            )
-            {
-                Save(pass.camera, filenameWithoutExtension + pass.name + filenameExtension, width, height, pass.supportsAntialiasing, pass.needsRescale);
-            }
-        }
-    }
-
-    private void Save(Camera cam, string filename, int width, int height, bool supportsAntialiasing, bool needsRescale)
-    {
-        var mainCamera = GetComponent<Camera>();
-        var depth = 24;
-        var format = RenderTextureFormat.Default;
-        var readWrite = RenderTextureReadWrite.Default;
-        var antiAliasing = (supportsAntialiasing) ? Mathf.Max(1, QualitySettings.antiAliasing) : 1;
-
-        var finalRT =
-            RenderTexture.GetTemporary(width, height, depth, format, readWrite, antiAliasing);
-        var renderRT = (!needsRescale) ? finalRT :
-            RenderTexture.GetTemporary(mainCamera.pixelWidth, mainCamera.pixelHeight, depth, format, readWrite, antiAliasing);
-        var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
-
-        var prevActiveRT = RenderTexture.active;
-        var prevCameraRT = cam.targetTexture;
-
-        // render to offscreen texture (readonly from CPU side)
-        RenderTexture.active = renderRT;
-        cam.targetTexture = renderRT;
-
-        cam.Render();
-
-        if (needsRescale)
-        {
-            // blit to rescale (see issue with Motion Vectors in @KNOWN ISSUES)
-            RenderTexture.active = finalRT;
-            Graphics.Blit(renderRT, finalRT);
-            RenderTexture.ReleaseTemporary(renderRT);
-        }
-
-        // read offsreen texture contents into the CPU readable texture
-        tex.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
-        tex.Apply();
-
-        // encode texture into PNG
-        var bytes = tex.EncodeToPNG();
-        File.WriteAllBytes(filename, bytes);
-
-        // restore state and cleanup
-        cam.targetTexture = prevCameraRT;
-        RenderTexture.active = prevActiveRT;
-
-        Object.Destroy(tex);
-        RenderTexture.ReleaseTemporary(finalRT);
     }
 
 #if UNITY_EDITOR

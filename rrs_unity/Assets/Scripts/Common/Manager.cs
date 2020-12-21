@@ -6,12 +6,14 @@ using Roboland.Tools.Network;
 public class Manager : MonoBehaviour
 {
     public static bool inited = false;
-
+    public int desire_frame_rate = 30;
     void Start()
     {
         AsyncIO.ForceDotNet.Force();
         Statics.Init();
         inited = true;
+
+        Application.targetFrameRate = desire_frame_rate;
 
         print("RRS Ready " + Statics.current_config.consul_network_address);
     }

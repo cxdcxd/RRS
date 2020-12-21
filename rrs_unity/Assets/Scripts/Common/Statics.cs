@@ -55,7 +55,7 @@ public class Statics
         ProcessResult result = xml_manager.loadXML<Config>(folder_path + "config.xml");
         current_config = (Config)result.Result;
 
-        Application.targetFrameRate = 60;
+        
 
         net2_config = new Net2Config();
         net2_config.consul_mode = RRS.Tools.Network.Net2ConsulMode.CLIENT;
