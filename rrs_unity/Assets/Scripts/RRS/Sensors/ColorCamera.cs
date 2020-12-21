@@ -64,6 +64,8 @@ public class ColorCamera : MonoBehaviour
 
     uint Sequence;
 
+    bool invalid = false;
+
     public enum Mode
     {
         a,b,c,d,e,f
@@ -342,6 +344,8 @@ public class ColorCamera : MonoBehaviour
 
     public void OnDestroy()
     {
+        invalid = true;
+
         if (SensorCamera != null && SensorCamera.targetTexture != null)
         {
             SensorCamera.targetTexture.Release();
@@ -367,17 +371,20 @@ public class ColorCamera : MonoBehaviour
 
     private void Update()
     {
-        SensorCamera.fieldOfView = FieldOfView;
-        SensorCamera.nearClipPlane = MinDistance;
-        SensorCamera.farClipPlane = MaxDistance;
-
-        while (Tasks.Count > 0 && Tasks.Peek().IsCompleted)
+        if (invalid == false)
         {
-            Tasks.Dequeue();
-        }
+            SensorCamera.fieldOfView = FieldOfView;
+            SensorCamera.nearClipPlane = MinDistance;
+            SensorCamera.farClipPlane = MaxDistance;
 
-        CheckTexture();
-        CheckCapture();
-        ProcessReadbackRequests();
+            while (Tasks.Count > 0 && Tasks.Peek().IsCompleted)
+            {
+                Tasks.Dequeue();
+            }
+
+            CheckTexture();
+            CheckCapture();
+            ProcessReadbackRequests();
+        }
     }
 }
