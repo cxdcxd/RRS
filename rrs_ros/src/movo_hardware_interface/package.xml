@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
   <name>tr1_hardware_interface</name>
-  <version>0.0.1</version>
-  <description>Provides the hardware definition and interfaces for TR1</description>
+  <version>1.0.0</version>
+  <description>Provides the hardware definition and interfaces for Movo platform</description>
 
   <maintainer email="zach@slaterobots.com">Zach Allen</maintainer>
 
@@ -15,6 +15,7 @@
   <author email="zach@slaterobots.com">Zach Allen</author>
 
   <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>message_generation</build_depend>
 
   <build_depend>movo_msgs</build_depend>
   <build_depend>hardware_interface</build_depend>

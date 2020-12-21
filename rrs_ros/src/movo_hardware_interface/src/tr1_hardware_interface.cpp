@@ -47,7 +47,7 @@ namespace tr1_hardware_interface
 	{
 		nh_.getParam("/movo/hardware_interface/joints", joint_names_);
 
-		if (joint_names_.size() == 19)
+		if (joint_names_.size() != 19)
 		{
 		  ROS_FATAL_STREAM_NAMED("init","No joints found on parameter server for controller. Did you load the proper yaml file?");
 		}
