@@ -17,54 +17,20 @@
 
 1) Install [ROS](http://wiki.ros.org/melodic/Installation/Ubuntu)
 
-2) Install all dependencies
-```
-sudo apt install -y libprotobuf-dev
-sudo apt install -y ros-melodic-roslint
-sudo apt install -y ros-melodic-move-base
-sudo apt install -y ros-melodic-urdf
-sudo apt install -y ros-melodic-moveit
-sudo apt install -y ros-melodic-pcl-ros
-sudo apt install -y ros-melodic-filters
-sudo apt install -y ros-melodic-hardware-interface
-sudo apt install -y ros-melodic-controller-manager
-sudo apt install -y ros-melodic-joint-limits-interface
-sudo apt install -y ros-melodic-transmission-interface
-sudo apt install -y ros-melodic-tf-conversions
-sudo apt install -y ros-melodic-tf2-bullet
-sudo apt install -y ros-melodic-control-toolbox
-sudo apt install -y libeigen3-dev
-sudo apt install -y protobuf-compiler
-sudo apt install -y libzmqpp-dev
-sudo apt install -y ros-melodic-joint-state-controller
-```
-
-3) Install ppconsul
-```
-mkdir third_party
-cd third_party
-git clone https://github.com/oliora/ppconsul
-mkdir build
-cd build
-cmake ..
-make
-sudo make install
-```
-
-4) Clone this Repository 
+2) Clone this Repository 
 ```
 git clone https://github.com/cxdcxd/RRS.git
 cd rrs_ros
 ./install.sh
 ```
 
-5) Download [Unity](https://unity3d.com/get-unity/download/archive) 2020.1.17
+3) Download [Unity](https://unity3d.com/get-unity/download/archive) 2020.1.17
 
-6) Open Unity Hub and go to `Projects`, click `ADD` and then browse the folder `rrs_unity` from the downloaded repository and launch it. Make sure the `Unity Version` is set to `2020.1.17f1`
+4) Open Unity Hub and go to `Projects`, click `ADD` and then browse the folder `rrs_unity` from the downloaded repository and launch it. Make sure the `Unity Version` is set to `2020.1.17f1`
 
-7) Open the repository in a new terminal and type `cd rrs_ros` and build the workspace: `catkin_make`
+5) Open the repository in a new terminal and type `cd rrs_ros` and build the workspace: `catkin_make`
 
-8) Source the workspace: 
+6) Source the workspace: 
 ```
 setup ~/rrs_ros/devel/setup.bash
 ```
