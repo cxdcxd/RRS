@@ -2,9 +2,9 @@
 
 ![Alt text](sample.png?raw=true "Title")
 
-| OS  | ROS Version | Unity Version
-| --- | ----------- | ------------ |
-| Ubuntu 18.04 | Melodic | 2020.1.17f1
+| OS  | Kernel Version | ROS Version | Nvidia Driver Version | Unity Version
+| --- | ----------| ----------- | ------------ | ------------ |
+| Ubuntu 18.04.05 LTS | 5.4.0-58-generic | ROS Melodic | 450.80.02 | Unity 2020.1.17f1
 
 <!--# Unity Version
     2020.1.17f1-->
