@@ -18,33 +18,33 @@
 1) Install [ROS](http://wiki.ros.org/melodic/Installation/Ubuntu)
 
 2) Install all dependencies
-    sudo apt install -y libprotobuf-dev
-    sudo apt install -y ros-melodic-roslint
-    sudo apt install -y ros-melodic-move-base
-    sudo apt install -y ros-melodic-urdf
-    sudo apt install -y ros-melodic-moveit
-    sudo apt install -y ros-melodic-pcl-ros
-    sudo apt install -y ros-melodic-filters
-    sudo apt install -y ros-melodic-hardware-interface
-    sudo apt install -y ros-melodic-controller-manager
-    sudo apt install -y ros-melodic-joint-limits-interface
-    sudo apt install -y ros-melodic-transmission-interface
-    sudo apt install -y ros-melodic-tf-conversions
-    sudo apt install -y ros-melodic-tf2-bullet
-    sudo apt install -y ros-melodic-control-toolbox
-    sudo apt install -y libeigen3-dev
-    sudo apt install -y protobuf-compiler
-    sudo apt install -y libzmqpp-dev
+$ sudo apt install -y libprotobuf-dev
+$ sudo apt install -y ros-melodic-roslint
+$ sudo apt install -y ros-melodic-move-base
+$ sudo apt install -y ros-melodic-urdf
+$ sudo apt install -y ros-melodic-moveit
+$ sudo apt install -y ros-melodic-pcl-ros
+$ sudo apt install -y ros-melodic-filters
+$ sudo apt install -y ros-melodic-hardware-interface
+$ sudo apt install -y ros-melodic-controller-manager
+$ sudo apt install -y ros-melodic-joint-limits-interface
+$ sudo apt install -y ros-melodic-transmission-interface
+$ sudo apt install -y ros-melodic-tf-conversions
+$ sudo apt install -y ros-melodic-tf2-bullet
+$ sudo apt install -y ros-melodic-control-toolbox
+$ sudo apt install -y libeigen3-dev
+$ sudo apt install -y protobuf-compiler
+$ sudo apt install -y libzmqpp-dev
 
 3) Install ppconsul
-    mkdir third_party
-    cd third_party
-    git clone https://github.com/oliora/ppconsul
-    mkdir build
-    cd build
-    cmake ..
-    make
-    sudo make install
+$ mkdir third_party
+$ cd third_party
+$ git clone https://github.com/oliora/ppconsul
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+$ sudo make install
 
 4) Clone this Repository 
     git clone https://github.com/cxdcxd/RRS.git
