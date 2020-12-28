@@ -16,3 +16,39 @@ then
     rm src/consul/consul.zip
 fi
 
+sudo apt install -y libprotobuf-dev
+sudo apt install -y ros-melodic-roslint
+sudo apt install -y ros-melodic-move-base
+sudo apt install -y ros-melodic-urdf
+sudo apt install -y ros-melodic-moveit
+sudo apt install -y ros-melodic-pcl-ros
+sudo apt install -y ros-melodic-filters
+sudo apt install -y ros-melodic-hardware-interface
+sudo apt install -y ros-melodic-controller-manager
+sudo apt install -y ros-melodic-joint-limits-interface
+sudo apt install -y ros-melodic-transmission-interface
+sudo apt install -y ros-melodic-tf-conversions
+sudo apt install -y ros-melodic-tf2-bullet
+sudo apt install -y ros-melodic-control-toolbox
+sudo apt install -y libeigen3-dev
+sudo apt install -y protobuf-compiler
+sudo apt install -y libzmqpp-dev
+sudo apt install -y ros-melodic-joint-state-controller
+
+if [ ! -e third_party ]
+then
+
+mkdir third_party
+cd third_party
+git clone https://github.com/oliora/ppconsul
+cd ppconsul
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+
+fi
+
+sudo cp /usr/local/lib/libppconsul.so.0.1 /usr/lib/libppconsul.so.0.1
+sudo cp /usr/local/lib/libppconsul.so /usr/lib/libppconsul.so

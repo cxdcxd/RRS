@@ -1,5 +1,6 @@
 src/consul/consul
 build/
 devel/
+third_party/
 .catkin_workspace
 .vscode
