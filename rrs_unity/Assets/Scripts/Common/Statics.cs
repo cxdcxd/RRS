@@ -20,8 +20,8 @@ public class Statics
 
     public class Config
     {
-        public string consul_network_address = "192.168.92.139";
-        public string local_network_address = "192.168.92.1";
+        public string consul_network_address = "127.0.0.1";
+        public string local_network_address = "127.0.0.1";
         public uint consul_network_port = 8500;
         public string consul_network_mask = "255.255.255.0";
         public string ntp_server_host_name = "8500";
@@ -45,7 +45,11 @@ public class Statics
 
     private void Initialize()
     {
-        string folder_path = "c:\\Users\\" + user_name + "\\Documents\\WorkSpace\\RRS\\Config\\";
+        string p1 = Application.dataPath;
+        string folder_path = p1.Replace("/Assets", "/Config/");
+
+        Directory.CreateDirectory(folder_path);
+
         log_manager = new LogManager(folder_path + "log.txt", 1000, 1048576, true);
         xml_manager = new DataManagerXML();
 

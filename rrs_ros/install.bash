@@ -1,7 +1,7 @@
 #!/bin/bash
 
-
 mkdir -p src/consul/data
+mkdir -p src/core/cfg
 
 if [ ! -e src/consul/consul ]
 then
@@ -34,6 +34,7 @@ sudo apt install -y libeigen3-dev
 sudo apt install -y protobuf-compiler
 sudo apt install -y libzmqpp-dev
 sudo apt install -y ros-melodic-joint-state-controller
+sudo apt install -y ros-melodic-trac-ik
 
 if [ ! -e third_party ]
 then
@@ -48,7 +49,9 @@ cmake ..
 make
 sudo make install
 
-fi
-
 sudo cp /usr/local/lib/libppconsul.so.0.1 /usr/lib/libppconsul.so.0.1
 sudo cp /usr/local/lib/libppconsul.so /usr/lib/libppconsul.so
+
+fi
+
+

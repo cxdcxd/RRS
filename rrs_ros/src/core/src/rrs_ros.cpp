@@ -11,7 +11,7 @@ namespace roboland
     ROS_INFO("NET2 CPP ROS TEST HAS STARTED");
 
     std::string path = ros::package::getPath("rrs_ros");
-    path = path + "/config/config.yaml";
+    path = path + "/cfg/config.yaml";
 
     config_path = path;
 
