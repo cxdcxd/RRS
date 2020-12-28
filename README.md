@@ -19,43 +19,43 @@
 
 2) Install all dependencies
 ```
-$ sudo apt install -y libprotobuf-dev
-$ sudo apt install -y ros-melodic-roslint
-$ sudo apt install -y ros-melodic-move-base
-$ sudo apt install -y ros-melodic-urdf
-$ sudo apt install -y ros-melodic-moveit
-$ sudo apt install -y ros-melodic-pcl-ros
-$ sudo apt install -y ros-melodic-filters
-$ sudo apt install -y ros-melodic-hardware-interface
-$ sudo apt install -y ros-melodic-controller-manager
-$ sudo apt install -y ros-melodic-joint-limits-interface
-$ sudo apt install -y ros-melodic-transmission-interface
-$ sudo apt install -y ros-melodic-tf-conversions
-$ sudo apt install -y ros-melodic-tf2-bullet
-$ sudo apt install -y ros-melodic-control-toolbox
-$ sudo apt install -y libeigen3-dev
-$ sudo apt install -y protobuf-compiler
-$ sudo apt install -y libzmqpp-dev
-$ sudo apt install -y ros-melodic-joint-state-controller
+sudo apt install -y libprotobuf-dev
+sudo apt install -y ros-melodic-roslint
+sudo apt install -y ros-melodic-move-base
+sudo apt install -y ros-melodic-urdf
+sudo apt install -y ros-melodic-moveit
+sudo apt install -y ros-melodic-pcl-ros
+sudo apt install -y ros-melodic-filters
+sudo apt install -y ros-melodic-hardware-interface
+sudo apt install -y ros-melodic-controller-manager
+sudo apt install -y ros-melodic-joint-limits-interface
+sudo apt install -y ros-melodic-transmission-interface
+sudo apt install -y ros-melodic-tf-conversions
+sudo apt install -y ros-melodic-tf2-bullet
+sudo apt install -y ros-melodic-control-toolbox
+sudo apt install -y libeigen3-dev
+sudo apt install -y protobuf-compiler
+sudo apt install -y libzmqpp-dev
+sudo apt install -y ros-melodic-joint-state-controller
 ```
 
 3) Install ppconsul
 ```
-$ mkdir third_party
-$ cd third_party
-$ git clone https://github.com/oliora/ppconsul
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make
-$ sudo make install
+mkdir third_party
+cd third_party
+git clone https://github.com/oliora/ppconsul
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
 ```
 
 4) Clone this Repository 
 ```
-$ git clone https://github.com/cxdcxd/RRS.git
-$ cd rrs_ros
-$ ./install.sh
+git clone https://github.com/cxdcxd/RRS.git
+cd rrs_ros
+./install.sh
 ```
 
 5) Download [Unity](https://unity3d.com/get-unity/download/archive) 2020.1.17
@@ -66,16 +66,20 @@ $ ./install.sh
 
 8) Source the workspace: 
 ```
-$ setup ~/rrs_ros/devel/setup.bash
+setup ~/rrs_ros/devel/setup.bash
 ```
 
 # Run
+
+ROS Side:
 ```
-1) consul.sh
-2) roslaunch rrs_ros rrs_ros.launch
-3) roslaunch rrs_ros rrs_moveit.launch
+consul.sh
+roslaunch rrs_ros rrs_ros.launch
+roslaunch rrs_ros rrs_moveit.launch
+```
+
+Unity Side:
 Unity3D -> Play
-```
 
 # Settings (rrs_ros)
     ntp_server_host_name: test               //define the ntp server hostname
