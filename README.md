@@ -51,21 +51,30 @@ $ sudo make install
 ```
 
 4) Clone this Repository 
-    git clone https://github.com/cxdcxd/RRS.git
-    cd rrs_ros
-    ./install.sh
+```
+$ git clone https://github.com/cxdcxd/RRS.git
+$ cd rrs_ros
+$ ./install.sh
+```
 
 5) Download [Unity](https://unity3d.com/get-unity/download/archive) 2020.1.17
+
 6) Open Unity Hub and go to `Projects`, click `ADD` and then browse the folder `rrs_unity` from the downloaded repository and launch it. Make sure the `Unity Version` is set to `2020.1.17f1`
 
 7) Open the repository in a new terminal and type `cd rrs_ros` and build the workspace: `catkin_make`
-8) Source the workspace: `setup ~/rrs_ros/devel/setup.bash`
+
+8) Source the workspace: 
+```
+$ setup ~/rrs_ros/devel/setup.bash
+```
 
 # Run
-    1) consul.sh
-    2) roslaunch rrs_ros rrs_ros.launch
-    3) roslaunch rrs_ros rrs_moveit.launch
-    3) run Unity3D
+```
+1) consul.sh
+2) roslaunch rrs_ros rrs_ros.launch
+3) roslaunch rrs_ros rrs_moveit.launch
+Unity3D -> Play
+```
 
 # Settings (rrs_ros)
     ntp_server_host_name: test               //define the ntp server hostname
