@@ -36,6 +36,7 @@ $ sudo apt install -y ros-melodic-control-toolbox
 $ sudo apt install -y libeigen3-dev
 $ sudo apt install -y protobuf-compiler
 $ sudo apt install -y libzmqpp-dev
+$ sudo apt install -y ros-melodic-joint-state-controller
 ```
 
 3) Install ppconsul
