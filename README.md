@@ -18,6 +18,7 @@
 1) Install [ROS](http://wiki.ros.org/melodic/Installation/Ubuntu)
 
 2) Install all dependencies
+```
 $ sudo apt install -y libprotobuf-dev
 $ sudo apt install -y ros-melodic-roslint
 $ sudo apt install -y ros-melodic-move-base
@@ -35,8 +36,10 @@ $ sudo apt install -y ros-melodic-control-toolbox
 $ sudo apt install -y libeigen3-dev
 $ sudo apt install -y protobuf-compiler
 $ sudo apt install -y libzmqpp-dev
+```
 
 3) Install ppconsul
+```
 $ mkdir third_party
 $ cd third_party
 $ git clone https://github.com/oliora/ppconsul
@@ -45,6 +48,7 @@ $ cd build
 $ cmake ..
 $ make
 $ sudo make install
+```
 
 4) Clone this Repository 
     git clone https://github.com/cxdcxd/RRS.git
