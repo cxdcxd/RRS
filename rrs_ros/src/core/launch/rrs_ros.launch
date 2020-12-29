@@ -36,6 +36,10 @@
                       joint_state_controller
 		"/>
 
+  <!-- Sound modules -->    
+  <node pkg="sound_play" type="soundplay_node.py" name="sound_play" output="screen"/>
+  <node pkg="movo_ros" type="movo_voice" name="movo_voice" output="screen"/>
+
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find movo_viz)/rviz/robot_7dof_.rviz" output="screen"/>
 
 

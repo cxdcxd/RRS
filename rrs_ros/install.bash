@@ -35,6 +35,7 @@ sudo apt install -y protobuf-compiler
 sudo apt install -y libzmqpp-dev
 sudo apt install -y ros-melodic-joint-state-controller
 sudo apt install -y ros-melodic-trac-ik
+sudo apt install -y ros-melodic-sound-play
 
 if [ ! -e third_party ]
 then
