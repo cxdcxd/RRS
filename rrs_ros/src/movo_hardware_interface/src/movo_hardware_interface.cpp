@@ -1,5 +1,5 @@
 
-#include <tr1_hardware_interface/tr1_hardware_interface.h>
+#include <movo_hardware_interface/movo_hardware_interface.h>
 #include <joint_limits_interface/joint_limits_interface.h>
 #include <joint_limits_interface/joint_limits.h>
 #include <joint_limits_interface/joint_limits_urdf.h>
@@ -12,9 +12,9 @@ using joint_limits_interface::SoftJointLimits;
 using joint_limits_interface::PositionJointSoftLimitsHandle;
 using joint_limits_interface::PositionJointSoftLimitsInterface;
 
-namespace tr1_hardware_interface
+namespace movo_hardware_interface
 {
-	TR1HardwareInterface::TR1HardwareInterface(ros::NodeHandle& nh) \
+	movoHardwareInterface::movoHardwareInterface(ros::NodeHandle& nh) \
 		: nh_(nh)
 	{
 		init();
@@ -23,27 +23,27 @@ namespace tr1_hardware_interface
 		nh_.param("/movo/hardware_interface/loop_hz", loop_hz_, 0.1);
 		ROS_DEBUG_STREAM_NAMED("constructor","Using loop freqency of " << loop_hz_ << " hz");
 		ros::Duration update_freq = ros::Duration(1.0/loop_hz_);
-		non_realtime_loop_ = nh_.createTimer(update_freq, &TR1HardwareInterface::update, this);
+		non_realtime_loop_ = nh_.createTimer(update_freq, &movoHardwareInterface::update, this);
 
 		ROS_INFO_NAMED("hardware_interface", "Loaded movo_hardware_interface.");
 
 		pub_joint_command = nh.advertise<movo_msgs::JacoJointCmd>("rrs/joint_command",1);
-		sub_joint_state = nh.subscribe("rrs/joint_states",1,&TR1HardwareInterface::chatterCallbackJointState, this);
+		sub_joint_state = nh.subscribe("rrs/joint_states",1,&movoHardwareInterface::chatterCallbackJointState, this);
 	}
 
-	TR1HardwareInterface::~TR1HardwareInterface()
+	movoHardwareInterface::~movoHardwareInterface()
 	{
 
 	}
 
-	void TR1HardwareInterface::chatterCallbackJointState (const sensor_msgs::JointState::ConstPtr& msg)
+	void movoHardwareInterface::chatterCallbackJointState (const sensor_msgs::JointState::ConstPtr& msg)
 	{
         mtx_status.lock();
         current_joint_state = *msg;
         mtx_status.unlock();
 	}
 
-	void TR1HardwareInterface::init()
+	void movoHardwareInterface::init()
 	{
 		nh_.getParam("/movo/hardware_interface/joints", joint_names_);
 
@@ -86,7 +86,7 @@ namespace tr1_hardware_interface
 		ROS_INFO_STREAM("Init Done");
 	}
 
-	void TR1HardwareInterface::update(const ros::TimerEvent& e)
+	void movoHardwareInterface::update(const ros::TimerEvent& e)
 	{
 		elapsed_time_ = ros::Duration(e.current_real - e.last_real);
 
@@ -97,7 +97,7 @@ namespace tr1_hardware_interface
 		//ROS_INFO_STREAM(_logInfo);
 	}
 
-	void TR1HardwareInterface::read()
+	void movoHardwareInterface::read()
 	{
 		//_logInfo += "Joint State:\n";
 	
@@ -118,7 +118,7 @@ namespace tr1_hardware_interface
         mtx_status.unlock();
 
 		
-		// 	tr1cpp::Joint joint = tr1.getJoint(joint_names_[i]);
+		// 	movocpp::Joint joint = movo.getJoint(joint_names_[i]);
 
 		// 	if (joint.getActuatorType() == ACTUATOR_TYPE_MOTOR)
 		// 	{
@@ -130,13 +130,13 @@ namespace tr1_hardware_interface
 		// 		_logInfo += "  " + joint.name + ": " + jointPositionStr.str() + "\n";
 		// 	}
 
-		// 	tr1.setJoint(joint);
+		// 	movo.setJoint(joint);
 		// }
 
 		//ROS_INFO_STREAM("READ LOOP DONE");
 	}
 
-	void TR1HardwareInterface::write(ros::Duration elapsed_time)
+	void movoHardwareInterface::write(ros::Duration elapsed_time)
 	{
 
         movo_msgs::JacoJointCmd cmd;

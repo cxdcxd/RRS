@@ -18,7 +18,7 @@ namespace roboland
     ROS_INFO("RRS Network Test V 1.0");
 
     std::string path = ros::package::getPath("rrs_ros");
-    path = path + "/config/config.yaml";
+    path = path + "/cfg/config.yaml";
 
     config_path = path;
 

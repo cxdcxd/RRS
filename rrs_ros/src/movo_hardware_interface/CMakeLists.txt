@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(tr1_hardware_interface)
+project(movo_hardware_interface)
 
 add_compile_options(-std=c++11)
 
@@ -34,7 +34,7 @@ catkin_package(
     control_toolbox
     joint_limits_interface
   LIBRARIES 
-    tr1_hardware_interface
+    movo_hardware_interface
 )
 
 include_directories(
@@ -46,13 +46,13 @@ install(DIRECTORY include/${PROJECT_NAME}/
   FILES_MATCHING PATTERN "*.h"
   PATTERN ".svn" EXCLUDE)
 
-add_library(tr1_hardware_interface src/tr1_hardware_interface.cpp)
-target_link_libraries(tr1_hardware_interface
+add_library(movo_hardware_interface src/movo_hardware_interface.cpp)
+target_link_libraries(movo_hardware_interface
 	${catkin_LIBRARIES})
 
-add_executable(tr1_hardware_interface_node src/tr1_hardware_interface_node.cpp)
-add_dependencies(tr1_hardware_interface_node tr1_hardware_interface)
+add_executable(movo_hardware_interface_node src/movo_hardware_interface_node.cpp)
+add_dependencies(movo_hardware_interface_node movo_hardware_interface)
 
-target_link_libraries(tr1_hardware_interface_node
-	tr1_hardware_interface
+target_link_libraries(movo_hardware_interface_node
+	movo_hardware_interface
 	${catkin_LIBRARIES})

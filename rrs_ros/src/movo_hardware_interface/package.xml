@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package>
-  <name>tr1_hardware_interface</name>
+  <name>movo_hardware_interface</name>
   <version>1.0.0</version>
   <description>Provides the hardware definition and interfaces for Movo platform</description>
 
-  <maintainer email="zach@slaterobots.com">Zach Allen</maintainer>
+  <maintainer email="edwin.babaians@tum.de">Edwin Babaians</maintainer>
 
   <license>MIT</license>
 
@@ -12,7 +12,7 @@
   <url type="bugtracker"></url>
   <url type="repository">/</url>
 
-  <author email="zach@slaterobots.com">Zach Allen</author>
+  <author email="edwin.babaians@tum.de">Edwin Babaians</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>message_generation</build_depend>
@@ -29,14 +29,14 @@
   <build_depend>urdf</build_depend>
   <build_depend>control_toolbox</build_depend>
   <build_depend>joint_limits_interface</build_depend>
-  <build_depend>tr1cpp</build_depend>
+  <build_depend>movocpp</build_depend>
  
 
   <run_depend>movo_msgs</run_depend>
   <run_depend>hardware_interface</run_depend>
   <run_depend>controller_manager</run_depend>
   <run_depend>ros_controllers</run_depend>
-  <run_depend>tr1_description</run_depend>
+  <run_depend>movo_description</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>control_msgs</run_depend>
   <run_depend>trajectory_msgs</run_depend>
@@ -46,7 +46,7 @@
   <run_depend>urdf</run_depend>
   <run_depend>control_toolbox</run_depend>
   <run_depend>joint_limits_interface</run_depend>
-  <run_depend>tr1cpp</run_depend>
+  <run_depend>movocpp</run_depend>
   
 
 </package>

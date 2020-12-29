@@ -1,5 +1,5 @@
-#ifndef ROS_CONTROL_MOVO_HARDWARE_H
-#define ROS_CONTROL_MOVO_HARDWARE_H
+#ifndef ROS_CONTROL__movo_HARDWARE_H
+#define ROS_CONTROL__movo_HARDWARE_H
 
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
@@ -12,14 +12,16 @@
 #include <boost/scoped_ptr.hpp>
 #include <ros/ros.h>
 
+namespace movo_hardware_interface
+{
 	/// \brief Hardware interface for a robot
-	class MovoHardware : public hardware_interface::RobotHW 
+	class movoHardware : public hardware_interface::RobotHW 
 	{
 		/*public:
 			/// \brief Constructor.
-			TR1Hardware();
+			movoHardware();
 			/// \brief Destructor.
-			~TR1Hardware();
+			~movoHardware();
 		*/
 		protected:
 
@@ -57,7 +59,6 @@
 
 	}; // class
 
-
+} // namespace
 
 #endif
-

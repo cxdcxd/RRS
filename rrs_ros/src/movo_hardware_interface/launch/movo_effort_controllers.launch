@@ -1,0 +1,46 @@
+<launch>
+
+  <!-- GDB functionality -->
+  <arg name="debug" default="false" />
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+  <arg name="robot_name" default="movo"/>
+
+  <rosparam file="$(find movo_hardware_interface)/config/hardware.yaml" command="load"/>
+  <rosparam file="$(find movo_hardware_interface)/config/controllers.yaml" command="load"/>
+  <rosparam file="$(find movo_hardware_interface)/config/joint_limits.yaml" command="load"/>
+  <rosparam file="$(find movo_hardware_interface)/config/joint_offsets.yaml" command="load"/>
+	<param name="robot_description" command="cat $(find movo_description)/urdf/movo.urdf" />
+
+  <node name="movo_hardware_interface" pkg="movo_hardware_interface" type="movo_hardware_interface_node"
+        output="screen" launch-prefix="$(arg launch_prefix)"/>
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/"
+		args="
+
+			/movo/controller/state
+			/movo/controller/effort/JointRightShoulderPan
+			/movo/controller/effort/JointRightShoulderTilt
+			/movo/controller/effort/JointRightUpperArmRoll
+			/movo/controller/effort/JointRightElbowFlex
+			/movo/controller/effort/JointRightForearmRoll
+			/movo/controller/effort/JointRightWristFlex
+			/movo/controller/effort/JointRightWristRoll
+			/movo/controller/effort/JointRightGripper
+			/movo/controller/effort/JointBaseWheelFR
+			/movo/controller/effort/JointBaseWheelFL
+     			/movo/controller/effort/JointBaseWheelBR
+			/movo/controller/effort/JointBaseWheelBL
+			/movo/controller/effort/JointTorsoExtension
+			/movo/controller/effort/neck_base_to_neck
+			/movo/controller/effort/neck_to_head
+			/movo/controller/effort/JointLeftShoulderPan
+			/movo/controller/effort/JointLeftShoulderTilt
+			/movo/controller/effort/JointLeftUpperArmRoll
+			/movo/controller/effort/JointLeftElbowFlex
+			/movo/controller/effort/JointLeftForearmRoll
+			/movo/controller/effort/JointLeftWristFlex
+			/movo/controller/effort/JointLeftWristRoll
+			/movo/controller/effort/JointLeftGripper
+		"/>
+
+</launch>
