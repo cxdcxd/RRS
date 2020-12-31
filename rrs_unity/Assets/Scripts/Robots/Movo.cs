@@ -76,10 +76,10 @@ public class Movo : MonoBehaviour
 
     public Lidar lidar_front;
     public Lidar lidar_rear;
-    public ColorCamera color_camera;
-    public ColorCamera depth_camera;
-    public ColorCamera segment_camera;
-    public ColorCamera normal_camera;
+    public ColorCameraOpenGL color_camera;
+    public ColorCameraOpenGL depth_camera;
+    public ColorCameraOpenGL segment_camera;
+    public ColorCameraOpenGL normal_camera;
     public IMU imu;
 
     private RVector3[] current_path = null;
@@ -235,7 +235,7 @@ public class Movo : MonoBehaviour
 
     private void Depth_camera_delegateCameraDataChanged(byte[] buffer)
     {
-        //print("Depth");
+        print("Depth");
         publisher_camera_depth.Send(buffer);
     }
 
@@ -543,6 +543,14 @@ public class Movo : MonoBehaviour
                 currentRotation = currentRotationRads;
                 currentVel = articulation.jointVelocity[0];
                 currentEffort = articulation.jointForce[0];
+
+                List<float> f = new List<float>();
+                int x = articulation.GetJointForces(f);
+                print(x);
+                print(f.Count);
+                print(f[0]);
+
+
             }
         }
         return (currentRotation, currentVel, currentEffort);

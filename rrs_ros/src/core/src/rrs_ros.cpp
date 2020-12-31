@@ -393,18 +393,18 @@ void Net2TestROS::publishCameraDepth(char* data, int size)
   out_msg.header.frame_id = "camera_link";
   pub_camera_depth.publish(out_msg.toImageMsg());
 
-   cv::Mat c8BitDepth;
-   image.convertTo(c8BitDepth, CV_8U);
+   //cv::Mat c8BitDepth;
+   //image.convertTo(c8BitDepth, CV_8U);
 
-   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = MatToPoinXYZ(c8BitDepth);
-   sensor_msgs::PointCloud2 point_cloud2;
+   //pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = MatToPoinXYZ(c8BitDepth);
+   //sensor_msgs::PointCloud2 point_cloud2;
 
-   pcl::toROSMsg(*cloud, point_cloud2);
+   //pcl::toROSMsg(*cloud, point_cloud2);
 
-   point_cloud2.header.stamp = ros::Time::now();
-   point_cloud2.header.frame_id = "camera_link";
+   //point_cloud2.header.stamp = ros::Time::now();
+   //point_cloud2.header.frame_id = "camera_link";
 
-   pub_camera_point.publish(point_cloud2);
+   //pub_camera_point.publish(point_cloud2);
 
 }
 

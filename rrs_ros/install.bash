@@ -36,6 +36,11 @@ sudo apt install -y libzmqpp-dev
 sudo apt install -y ros-melodic-joint-state-controller
 sudo apt install -y ros-melodic-trac-ik
 sudo apt install -y ros-melodic-sound-play
+sudo apt install -y as31 nasm  
+sudo apt install -y libsdl-dev
+sudo apt install -y libsdl-image1.2-dev
+sudo apt install -y ros-melodic-navigation
+sudo apt install -y ros-melodic-bfl
 
 if [ ! -e third_party ]
 then
