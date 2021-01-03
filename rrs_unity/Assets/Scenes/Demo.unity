@@ -424,7 +424,7 @@ MonoBehaviour:
   opticalFlowSensitivity: 1
   Width: 800
   Height: 600
-  Frequency: 25
+  Frequency: 20
   JpegQuality: 70
   FieldOfView: 60
   MinDistance: 0.1
@@ -747,6 +747,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: movo
       objectReference: {fileID: 0}
+    - target: {fileID: 6342204864944019077, guid: c2d45d07d5b3e684eabe2fe267707481, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6342204865107203704, guid: c2d45d07d5b3e684eabe2fe267707481, type: 3}
       propertyPath: m_ParentAnchorPosition.x
       value: 0.027253238
@@ -824,6 +828,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9014223843144194065, guid: c2d45d07d5b3e684eabe2fe267707481, type: 3}
+      propertyPath: fps_status
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 9014223843144194065, guid: c2d45d07d5b3e684eabe2fe267707481, type: 3}
       propertyPath: lidar_rear
       value: 
       objectReference: {fileID: 409816368}
@@ -851,6 +859,14 @@ PrefabInstance:
       propertyPath: segment_camera
       value: 
       objectReference: {fileID: 906973508}
+    - target: {fileID: 9014223843144194065, guid: c2d45d07d5b3e684eabe2fe267707481, type: 3}
+      propertyPath: fps_control_update
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 9014223843144194065, guid: c2d45d07d5b3e684eabe2fe267707481, type: 3}
+      propertyPath: fps_nav_path_update
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 9014223843144194065, guid: c2d45d07d5b3e684eabe2fe267707481, type: 3}
       propertyPath: ik_left_hand_target
       value: 
@@ -1310,7 +1326,6 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &705507995
@@ -1414,7 +1429,7 @@ MonoBehaviour:
   opticalFlowSensitivity: 1
   Width: 800
   Height: 600
-  Frequency: 25
+  Frequency: 20
   JpegQuality: 70
   FieldOfView: 60
   MinDistance: 0.1
@@ -1746,7 +1761,7 @@ MonoBehaviour:
   opticalFlowSensitivity: 1
   Width: 800
   Height: 600
-  Frequency: 25
+  Frequency: 20
   JpegQuality: 70
   FieldOfView: 60
   MinDistance: 0.1
@@ -2025,7 +2040,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8cbac5e288fd154cb258e0e0b251877, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  desire_frame_rate: 60
+  desire_frame_rate: 30
 --- !u!4 &1797067050
 Transform:
   m_ObjectHideFlags: 0
@@ -2385,7 +2400,7 @@ MonoBehaviour:
   opticalFlowSensitivity: 1
   Width: 800
   Height: 600
-  Frequency: 25
+  Frequency: 20
   JpegQuality: 70
   FieldOfView: 60
   MinDistance: 0.1

@@ -60,9 +60,20 @@ public class Movo : MonoBehaviour
 
     #endregion
 
-    public float fps_status = 50;
-    public float fps_motor_update = 50;
+    [Range(1, 100)]
+    public int fps_status = 20;
+
+    float next_status_time = 0;
+
+    [Range(1, 100)]
+    public float fps_control_update = 20;
+
+    float next_control_time = 0;
+
+    [Range(1, 100)]
     public float fps_nav_path_update = 3;
+
+    float next_nav_path_time = 0;
 
     public GameObject target;
     public Camera sensor_kinect;
@@ -188,12 +199,20 @@ public class Movo : MonoBehaviour
 
     void rightGripper()
     {
-      //@TODO
+        if (d_joints.Length == 0) return;
+
+        float value = d_joints[7];
+
+        RotateToRightFinger(value);
     }
 
     void leftGripper()
     {
-      //@TODO
+        if (d_joints.Length == 0) return;
+
+        float value = d_joints[15];
+
+        RotateToLefttFinger(value);
     }
 
     void updateMotors()
@@ -235,7 +254,7 @@ public class Movo : MonoBehaviour
 
     private void Depth_camera_delegateCameraDataChanged(byte[] buffer)
     {
-        print("Depth");
+        //print("Depth");
         publisher_camera_depth.Send(buffer);
     }
 
@@ -342,6 +361,44 @@ public class Movo : MonoBehaviour
         articulation.xDrive = drive;
     }
 
+    void RotateToRightFinger(float primaryAxisRotation)
+    {
+        var articulation1 = right_finger_joints[0].GetComponent<ArticulationBody>();
+        var articulation2 = right_finger_joints[1].GetComponent<ArticulationBody>();
+        var articulation3 = right_finger_joints[2].GetComponent<ArticulationBody>();
+
+        var drive = articulation1.xDrive;
+        drive.target = primaryAxisRotation;
+        articulation1.xDrive = drive;
+
+        drive = articulation2.xDrive;
+        drive.target = primaryAxisRotation;
+        articulation2.xDrive = drive;
+
+        drive = articulation3.xDrive;
+        drive.target = primaryAxisRotation;
+        articulation3.xDrive = drive;
+    }
+
+    void RotateToLefttFinger(float primaryAxisRotation)
+    {
+        var articulation1 = left_finger_joints[0].GetComponent<ArticulationBody>();
+        var articulation2 = left_finger_joints[1].GetComponent<ArticulationBody>();
+        var articulation3 = left_finger_joints[2].GetComponent<ArticulationBody>();
+
+        var drive = articulation1.xDrive;
+        drive.target = primaryAxisRotation;
+        articulation1.xDrive = drive;
+
+        drive = articulation2.xDrive;
+        drive.target = primaryAxisRotation;
+        articulation2.xDrive = drive;
+
+        drive = articulation3.xDrive;
+        drive.target = primaryAxisRotation;
+        articulation3.xDrive = drive;
+    }
+
     void RotateToLeft(float primaryAxisRotation, int index)
     {
         var articulation = left_arm_joints[++index].GetComponent<ArticulationBody>();
@@ -356,6 +413,11 @@ public class Movo : MonoBehaviour
         var drive = articulation.xDrive;
         drive.target = primaryAxisRotation;
         articulation.xDrive = drive;
+    }
+
+    void RotateToLinear(float primaryAxisRotation)
+    {
+
     }
 
     private void Subscriber_rrs_joint_command_delegateNewData(ulong sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
@@ -542,15 +604,7 @@ public class Movo : MonoBehaviour
                 float currentRotationRads = articulation.jointPosition[0] * -1;
                 currentRotation = currentRotationRads;
                 currentVel = articulation.jointVelocity[0];
-                currentEffort = articulation.jointForce[0];
-
-                List<float> f = new List<float>();
-                int x = articulation.GetJointForces(f);
-                print(x);
-                print(f.Count);
-                print(f[0]);
-
-
+                currentEffort = articulation.jointForce[0]; //TODO@ Always Zero
             }
         }
         return (currentRotation, currentVel, currentEffort);
@@ -567,7 +621,7 @@ public class Movo : MonoBehaviour
                 float currentRotationRads = articulation.jointPosition[0] * -1;
                 currentRotation = currentRotationRads;
                 currentVel = articulation.jointVelocity[0];
-                currentEffort = articulation.jointForce[0];
+                currentEffort = articulation.jointForce[0]; //TODO@ Always Zero
             }
         }
         return (currentRotation, currentVel, currentEffort);
@@ -582,7 +636,7 @@ public class Movo : MonoBehaviour
             float currentRotationRads = articulation.jointPosition[0] * -1;
             currentRotation = currentRotationRads;
             currentVel = articulation.jointVelocity[0];
-            currentEffort = articulation.jointForce[0];
+            currentEffort = articulation.jointForce[0]; //TODO@ Always Zero
         }
         return (currentRotation, currentVel, currentEffort);
     }
@@ -590,6 +644,90 @@ public class Movo : MonoBehaviour
     (float, float, float) CurrentPrimaryAxisRotationLinear()
     {
         float currentRotation = 0, currentEffort = 0, currentVel = 0;
+        return (currentRotation, currentVel, currentEffort);
+    }
+
+    (float, float, float) CurrentPrimaryAxisRotationRightFinger()
+    {
+        float currentRotation1 = 0, currentEffort1 = 0, currentVel1 = 0;
+        float currentRotation2 = 0, currentEffort2 = 0, currentVel2 = 0;
+        float currentRotation3 = 0, currentEffort3 = 0, currentVel3 = 0;
+        float currentRotation = 0, currentEffort = 0, currentVel = 0;
+
+        var articulation1 = right_finger_joints[0].GetComponent<ArticulationBody>();
+        var articulation2 = right_finger_joints[1].GetComponent<ArticulationBody>();
+        var articulation3 = right_finger_joints[2].GetComponent<ArticulationBody>();
+
+        if (articulation1.jointPosition.dofCount == 1)
+        {
+            float currentRotationRads = articulation1.jointPosition[0] * -1;
+            currentRotation1 = currentRotationRads;
+            currentVel1 = articulation1.jointVelocity[0];
+            currentEffort1 = articulation1.jointForce[0]; //TODO@ Always Zero
+        }
+
+        if (articulation2.jointPosition.dofCount == 1)
+        {
+            float currentRotationRads = articulation2.jointPosition[0] * -1;
+            currentRotation2 = currentRotationRads;
+            currentVel2 = articulation2.jointVelocity[0];
+            currentEffort2 = articulation2.jointForce[0]; //TODO@ Always Zero
+        }
+
+        if (articulation3.jointPosition.dofCount == 1)
+        {
+            float currentRotationRads = articulation3.jointPosition[0] * -1;
+            currentRotation3 = currentRotationRads;
+            currentVel3 = articulation3.jointVelocity[0];
+            currentEffort3 = articulation3.jointForce[0]; //TODO@ Always Zero
+        }
+
+        currentRotation = (currentRotation1 + currentRotation2 + currentRotation3 ) / 3;
+        currentVel = (currentVel1 + currentVel2 + currentVel3) / 3;
+        currentEffort = (currentEffort1 + currentEffort2 + currentEffort3) / 3;
+
+        return (currentRotation, currentVel, currentEffort);
+    }
+
+    (float, float, float) CurrentPrimaryAxisRotationLeftFinger()
+    {
+        float currentRotation1 = 0, currentEffort1 = 0, currentVel1 = 0;
+        float currentRotation2 = 0, currentEffort2 = 0, currentVel2 = 0;
+        float currentRotation3 = 0, currentEffort3 = 0, currentVel3 = 0;
+        float currentRotation = 0, currentEffort = 0, currentVel = 0;
+
+        var articulation1 = left_finger_joints[0].GetComponent<ArticulationBody>();
+        var articulation2 = left_finger_joints[1].GetComponent<ArticulationBody>();
+        var articulation3 = left_finger_joints[2].GetComponent<ArticulationBody>();
+
+        if (articulation1.jointPosition.dofCount == 1)
+        {
+            float currentRotationRads = articulation1.jointPosition[0] * -1;
+            currentRotation1 = currentRotationRads;
+            currentVel1 = articulation1.jointVelocity[0];
+            currentEffort1 = articulation1.jointForce[0]; //TODO@ Always Zero
+        }
+
+        if (articulation2.jointPosition.dofCount == 1)
+        {
+            float currentRotationRads = articulation2.jointPosition[0] * -1;
+            currentRotation2 = currentRotationRads;
+            currentVel2 = articulation2.jointVelocity[0];
+            currentEffort2 = articulation2.jointForce[0]; //TODO@ Always Zero
+        }
+
+        if (articulation3.jointPosition.dofCount == 1)
+        {
+            float currentRotationRads = articulation3.jointPosition[0] * -1;
+            currentRotation3 = currentRotationRads;
+            currentVel3 = articulation3.jointVelocity[0];
+            currentEffort3 = articulation3.jointForce[0]; //TODO@ Always Zero
+        }
+
+        currentRotation = (currentRotation1 + currentRotation2 + currentRotation3) / 3;
+        currentVel = (currentVel1 + currentVel2 + currentVel3) / 3;
+        currentEffort = (currentEffort1 + currentEffort2 + currentEffort3) / 3;
+
         return (currentRotation, currentVel, currentEffort);
     }
 
@@ -629,17 +767,18 @@ public class Movo : MonoBehaviour
             (joint_state_msg.position[i], joint_state_msg.velocity[i], joint_state_msg.effort[i]) = CurrentPrimaryAxisRotationRight(i);
         }
 
+        (joint_state_msg.position[7], joint_state_msg.velocity[7], joint_state_msg.effort[7]) = CurrentPrimaryAxisRotationRightFinger();
+
         for (int i = 8; i < 15; i++)
         {
             (joint_state_msg.position[i], joint_state_msg.velocity[i], joint_state_msg.effort[i]) = CurrentPrimaryAxisRotationLeft(i - 8);
         }
 
+        (joint_state_msg.position[15], joint_state_msg.velocity[15], joint_state_msg.effort[15]) = CurrentPrimaryAxisRotationLeftFinger();
         (joint_state_msg.position[16], joint_state_msg.velocity[16], joint_state_msg.effort[16]) = CurrentPrimaryAxisRotationLinear();
-
         (joint_state_msg.position[17], joint_state_msg.velocity[17], joint_state_msg.effort[17]) = CurrentPrimaryAxisRotationHead(0);
         (joint_state_msg.position[18], joint_state_msg.velocity[18], joint_state_msg.effort[18]) = CurrentPrimaryAxisRotationHead(1);
-
-    
+         
         MemoryStream ms = new MemoryStream();
         Serializer.Serialize<RRSJointState>(ms, joint_state_msg);
         byte[] data = ms.ToArray();
@@ -771,12 +910,18 @@ public class Movo : MonoBehaviour
         current_orientation.z = transform.rotation.z;
         current_orientation.w = transform.rotation.w;
 
-        if (inited)
+        if ( inited && Time.time >= next_status_time )
         {
-            updateMotors();
+            next_status_time = Time.time + (1 / fps_status);
             sendState();
         }
-  
+
+        if (inited && Time.time >= next_control_time)
+        {
+            next_control_time = Time.time + (1 / fps_control_update);
+            updateMotors();
+        }
+
         if (path_updated && current_path != null)
              setPath(current_path);
 
