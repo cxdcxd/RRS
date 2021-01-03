@@ -122,18 +122,18 @@ namespace roboland
     publisher_navigation_state->Start();
 
     //ROS
-    pub_lidar_1 = nh.advertise<sensor_msgs::LaserScan>("scan/front", 1);
-    pub_lidar_2 = nh.advertise<sensor_msgs::LaserScan>("scan/rear", 1);
-    pub_camera_color = nh.advertise<sensor_msgs::Image>("camera/image_raw", 1);
-    pub_camera_info = nh.advertise<sensor_msgs::CameraInfo>("camera/camera_info", 1);
-    pub_camera_depth = nh.advertise<sensor_msgs::Image>("camera/depth_raw", 1);
-    pub_camera_normal = nh.advertise<sensor_msgs::Image>("camera/normal_raw", 1);
-    pub_camera_segment = nh.advertise<sensor_msgs::Image>("camera/segment_raw", 1);
-    pub_odometry = nh.advertise<nav_msgs::Odometry>("odometry",1);
-    pub_imu = nh.advertise<sensor_msgs::Imu>("imu",1);
-    pub_camera_point = nh.advertise<pcl::PCLPointCloud2>("camera/points", 1);
+    pub_lidar_1 = nh.advertise<sensor_msgs::LaserScan>("movo/front_scan", 1);
+    pub_lidar_2 = nh.advertise<sensor_msgs::LaserScan>("movo/rear_scan", 1);
+    pub_camera_color = nh.advertise<sensor_msgs::Image>("movo/camera/image_raw", 1);
+    pub_camera_info = nh.advertise<sensor_msgs::CameraInfo>("movo/camera/camera_info", 1);
+    pub_camera_depth = nh.advertise<sensor_msgs::Image>("movo/camera/depth_raw", 1);
+    pub_camera_normal = nh.advertise<sensor_msgs::Image>("movo/camera/normal_raw", 1);
+    pub_camera_segment = nh.advertise<sensor_msgs::Image>("movo/camera/segment_raw", 1);
+    pub_odometry = nh.advertise<nav_msgs::Odometry>("movo/odometry",1);
+    pub_imu = nh.advertise<sensor_msgs::Imu>("movo/imu",1);
+    pub_camera_point = nh.advertise<pcl::PCLPointCloud2>("movo/camera/points", 1);
     
-    pub_groundtruth = nh.advertise<geometry_msgs::PoseStamped>("groundtruth",1);
+    pub_groundtruth = nh.advertise<geometry_msgs::PoseStamped>("movo/groundtruth",1);
     pub_desire_points = nh.advertise<rrs_ros::PointList>("points",1);
     pub_tag_points = nh.advertise<rrs_ros::PointList>("tags",1);
     pub_navigation_goal = nh.advertise<geometry_msgs::PoseStamped>("goal",1);
@@ -727,7 +727,7 @@ void Net2TestROS::publishIMU(char* data, int size)
   }
 
   out_msg.header.stamp = ros::Time::now();
-  out_msg.header.frame_id = "imu_link"; //TODO
+  out_msg.header.frame_id = "sic_imu_frame"; 
 
   pub_imu.publish(out_msg);
 }

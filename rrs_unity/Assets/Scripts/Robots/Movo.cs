@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using ProtoBuf;
+﻿using System;
 using System.IO;
-using System.Timers;
-using System;
-using RRS.Tools.Protobuf;
+using ProtoBuf;
 using RRS.Tools.Network;
+using RRS.Tools.Protobuf;
+using UnityEngine;
 
 public class Movo : MonoBehaviour
 {
@@ -114,11 +111,24 @@ public class Movo : MonoBehaviour
     public GameObject ik_right_hand_target;
     public GameObject ik_left_hand_target;
 
-    float[] d_joints;
+    public ArticulationBody root_right_body;
+    public ArticulationBody root_left_body;
+    public ArticulationBody root_head_body;
 
+    public Transform root_right_transform;
+    public Transform root_left_transform;
+    public Transform root_head_transform;
+
+    public bool is_moving = false;
+
+    float[] d_joints;
+    float[] c_joints;
+    int joint_numbers = 19;
+   
     void init()
     {
-        d_joints = new float[19];
+        d_joints = new float[joint_numbers];
+        c_joints = new float[joint_numbers];
 
         publisher_joint_state = Net2.Publisher("joint_state");
         publisher_lidar_front = Net2.Publisher("lidar_front");
@@ -162,10 +172,29 @@ public class Movo : MonoBehaviour
     }
 
     #region MotorControl
+
     void locomotion()
     {
+        if (speed.x != 0 || speed.y != 0 || speed.z != 0)
+        {
+            is_moving = true;
+        }
+        else
+        {
+            is_moving = false;
+        }
+
+
         transform.Translate(speed.y / 1000, 0, speed.x / 1000, Space.Self);
         transform.Rotate(0, -1 * speed.z / 10, 0, Space.Self);
+
+        if (is_moving)
+        {
+            root_right_body.TeleportRoot(root_right_transform.position, root_right_transform.rotation);
+            root_left_body.TeleportRoot(root_left_transform.position, root_left_transform.rotation);
+            root_head_body.TeleportRoot(root_head_transform.position, root_head_transform.rotation);
+        }
+
     }
 
     void moveHead()
@@ -218,15 +247,13 @@ public class Movo : MonoBehaviour
     void updateMotors()
     {
         locomotion();
-
         moveHead();
-       
         moveRightHand();
         rightGripper();
-
         moveLeftHand();
         leftGripper();
     }
+
     #endregion
 
     #region SensorFeedbak
@@ -733,10 +760,10 @@ public class Movo : MonoBehaviour
     {
         RRSJointState joint_state_msg = new RRSJointState();
 
-        joint_state_msg.name = new string[19];
-        joint_state_msg.position = new float[19];
-        joint_state_msg.velocity = new float[19];
-        joint_state_msg.effort = new float[19];
+        joint_state_msg.name = new string[joint_numbers];
+        joint_state_msg.position = new float[joint_numbers];
+        joint_state_msg.velocity = new float[joint_numbers];
+        joint_state_msg.effort = new float[joint_numbers];
 
         joint_state_msg.name[0] = Links.right_shoulder_pan_joint.ToString();
         joint_state_msg.name[1] = Links.right_shoulder_lift_joint.ToString();
@@ -776,7 +803,24 @@ public class Movo : MonoBehaviour
         (joint_state_msg.position[16], joint_state_msg.velocity[16], joint_state_msg.effort[16]) = CurrentPrimaryAxisRotationLinear();
         (joint_state_msg.position[17], joint_state_msg.velocity[17], joint_state_msg.effort[17]) = CurrentPrimaryAxisRotationHead(0);
         (joint_state_msg.position[18], joint_state_msg.velocity[18], joint_state_msg.effort[18]) = CurrentPrimaryAxisRotationHead(1);
-         
+
+        //if (is_moving == false)
+        //{
+        //    for (int i = 0; i < joint_state_msg.position.Length; i++)
+        //    {
+        //        c_joints[i] = joint_state_msg.position[i];
+        //    }
+        //}
+        //else
+        //{
+        //    for (int i = 0; i < joint_state_msg.position.Length; i++)
+        //    {
+        //        joint_state_msg.position[i] = c_joints[i];
+        //    }
+        //}
+
+        //print(joint_state_msg.position[1]);
+
         MemoryStream ms = new MemoryStream();
         Serializer.Serialize<RRSJointState>(ms, joint_state_msg);
         byte[] data = ms.ToArray();

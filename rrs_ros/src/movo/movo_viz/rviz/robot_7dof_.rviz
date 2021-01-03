@@ -6,10 +6,11 @@ Panels:
       Expanded:
         - /Global Options1
         - /TF1/Frames1
-        - /LaserScan2/Status1
-        - /PointCloud21/Status1
-      Splitter Ratio: 0.48546499013900757
-    Tree Height: 764
+        - /Imu1/Status1
+        - /Odometry1/Shape1
+        - /Odometry1/Covariance1
+      Splitter Ratio: 0.5201698541641235
+    Tree Height: 796
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -167,72 +168,71 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        base_link:
-          base_chassis_link:
-            front_laser_link:
-              {}
-            linear_actuator_fixed_link:
-              linear_actuator_link:
-                left_base_link:
-                  left_shoulder_link:
-                    left_arm_half_1_link:
-                      left_arm_half_2_link:
-                        left_forearm_link:
-                          left_wrist_spherical_1_link:
-                            left_wrist_spherical_2_link:
-                              left_wrist_3_link:
-                                left_ee_link:
-                                  left_gripper_base_link:
-                                    left_gripper_finger1_knuckle_link:
-                                      left_gripper_finger1_finger_tip_link:
-                                        {}
-                                    left_gripper_finger2_knuckle_link:
-                                      left_gripper_finger2_finger_tip_link:
-                                        {}
-                                    left_gripper_finger3_knuckle_link:
-                                      left_gripper_finger3_finger_tip_link:
-                                        {}
-                pan_base_link:
-                  pan_link:
-                    tilt_link:
-                      kinect2_link:
-                        kinect2_ir_link:
-                          kinect2_ir_optical_frame:
-                            {}
-                          kinect2_rgb_link:
-                            kinect2_rgb_optical_frame:
-                              {}
-                right_base_link:
-                  right_shoulder_link:
-                    right_arm_half_1_link:
-                      right_arm_half_2_link:
-                        right_forearm_link:
-                          right_wrist_spherical_1_link:
-                            right_wrist_spherical_2_link:
-                              right_wrist_3_link:
-                                right_ee_link:
-                                  right_gripper_base_link:
-                                    right_gripper_finger1_knuckle_link:
-                                      right_gripper_finger1_finger_tip_link:
-                                        {}
-                                    right_gripper_finger2_knuckle_link:
-                                      right_gripper_finger2_finger_tip_link:
-                                        {}
-                                    right_gripper_finger3_knuckle_link:
-                                      right_gripper_finger3_finger_tip_link:
-                                        {}
-                upper_body_link:
-                  {}
-            lower_body_link:
-              {}
-            mid_body_link:
-              {}
-            rear_laser_link:
-              {}
-            sic_imu_frame:
-              {}
         odom:
-          {}
+          base_link:
+            base_chassis_link:
+              front_laser_link:
+                {}
+              linear_actuator_fixed_link:
+                linear_actuator_link:
+                  left_base_link:
+                    left_shoulder_link:
+                      left_arm_half_1_link:
+                        left_arm_half_2_link:
+                          left_forearm_link:
+                            left_wrist_spherical_1_link:
+                              left_wrist_spherical_2_link:
+                                left_wrist_3_link:
+                                  left_ee_link:
+                                    left_gripper_base_link:
+                                      left_gripper_finger1_knuckle_link:
+                                        left_gripper_finger1_finger_tip_link:
+                                          {}
+                                      left_gripper_finger2_knuckle_link:
+                                        left_gripper_finger2_finger_tip_link:
+                                          {}
+                                      left_gripper_finger3_knuckle_link:
+                                        left_gripper_finger3_finger_tip_link:
+                                          {}
+                  pan_base_link:
+                    pan_link:
+                      tilt_link:
+                        kinect2_link:
+                          kinect2_ir_link:
+                            kinect2_ir_optical_frame:
+                              {}
+                            kinect2_rgb_link:
+                              kinect2_rgb_optical_frame:
+                                {}
+                  right_base_link:
+                    right_shoulder_link:
+                      right_arm_half_1_link:
+                        right_arm_half_2_link:
+                          right_forearm_link:
+                            right_wrist_spherical_1_link:
+                              right_wrist_spherical_2_link:
+                                right_wrist_3_link:
+                                  right_ee_link:
+                                    right_gripper_base_link:
+                                      right_gripper_finger1_knuckle_link:
+                                        right_gripper_finger1_finger_tip_link:
+                                          {}
+                                      right_gripper_finger2_knuckle_link:
+                                        right_gripper_finger2_finger_tip_link:
+                                          {}
+                                      right_gripper_finger3_knuckle_link:
+                                        right_gripper_finger3_finger_tip_link:
+                                          {}
+                  upper_body_link:
+                    {}
+              lower_body_link:
+                {}
+              mid_body_link:
+                {}
+              rear_laser_link:
+                {}
+              sic_imu_frame:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -247,7 +247,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 0
@@ -260,11 +260,11 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.10000000149011612
       Style: Flat Squares
-      Topic: /scan/front
+      Topic: /movo/front_scan
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -277,7 +277,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 0
@@ -290,55 +290,84 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.10000000149011612
       Style: Flat Squares
-      Topic: /scan/rear
+      Topic: /movo/rear_scan
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
+        Max Value: 0
+        Min Value: 0
         Value: true
       Axis: Z
       Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: ""
+      Class: rviz/LaserScan
+      Color: 138; 226; 52
+      Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: false
+      Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
       Min Color: 0; 0; 0
       Min Intensity: 0
-      Name: PointCloud2
-      Position Transformer: ""
+      Name: LaserScan
+      Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.009999999776482582
+      Size (m): 0.05000000074505806
       Style: Flat Squares
-      Topic: /camera/points
+      Topic: /movo/scan_multi
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: false
-    - Class: rviz/TF
-      Enabled: false
-      Frame Timeout: 15
-      Frames:
-        All Enabled: true
-      Marker Scale: 1
-      Name: TF
-      Show Arrows: true
-      Show Axes: true
-      Show Names: true
-      Tree:
-        {}
-      Update Interval: 0
-      Value: false
+      Value: true
+    - Alpha: 1
+      Class: rviz_plugin_tutorials/Imu
+      Color: 204; 51; 204
+      Enabled: true
+      History Length: 1
+      Name: Imu
+      Topic: /movo/imu
+      Unreliable: false
+      Value: true
+    - Angle Tolerance: 0.5
+      Class: rviz/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: true
+      Keep: 100
+      Name: Odometry
+      Position Tolerance: 0.5
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 255; 25; 0
+        Head Length: 0.05000000074505806
+        Head Radius: 0.05000000074505806
+        Shaft Length: 0.5
+        Shaft Radius: 0.019999999552965164
+        Value: Arrow
+      Topic: /movo/odometry
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 125; 125; 125
@@ -365,33 +394,33 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.5745117664337158
+      Distance: 6.213014602661133
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.07138320058584213
-        Y: -0.0888398140668869
-        Z: 1.0041284561157227
+        X: 0.7717234492301941
+        Y: -1.2583106756210327
+        Z: 0.3393319845199585
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7597968578338623
+      Pitch: 0.6147971749305725
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.116812229156494
+      Yaw: 4.186813831329346
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 993
+  Height: 1025
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000002b300000387fc0200000007fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d00000387000000c900fffffffb0000000c00430061006d0065007200610000000334000000ce0000000000000000fb0000000a0049006d00610067006502000005ad00000293000001d100000185000000010000010f000002ddfc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000043000002dd000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004a00000003efc0100000002fb0000000800540069006d00650000000000000004a0000002eb00fffffffb0000000800540069006d00650100000000000004500000000000000000000004820000038700000004000000040000000800000008fc00000002000000020000000000000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001d9000003a7fc0200000007fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000003a7000000c900fffffffb0000000c00430061006d0065007200610000000334000000ce0000000000000000fb0000000a0049006d00610067006502000005ad00000293000001d100000185000000010000010f000002ddfc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000043000002dd000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004a00000003efc0100000002fb0000000800540069006d00650000000000000004a0000002eb00fffffffb0000000800540069006d006501000000000000045000000000000000000000055e000003a700000004000000040000000800000008fc00000002000000020000000000000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -400,6 +429,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1851
+  Width: 1853
   X: 67
   Y: 27
