@@ -472,6 +472,7 @@ void Net2TestROS::publishCameraInfo(char* data, int size)
   camera_info_msg.width = info_msg.width();
   camera_info_msg.height = info_msg.height();
   camera_info_msg.header.stamp = ros::Time::now();
+  camera_info_msg.header.frame_id = "camera_link";
 
   for ( int i = 0 ; i < 5 ; i++)
   {

@@ -348,8 +348,6 @@ public class Movo : MonoBehaviour
         byte[] data = ms.ToArray();
 
         publisher_camera_info.Send(data);
-
-
     }
     #endregion
 

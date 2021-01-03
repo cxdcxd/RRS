@@ -93,14 +93,10 @@ namespace movo_hardware_interface
 		read();
 		controller_manager_->update(ros::Time::now(), elapsed_time_);
 		write(elapsed_time_);
-
-		//ROS_INFO_STREAM(_logInfo);
 	}
 
 	void movoHardwareInterface::read()
 	{
-		//_logInfo += "Joint State:\n";
-	
         mtx_status.lock();
 
         if ( current_joint_state.position.size() != 0)
@@ -116,41 +112,18 @@ namespace movo_hardware_interface
 		}
 
         mtx_status.unlock();
-
-		
-		// 	movocpp::Joint joint = movo.getJoint(joint_names_[i]);
-
-		// 	if (joint.getActuatorType() == ACTUATOR_TYPE_MOTOR)
-		// 	{
-		 		//joint_position_[i] = joint.readAngle();
-				
-
-		// 		std::ostringstream jointPositionStr;
-		// 		jointPositionStr << joint_position_[i];
-		// 		_logInfo += "  " + joint.name + ": " + jointPositionStr.str() + "\n";
-		// 	}
-
-		// 	movo.setJoint(joint);
-		// }
-
-		//ROS_INFO_STREAM("READ LOOP DONE");
 	}
 
 	void movoHardwareInterface::write(ros::Duration elapsed_time)
 	{
-
         movo_msgs::JacoJointCmd cmd;
 
 		for (int i = 0; i < num_joints_; i++)
 		{
-           
 		   cmd.joint_cmds.push_back( joint_position_command_[i]);
-
 		}
 
 	    pub_joint_command.publish(cmd);
-
-		//ROS_INFO_STREAM("WRITE LOOP DONE");
 	}
 }
 
