@@ -1,0 +1,12 @@
+
+obstacle_range: 2
+raytrace_range: 2
+inflation_radius: 0.4
+
+footprint: [[0.30, 0.30], [0.30, -0.30], [-0.30, -0.30],[-0.30, 0.30]]
+
+observation_sources: scan 
+
+scan: {data_type: LaserScan, topic: /movo/scan_multi , marking: true, clearing: true , observation_persistence: 0}
+
+

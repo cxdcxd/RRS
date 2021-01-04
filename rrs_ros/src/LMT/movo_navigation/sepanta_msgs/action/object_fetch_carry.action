@@ -1,0 +1,13 @@
+# define the goal
+string input1
+string input2
+string input3
+---
+# define the result
+float64 x
+float64 y
+float64 z
+string finded
+---
+# define the feedback
+int32 feedback

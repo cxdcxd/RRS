@@ -1,0 +1,6 @@
+string type
+int32 value
+---
+string result
+---
+int32 feedback

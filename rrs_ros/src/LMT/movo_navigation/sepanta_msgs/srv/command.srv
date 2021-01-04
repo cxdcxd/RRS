@@ -1,0 +1,14 @@
+string command
+string id
+int32 value1
+int32 value2
+int32 value3
+int32 value4
+int32 value5
+int32 value6
+int32 value7
+int32 value8
+int32 value9
+int32 value10
+---
+string result

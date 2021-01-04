@@ -1,0 +1,9 @@
+# define the goal
+string destination
+string object
+---
+# define the result
+string result
+---
+# define the feedback
+int32 feedback

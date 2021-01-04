@@ -1,0 +1,9 @@
+# define the goal
+string input
+---
+# define the result
+float64 x
+float64 z
+---
+# define the feedback
+int32 feedback

@@ -1,0 +1,4 @@
+int32 iteration_select
+int32 iteration_all
+---
+bool result

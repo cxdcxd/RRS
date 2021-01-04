@@ -6,9 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /TF1/Frames1
-        - /Imu1/Status1
-        - /Odometry1/Shape1
-        - /Odometry1/Covariance1
       Splitter Ratio: 0.5201698541641235
     Tree Height: 796
   - Class: rviz/Selection
@@ -116,8 +113,6 @@ Visualization Manager:
           Value: true
         mid_body_link:
           Value: true
-        odom:
-          Value: true
         pan_base_link:
           Value: true
         pan_link:
@@ -168,71 +163,70 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        odom:
-          base_link:
-            base_chassis_link:
-              front_laser_link:
-                {}
-              linear_actuator_fixed_link:
-                linear_actuator_link:
-                  left_base_link:
-                    left_shoulder_link:
-                      left_arm_half_1_link:
-                        left_arm_half_2_link:
-                          left_forearm_link:
-                            left_wrist_spherical_1_link:
-                              left_wrist_spherical_2_link:
-                                left_wrist_3_link:
-                                  left_ee_link:
-                                    left_gripper_base_link:
-                                      left_gripper_finger1_knuckle_link:
-                                        left_gripper_finger1_finger_tip_link:
-                                          {}
-                                      left_gripper_finger2_knuckle_link:
-                                        left_gripper_finger2_finger_tip_link:
-                                          {}
-                                      left_gripper_finger3_knuckle_link:
-                                        left_gripper_finger3_finger_tip_link:
-                                          {}
-                  pan_base_link:
-                    pan_link:
-                      tilt_link:
-                        kinect2_link:
-                          kinect2_ir_link:
-                            kinect2_ir_optical_frame:
+        base_link:
+          base_chassis_link:
+            front_laser_link:
+              {}
+            linear_actuator_fixed_link:
+              linear_actuator_link:
+                left_base_link:
+                  left_shoulder_link:
+                    left_arm_half_1_link:
+                      left_arm_half_2_link:
+                        left_forearm_link:
+                          left_wrist_spherical_1_link:
+                            left_wrist_spherical_2_link:
+                              left_wrist_3_link:
+                                left_ee_link:
+                                  left_gripper_base_link:
+                                    left_gripper_finger1_knuckle_link:
+                                      left_gripper_finger1_finger_tip_link:
+                                        {}
+                                    left_gripper_finger2_knuckle_link:
+                                      left_gripper_finger2_finger_tip_link:
+                                        {}
+                                    left_gripper_finger3_knuckle_link:
+                                      left_gripper_finger3_finger_tip_link:
+                                        {}
+                pan_base_link:
+                  pan_link:
+                    tilt_link:
+                      kinect2_link:
+                        kinect2_ir_link:
+                          kinect2_ir_optical_frame:
+                            {}
+                          kinect2_rgb_link:
+                            kinect2_rgb_optical_frame:
                               {}
-                            kinect2_rgb_link:
-                              kinect2_rgb_optical_frame:
-                                {}
-                  right_base_link:
-                    right_shoulder_link:
-                      right_arm_half_1_link:
-                        right_arm_half_2_link:
-                          right_forearm_link:
-                            right_wrist_spherical_1_link:
-                              right_wrist_spherical_2_link:
-                                right_wrist_3_link:
-                                  right_ee_link:
-                                    right_gripper_base_link:
-                                      right_gripper_finger1_knuckle_link:
-                                        right_gripper_finger1_finger_tip_link:
-                                          {}
-                                      right_gripper_finger2_knuckle_link:
-                                        right_gripper_finger2_finger_tip_link:
-                                          {}
-                                      right_gripper_finger3_knuckle_link:
-                                        right_gripper_finger3_finger_tip_link:
-                                          {}
-                  upper_body_link:
-                    {}
-              lower_body_link:
-                {}
-              mid_body_link:
-                {}
-              rear_laser_link:
-                {}
-              sic_imu_frame:
-                {}
+                right_base_link:
+                  right_shoulder_link:
+                    right_arm_half_1_link:
+                      right_arm_half_2_link:
+                        right_forearm_link:
+                          right_wrist_spherical_1_link:
+                            right_wrist_spherical_2_link:
+                              right_wrist_3_link:
+                                right_ee_link:
+                                  right_gripper_base_link:
+                                    right_gripper_finger1_knuckle_link:
+                                      right_gripper_finger1_finger_tip_link:
+                                        {}
+                                    right_gripper_finger2_knuckle_link:
+                                      right_gripper_finger2_finger_tip_link:
+                                        {}
+                                    right_gripper_finger3_knuckle_link:
+                                      right_gripper_finger3_finger_tip_link:
+                                        {}
+                upper_body_link:
+                  {}
+            lower_body_link:
+              {}
+            mid_body_link:
+              {}
+            rear_laser_link:
+              {}
+            sic_imu_frame:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -334,40 +328,6 @@ Visualization Manager:
       Topic: /movo/imu
       Unreliable: false
       Value: true
-    - Angle Tolerance: 0.5
-      Class: rviz/Odometry
-      Covariance:
-        Orientation:
-          Alpha: 0.5
-          Color: 255; 255; 127
-          Color Style: Unique
-          Frame: Local
-          Offset: 1
-          Scale: 1
-          Value: true
-        Position:
-          Alpha: 0.30000001192092896
-          Color: 204; 51; 204
-          Scale: 1
-          Value: true
-        Value: true
-      Enabled: true
-      Keep: 100
-      Name: Odometry
-      Position Tolerance: 0.5
-      Shape:
-        Alpha: 1
-        Axes Length: 1
-        Axes Radius: 0.10000000149011612
-        Color: 255; 25; 0
-        Head Length: 0.05000000074505806
-        Head Radius: 0.05000000074505806
-        Shaft Length: 0.5
-        Shaft Radius: 0.019999999552965164
-        Value: Arrow
-      Topic: /movo/odometry
-      Unreliable: false
-      Value: true
   Enabled: true
   Global Options:
     Background Color: 125; 125; 125
@@ -409,10 +369,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6147971749305725
+      Pitch: 0.37479740381240845
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.186813831329346
+      Yaw: 4.9018096923828125
     Saved: ~
 Window Geometry:
   Displays:

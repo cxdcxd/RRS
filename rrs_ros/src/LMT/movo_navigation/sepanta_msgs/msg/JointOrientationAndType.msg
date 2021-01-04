@@ -1,0 +1,2 @@
+geometry_msgs/Quaternion orientation
+int32 jointType

@@ -1,0 +1,6 @@
+string command
+string pattern1
+string pattern2
+---
+bool result
+

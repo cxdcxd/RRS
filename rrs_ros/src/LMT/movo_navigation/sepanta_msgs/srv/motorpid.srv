@@ -1,0 +1,6 @@
+string id
+uint8 margin
+uint8 slope
+uint8 punch
+---
+string result

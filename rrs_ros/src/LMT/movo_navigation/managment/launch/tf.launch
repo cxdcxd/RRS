@@ -1,0 +1,11 @@
+<launch>
+	
+	 <arg name="base_frame_name" default="map"/>
+	 <arg name="laser_frame_name" default="odom"/>
+	 <arg name="laser_frame_name2" default="camera_link"/>
+
+	 <node pkg="tf" type="static_transform_publisher" name="broadcaster_laserscan_base_to_laser" output="screen"
+		args="0 0 0 0 0 0 1 $(arg base_frame_name) $(arg laser_frame_name) 10"
+	 />
+
+</launch>

@@ -1,0 +1,19 @@
+bool w0_torque
+bool w1_torque
+bool w2_torque
+bool zm_torque
+bool right_shoulder_torque
+bool left_shoulder_torque
+bool right_elbow_torque
+bool left_elbow_torque
+bool right_wrist_torque
+bool left_wrist_torque
+bool right_hand_torque
+bool left_hand_torque
+bool right_grip0_torque
+bool right_grip1_torque
+bool left_grip_torque
+bool headpan_torque
+bool headtilt_torque
+
+

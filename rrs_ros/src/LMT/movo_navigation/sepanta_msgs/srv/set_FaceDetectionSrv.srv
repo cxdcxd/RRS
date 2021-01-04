@@ -1,0 +1,6 @@
+float64 scalefactor
+int32 minNeighbores
+int32 flags
+int32 minsize
+---
+string result

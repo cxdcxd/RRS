@@ -1,0 +1,10 @@
+# define the goal
+string object
+---
+# define the result
+float64 x
+float64 y
+float64 z
+---
+# define the feedback
+int32 feedback

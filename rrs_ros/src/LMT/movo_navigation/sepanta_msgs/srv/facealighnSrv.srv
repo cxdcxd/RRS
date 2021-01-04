@@ -1,0 +1,5 @@
+bool start
+bool stop
+
+---
+bool result

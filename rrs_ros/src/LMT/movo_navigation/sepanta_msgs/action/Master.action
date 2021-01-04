@@ -1,0 +1,22 @@
+#goal definition
+string action
+string id
+int32 iParam1
+int32 iParam2
+int32 iParam3
+int32 iParam4
+float64 dParam5
+float64 dParam6
+float64 dParam7
+float64 dParam8
+string sParam9
+string sParam10
+string sParam11
+string sParam12
+geometry_msgs/PoseStamped goal
+---
+#result definition
+string result
+---
+#feedback
+float64 feedback

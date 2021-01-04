@@ -1,0 +1,8 @@
+Header header
+float64 beamAngle
+float64 beamAngleConfidence
+float32[] audioStream
+int16 numBytesPerSample
+int16 numSamplesPerFrame
+float64 frameLifeTime
+int16 samplingFrequency

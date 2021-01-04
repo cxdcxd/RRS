@@ -1,0 +1,7 @@
+bool stop
+bool start
+bool nearest
+bool id_tr_flag
+int32 id_tr
+---
+string resule

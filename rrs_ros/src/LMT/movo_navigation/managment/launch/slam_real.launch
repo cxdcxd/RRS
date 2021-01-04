@@ -1,0 +1,33 @@
+<launch>
+    <arg name="map_frame_name" default="map"/>
+    <arg name="odom_frame_name" default="odom"/>
+    <arg name="base_frame_name" default="base_link"/>
+    <arg name="laser_frame_name" default="laser_link"/>
+    <arg name="laser_topic_name" default=""/>
+    <arg name="scan_topic_name" default="/movo/base_scan_filtered"/>
+
+    <node pkg="hector_mapping" type="hector_mapping" name="hector_slam" output="screen">
+        <remap from="map_metadata"                          to="$(arg laser_topic_name)map_metadata"/>
+        <remap from="map"                                   to="map"/>
+        <remap from="slam_out_pose"                         to="$(arg laser_topic_name)slam_out_pose"/>
+        <remap from="pose_update"                           to="$(arg laser_topic_name)pose_update"/>
+        <remap from="dynamic_map"                           to="$(arg laser_topic_name)dynamic_map"/>
+        <remap from="slam_cloud"                            to="$(arg laser_topic_name)slam_cloud"/>
+        <remap from="poseupdate"                            to="$(arg laser_topic_name)poseupdate"/>
+        
+	<param name="~scan_topic"                           type="str"          value="$(arg scan_topic_name)"/>
+        <param name="~base_frame"                           type="str"          value="$(arg base_frame_name)"/>
+        <param name="~map_frame"                            type="str"          value="$(arg map_frame_name)"/>
+        <param name="~odom_frame"                           type="str"          value="$(arg odom_frame_name)"/>
+        <param name="~map_resolution"                       type="double"       value="0.025"/>
+        <param name="~map_size"                             type="int"          value="1536"/>
+        <param name="~map_update_distance_thresh"           type="double"       value="0.1"/>
+        <param name="~map_update_angle_thresh"              type="double"       value="0.2"/>
+        <param name="~map_pub_period"                       type="double"       value="0.5"/>
+        <param name="~pub_map_odom_transform"               type="bool"         value="true"/>
+        <param name="~update_factor_free"                   type="double"       value="0.3"/>
+        <param name="~update_factor_occupied"               type="double"       value="0.9"/>
+   </node>
+
+</launch>
+

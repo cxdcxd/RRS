@@ -1,0 +1,15 @@
+int32 speed
+int32 position
+float64 load
+int32 voltage
+int32 temp
+int32 id
+string name
+string status
+int32 min
+int32 max
+int32 init
+string model
+int32 p
+int32 i
+int32 d

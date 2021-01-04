@@ -687,7 +687,7 @@ void Net2TestROS::publishOdometry(char* data, int size)
   odom.twist.twist.angular.z = -transform_msg.angular_speed().z();
 
   //publish the message
-  pub_odometry.publish(odom);
+  //pub_odometry.publish(odom);
 }
 
 void Net2TestROS::publishIMU(char* data, int size)
@@ -744,7 +744,7 @@ void Net2TestROS::publishTF(char* data, int size)
   transform.setRotation(q);
 
   //ROS_WARN_STREAM("GET " << tf_msg.names(i));
-  tf_broadcasters[0].sendTransform(tf::StampedTransform(transform, ros::Time::now(), tf_msg.parents(0), tf_msg.names(0)));
+  //tf_broadcasters[0].sendTransform(tf::StampedTransform(transform, ros::Time::now(), tf_msg.parents(0), tf_msg.names(0)));
   std::string name = tf_msg.names(0);   
  }
 

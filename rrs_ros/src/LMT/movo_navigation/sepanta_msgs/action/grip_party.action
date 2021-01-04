@@ -1,0 +1,11 @@
+# define the goal
+string input
+string object1
+string object2
+string object3
+---
+# define the result
+string object_find
+---
+# define the feedback
+int32 feedback
