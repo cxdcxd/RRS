@@ -32,6 +32,14 @@ public class Movo : MonoBehaviour
         odom
     }
 
+    public enum Grippers
+    { 
+      KG3,
+      R2F85,
+      Hande
+    }
+
+
     #region Net2
 
     //PUBS
@@ -72,6 +80,7 @@ public class Movo : MonoBehaviour
 
     float next_nav_path_time = 0;
 
+    public Grippers grippers = Grippers.KG3;
     public GameObject target;
     public Camera sensor_kinect;
     public GameObject tag_test;

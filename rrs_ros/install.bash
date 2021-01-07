@@ -41,6 +41,8 @@ sudo apt install -y libsdl-dev
 sudo apt install -y libsdl-image1.2-dev
 sudo apt install -y ros-melodic-navigation
 sudo apt install -y ros-melodic-bfl
+sudo apt install -y ros-melodic-moveit-visual-tools
+sudo apt install -y ros-melodic-fake-joint-launch
 
 if [ ! -e third_party ]
 then
