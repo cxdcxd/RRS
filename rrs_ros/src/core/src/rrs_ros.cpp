@@ -10,6 +10,9 @@ namespace roboland
   {
     ROS_INFO("NET2 CPP ROS TEST HAS STARTED");
 
+    f = boost::bind(&Net2TestROS::callback,this, _1, _2);
+    server.setCallback(f);
+
     std::string path = ros::package::getPath("rrs_ros");
     path = path + "/cfg/config.yaml";
 
@@ -372,12 +375,20 @@ void Net2TestROS::publishCameraColor(char* data, int size)
 	std::vector<unsigned char> data_byte;
 	data_byte.assign(data,data + size);
 	cv::Mat image(cv::imdecode(data_byte,1));
+
+  if ( last_color_frame_updated == false)
+  {
+    this->last_color_frame = image.clone(); 
+    last_color_frame_updated = true;
+  }
+
 	cv_bridge::CvImage out_msg;
 	out_msg.encoding = sensor_msgs::image_encodings::BGR8;
 	out_msg.image = image;
   out_msg.header.stamp = ros::Time::now();
-  out_msg.header.frame_id = "camera_link";
+  out_msg.header.frame_id = "kinect2_link";
   pub_camera_color.publish(out_msg.toImageMsg());
+  
 }
 
 void Net2TestROS::publishCameraDepth(char* data, int size)
@@ -386,26 +397,38 @@ void Net2TestROS::publishCameraDepth(char* data, int size)
   std::vector<unsigned char> data_byte;
   data_byte.assign(data,data + size);
   cv::Mat image(cv::imdecode(data_byte,1));
+
+  if ( last_depth_frame_updated == false)
+  {
+    this->last_depth_frame = image.clone(); 
+    last_depth_frame_updated = true;
+  }
+
   cv_bridge::CvImage out_msg;
   out_msg.encoding = sensor_msgs::image_encodings::BGR8;
   out_msg.image = image;
   out_msg.header.stamp = ros::Time::now();
-  out_msg.header.frame_id = "camera_link";
+  out_msg.header.frame_id = "kinect2_link";
   pub_camera_depth.publish(out_msg.toImageMsg());
 
-   //cv::Mat c8BitDepth;
-   //image.convertTo(c8BitDepth, CV_8U);
+}
 
-   //pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = MatToPoinXYZ(c8BitDepth);
-   //sensor_msgs::PointCloud2 point_cloud2;
+void Net2TestROS::publishPointCloud()
+{
+  if ( last_color_frame_updated && last_depth_frame_updated)
+  {
+      pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = MatToPoinXYZ();
+      sensor_msgs::PointCloud2 point_cloud2;
 
-   //pcl::toROSMsg(*cloud, point_cloud2);
+      pcl::toROSMsg(*cloud, point_cloud2);
 
-   //point_cloud2.header.stamp = ros::Time::now();
-   //point_cloud2.header.frame_id = "camera_link";
+      point_cloud2.header.stamp = ros::Time::now();
+      point_cloud2.header.frame_id = "kinect2_link";
 
-   //pub_camera_point.publish(point_cloud2);
-
+      pub_camera_point.publish(point_cloud2);
+      last_color_frame_updated = false;
+      last_depth_frame_updated = false;
+  }
 }
 
 void Net2TestROS::publishCameraNormal(char* data, int size)
@@ -418,44 +441,90 @@ void Net2TestROS::publishCameraNormal(char* data, int size)
   out_msg.encoding = sensor_msgs::image_encodings::BGR8;
   out_msg.image = image;
   out_msg.header.stamp = ros::Time::now();
-  out_msg.header.frame_id = "camera_link";
+  out_msg.header.frame_id = "kinect2_link";
   pub_camera_normal.publish(out_msg.toImageMsg());
 }
 
+void Net2TestROS::callback(rrs_ros::ParamConfig &config, uint32_t level) 
+{
+  // ROS_INFO("Reconfigure Request: %f %f %f", 
+  //           config.distance_param, 
+  //           config.theta_h_param,
+  //           config.theta_v_param);
 
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr Net2TestROS::MatToPoinXYZ(cv::Mat depthMat)
+            p_fx = config.fx_param;
+            p_fy = config.fy_param;
+            p_cx = config.cx_param;
+            p_cy = config.cy_param;
+            p_distance = config.distance_param;
+}
+
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Net2TestROS::MatToPoinXYZ()
 {
       pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
 
-      const double v0 = 520.907761;
-      const double u0 = 398.668872f;
-      const double fy =  520.193056f;
-      const double fx = 298.836832f;
-      int rows = depthMat.rows;
-      int cols = depthMat.cols;
-      cloud->height = (uint32_t) rows;
-      cloud->width = (uint32_t) cols;
-      cloud->is_dense = false;
-      cloud->points.resize(cloud->width * cloud->height);
-      for (unsigned int u = 0; u < rows; ++u) {
-        for (unsigned int v = 0; v < cols; ++v) {
-          float Xw = 0, Yw = 0, Zw = 0;
+      int rows = last_depth_frame.rows;
+      int cols = last_depth_frame.cols;
 
-          Xw = ((float)depthMat.at<ushort>(u, v) / 255) * 0.03;
-          Yw = (float) ((v - v0) * Xw / fx);
-          Zw = (float) ((u - u0) * Xw / fy);
+      float zFar = 5;
+      float zNear = 0.5;
 
-          //cloud->at(v, u).b = color.at<cv::Vec3b>(u, v)[0];
-          //cloud->at(v, u).g = color.at<cv::Vec3b>(u, v)[1];
-          //cloud->at(v, u).r = color.at<cv::Vec3b>(u, v)[2];
+      const double v0 = p_cx;
+      const double u0 = p_cy;
+      const double fy =  p_fy;
+      const double fx = p_fx;
 
-          //oud->at(v, u).b = 255;
-          //oud->at(v, u).g = 255;
-          //oud->at(v, u).r = 255;
+      cloud->is_dense = true;
+     
+      for (unsigned int u = 0; u < rows; ++u) 
+      {
+        for (unsigned int v = 0; v < cols; ++v) 
+        {
+            float Xw = 0, Yw = 0, Zw = 0;
+            char R = 255 , G = 255 , B = 255;
+          
+            float d = last_depth_frame.at<cv::Vec3b>(u, v)[0];
 
-          cloud->at(v, u).x = Xw;
-          cloud->at(v, u).y = -Yw;
-          cloud->at(v, u).z = -Zw;
+            if (  d > 0 &&  d < 255 )
+            {
+
+            float distance = ( d / 255 ) * (zFar - zNear) + zNear ;
+            distance = distance * p_distance;
+
+            pcl::PointXYZRGB newPoint;
+
+            Xw = (distance);
+
+            // //calculate x-coordinate
+            // float alpha_h = (M_PI - p_h) / 2;
+            // float gamma_i_h = alpha_h + (float)v*(p_h / cols);
+            // Yw = distance / tan(gamma_i_h);
+
+            // //calculate y-coordinate
+            // float alpha_v = 2 * M_PI - (p_v / 2);
+            // float gamma_i_v = alpha_v + (float)u*(p_v / rows);
+            // Zw = distance * tan(gamma_i_v)*-1;
+
+            Yw = (float) ((v - v0) * Xw / fx);
+            Zw = (float) ((u - u0) * Xw / fy);
+
+            //ROS_INFO_STREAM(Xw << " " << Yw << " " << Zw);
+
+            B = last_color_frame.at<cv::Vec3b>(u, v)[0];
+            G = last_color_frame.at<cv::Vec3b>(u, v)[1];
+            R = last_color_frame.at<cv::Vec3b>(u, v)[2];
+
+            newPoint.x = Xw;
+            newPoint.y = -Yw;
+            newPoint.z = -Zw;
+            newPoint.r = R;
+            newPoint.g = G;
+            newPoint.b = B;
+
+            cloud->points.push_back(newPoint);
+
+            }
+          
         }
       }
 
@@ -850,7 +919,6 @@ std::vector<char> Net2TestROS::callbackDataNavGoal(std::vector<char> buffer, uns
 
 std::vector<char> Net2TestROS::callbackDataJointState(std::vector<char> buffer, unsigned int priority, std::string sender)
 {
-  //ROS_INFO("GET JOINTS");
   //11
   std::vector<char> result;
   if ( priority == 10 ) return result;
@@ -885,44 +953,9 @@ std::vector<char> Net2TestROS::callbackDataTF(std::vector<char> buffer, unsigned
   return result;
 }
 
-// std::vector<char> Net2TestROS::callbackService(std::vector<char> buffer, unsigned int priority, std::string sender)
-// {
-//   std::vector<char> result;
-//   ROS_INFO_STREAM("Get callback service " << sender << " " << buffer.size() << " " << priority );
-
-//   result.push_back('o');
-//   result.push_back('k');
-
-//   return result;
-// }
-
-
-
 void Net2TestROS::update()
 {
-    // a += 0.001;
-    // test_joint_command.joint_cmds[0] = sin(a) / 2;
-    // test_joint_command.joint_cmds[1] = sin(a) / 2;
-    // test_joint_command.joint_cmds[2] = sin(a) / 2;
-
-    // ROS_INFO_STREAM("Set " << test_joint_command.joint_cmds[0] << " " << a);
- 
-
-    // RRSJointCommand cmd;
-    // int size = test_joint_command.joint_cmds.size();
-   
-    // for ( int i = 0 ; i < size ; i++)
-    // {
-    //   cmd.add_goal(test_joint_command.joint_cmds[i]);
-
-    //   //ROS_INFO_STREAM("Set " << test_joint_command.joint_cmds[i]);
-    // }
-
-    // int bsize = cmd.ByteSize();
-    // char buffer[bsize];
-    // cmd.SerializeToArray(buffer,bsize);
-
-    // publisher_joint_command->send(buffer,bsize,1);
+   publishPointCloud();
 }
 
 void Net2TestROS::kill()
@@ -936,6 +969,7 @@ void Net2TestROS::kill()
 
 Net2TestROS::~Net2TestROS()
 {
+
 }
 
 } // namespace roboland

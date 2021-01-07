@@ -23,6 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
   joint_limits_interface
   control_msgs
   transmission_interface
+  dynamic_reconfigure
   )
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -45,6 +46,11 @@ add_message_files(
 
 generate_messages(DEPENDENCIES std_msgs geometry_msgs)
 
+
+generate_dynamic_reconfigure_options(
+ cfg/Param.cfg
+)
+
 catkin_package(
 	INCLUDE_DIRS include 
         CATKIN_DEPENDS message_runtime std_msgs geometry_msgs
@@ -55,6 +61,7 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${YAML_CPP_INCLUDEDIR})
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
+
 
 add_library(rrsnet
 

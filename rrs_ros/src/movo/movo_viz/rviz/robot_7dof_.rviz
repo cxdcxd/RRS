@@ -6,7 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /TF1/Frames1
-      Splitter Ratio: 0.5201698541641235
+        - /PointCloud21
+      Splitter Ratio: 0.42462843656539917
     Tree Height: 796
   - Class: rviz/Selection
     Name: Selection
@@ -328,6 +329,36 @@ Visualization Manager:
       Topic: /movo/imu
       Unreliable: false
       Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 1.4353634119033813
+        Min Value: 0.4733666777610779
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 5
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.004999999888241291
+      Style: Flat Squares
+      Topic: /movo/camera/points
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 125; 125; 125
@@ -354,25 +385,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.213014602661133
+      Distance: 0.929898202419281
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.7717234492301941
-        Y: -1.2583106756210327
-        Z: 0.3393319845199585
+        X: 1.5677753686904907
+        Y: -0.19815422594547272
+        Z: 0.6835817694664001
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.37479740381240845
+      Pitch: 0.46479731798171997
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.9018096923828125
+      Yaw: 3.186824321746826
     Saved: ~
 Window Geometry:
   Displays:

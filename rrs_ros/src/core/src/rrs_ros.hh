@@ -64,6 +64,8 @@
 #include <yaml-cpp/yaml.h>
 #include <mutex>
 
+#include <dynamic_reconfigure/server.h>
+#include <rrs_ros/ParamConfig.h>
 #include "rrs_ros/PointList.h"
 
 //Protobuf
@@ -71,6 +73,7 @@
 
 using namespace std;
 using namespace Roboland::Tools::Network;
+
 
 namespace roboland
 {
@@ -92,7 +95,7 @@ public:
               int argc,
               char *argv[]);
 
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr MatToPoinXYZ(cv::Mat depthMat);
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr MatToPoinXYZ();
 
   std::vector<char> callbackDataLidar1(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataLidar2(std::vector<char> buffer, unsigned int priority, std::string sender);
@@ -109,7 +112,8 @@ public:
   std::vector<char> callbackDataIMU(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataOdometry(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataTF(std::vector<char> buffer, unsigned int priority, std::string sender);
-  
+  void callback(rrs_ros::ParamConfig &config, uint32_t level);
+
   std::shared_ptr<Net2Publisher> publisher_cmd_vel;
   std::shared_ptr<Net2Publisher> publisher_planner_viz;
   std::shared_ptr<Net2Publisher> publisher_navigation_state;
@@ -162,7 +166,23 @@ public:
 
   RRSRobot robot_protocol;
   movo_msgs::JacoJointCmd test_joint_command;
+
+  cv::Mat last_color_frame;
+  bool last_color_frame_updated = false;
+
+  cv::Mat last_depth_frame;
+  bool last_depth_frame_updated = false;
+
   double a = 0;
+
+  dynamic_reconfigure::Server<rrs_ros::ParamConfig> server;
+  dynamic_reconfigure::Server<rrs_ros::ParamConfig>::CallbackType f;
+
+  float p_distance = 0.4;
+  float p_fx = 780;
+  float p_fy = 650;
+  float p_cx = 410;
+  float p_cy = 240;
 
   void chatterCallbackMarker(const visualization_msgs::Marker::ConstPtr& msg);
   void chatterCallbackRRSCommand(const std_msgs::String::ConstPtr& msg);
@@ -187,6 +207,7 @@ public:
   void publishNavigationGoal(char* data, int size);
   void publishJointState(char* data, int size);
   void publishTF(char* data, int size);
+  void publishPointCloud();
 
   tf::TransformBroadcaster tf_broadcasters[1];
   tf::TransformBroadcaster odom_broadcaster;
