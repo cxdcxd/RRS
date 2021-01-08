@@ -7,7 +7,7 @@
 | Ubuntu 18.04.05 LTS | 5.4.0-58-generic | ROS Melodic | 460.27.04 | 11.2 | Unity 2020.2.1f1
 
 <!--# Unity Version
-    2020.1.17f1-->
+    2020.2.1f1-->
     
 <!--# ROS Version
     Ubuntu 18.04
@@ -24,7 +24,7 @@ cd rrs_ros
 ./install.sh
 ```
 
-3) Download [Unity](https://unity3d.com/get-unity/download/archive) 2020.1.17
+3) Download [Unity](https://unity3d.com/get-unity/download/archive) 2020.2.1f1
 
 4) Open Unity Hub and go to `Projects`, click `ADD` and then browse the folder `rrs_unity` from the downloaded repository and launch it. Make sure the `Unity Version` is set to `2020.1.17f1`
 
