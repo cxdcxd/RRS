@@ -26,7 +26,7 @@ cd rrs_ros
 
 3) Download [Unity](https://unity3d.com/get-unity/download/archive) 2020.2.1f1
 
-4) Open Unity Hub and go to `Projects`, click `ADD` and then browse the folder `rrs_unity` from the downloaded repository and launch it. Make sure the `Unity Version` is set to `2020.1.17f1`
+4) Open Unity Hub and go to `Projects`, click `ADD` and then browse the folder `rrs_unity` from the downloaded repository and launch it. Make sure the `Unity Version` is set to `2020.2.1f1`
 
 5) Open the repository in a new terminal and type `cd rrs_ros` and build the workspace: `catkin_make`
 
