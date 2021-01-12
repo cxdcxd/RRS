@@ -45,11 +45,10 @@ float4 Output(float depth01, float3 normal)
     {
         return _CategoryColor;
     }
-    else if (_OutputMode == 2) // DepthCompressed
+    else if (_OutputMode == 2) // Depth
     {
         float linearZFromNear = Linear01FromEyeToLinear01FromNear(depth01); 
-        float k = 0.25; // compression factor
-        return pow(linearZFromNear, k);
+        return linearZFromNear;
     }
     else if (_OutputMode == 3) // DepthMultichannel
     {

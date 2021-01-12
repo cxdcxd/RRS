@@ -178,11 +178,11 @@ public:
   dynamic_reconfigure::Server<rrs_ros::ParamConfig> server;
   dynamic_reconfigure::Server<rrs_ros::ParamConfig>::CallbackType f;
 
-  float p_distance = 0.4;
-  float p_fx = 780;
-  float p_fy = 650;
-  float p_cx = 410;
-  float p_cy = 240;
+  float p_distance = 1;
+  float p_fx = 550.0;
+  float p_fy = 650.0;
+  float p_cx = 400.0;
+  float p_cy = 300.0;
 
   void chatterCallbackMarker(const visualization_msgs::Marker::ConstPtr& msg);
   void chatterCallbackRRSCommand(const std_msgs::String::ConstPtr& msg);

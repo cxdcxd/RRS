@@ -463,9 +463,11 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Net2TestROS::MatToPoinXYZ()
 {
       pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
 
-      int rows = last_depth_frame.rows;
-      int cols = last_depth_frame.cols;
+      //Image h and w
+      float rows = last_depth_frame.rows;
+      float cols = last_depth_frame.cols;
 
+      //default far and near clipping distance
       float zFar = 5;
       float zNear = 0.5;
 
@@ -521,6 +523,8 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Net2TestROS::MatToPoinXYZ()
             newPoint.g = G;
             newPoint.b = B;
 
+
+            //Add the point to the cloud
             cloud->points.push_back(newPoint);
 
             }
