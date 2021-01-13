@@ -16,6 +16,7 @@
 #include <boost/thread.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <sepanta_msgs/command.h>
 using namespace std;
 
 actionlib::SimpleActionClient<sepanta_msgs::MasterAction> * ac;
@@ -24,14 +25,15 @@ ros::Subscriber sub_navigation_goal;
 ros::Subscriber sub_navigation_goal_name;
 ros::Publisher pub_navigation_status;
 geometry_msgs::PoseStamped current_goal;
-
+ros::ServiceClient client;
 
 int status = 0;
 bool thread_exit = false;
+int scenario_index = 0;
+bool scenario_mode = false;
+bool scenario_loop = false;
 
 std::string target_location;
-
-
 
 struct goal_data
 {
@@ -116,6 +118,11 @@ void thread_logic()
           ROS_INFO("Action did not finish before the time out.");
         }
 
+        if ( scenario_mode )
+        {
+          scenario_index++;
+        }
+
         status = 0;
      }
 
@@ -188,40 +195,87 @@ void chatterCallbackGoal(const geometry_msgs::PoseStamped::ConstPtr& msg)
    }
 }
 
+void sendForceStop()
+{
+  sepanta_msgs::command srv;
+
+  srv.request.command = "cancel";
+ 
+  if (client.call(srv))
+  {
+    ROS_INFO("cancel command done");
+  }
+  else
+  {
+    ROS_ERROR("Failed to call service, sepanta command");
+  }
+}
+
 void chatterCallbackGoalName(const std_msgs::String::ConstPtr& msg)
 {
-   if ( status == 0)
+   if ( status == 0) //idle
    {
      std::string name = msg->data;
 
-     for ( int i =0 ; i < goal_list.size() ; i++)
+     if ( scenario_mode == false)
      {
-        if ( goal_list.at(i).id == name )
-        {
-            
-                current_goal2.x = goal_list.at(i).x;
-                current_goal2.y = goal_list.at(i).y;
-                current_goal2.yaw = goal_list.at(i).yaw;
-                current_goal2.id = name;
-               
+          if ( name == "scenario_start" )
+          {
+            scenario_index = 1;
+            scenario_mode = true;
+          }
+          else
+          {
+              if ( scenario_mode == false)
+              {
+                  for ( int i =0 ; i < goal_list.size() ; i++)
+                  {
+                      if ( goal_list.at(i).id == name )
+                      {
+                          
+                              current_goal2.x = goal_list.at(i).x;
+                              current_goal2.y = goal_list.at(i).y;
+                              current_goal2.yaw = goal_list.at(i).yaw;
+                              current_goal2.id = name;
+                            
 
-                std::cout << "next goal : "  << name << std::endl;
-                status = 2;
-                break;
-        }
+                              std::cout << "next goal : "  << name << std::endl;
+                              status = 2;
+                              break;
+                      }
 
-      
+                    
+                  }
+              }
+
+          }
      }
-    
+     else
+     {
+       if ( msg->data == "cancel" || msg->data == "scenario_stop")
+       {
+         sendForceStop();
+         ac->cancelGoal ();
+         status = 0;
+         scenario_mode = false;
+         scenario_index  = 0;
+       }
+      
+       
+     }
+     
+
    }
    else if ( status != 0)
    {
-     if ( msg->data == "cancel")
+     if ( msg->data == "cancel" || msg->data == "scenario_stop")
      {
+      sendForceStop();
       ac->cancelGoal ();
       status = 0;
+      scenario_mode = false;
+      scenario_index  = 0;
      }
-   
    }
 }
 
@@ -238,6 +292,41 @@ void publishStatus(int int_status)
   pub_navigation_status.publish(msg);
 }
 
+void scnearioLoop()
+{
+    if ( scenario_mode )
+    {
+      if ( status == 0) //idle or done
+      {
+           if ( scenario_index < goal_list.size() )
+           {
+              current_goal2.x = goal_list.at(scenario_index).x;
+              current_goal2.y = goal_list.at(scenario_index).y;
+              current_goal2.yaw = goal_list.at(scenario_index).yaw;
+              current_goal2.id = goal_list.at(scenario_index).id;
+
+              std::cout << "next scenario goal : "  << current_goal2.id << std::endl;
+              status = 2;
+           }
+           else
+           {
+               scenario_mode = false;
+               scenario_index = 0;
+               std::cout << "***** Scenario done. ******"  << std::endl;
+
+               if ( scenario_loop)
+               {
+                 scenario_mode = true;
+                 std::cout << "Scenario loop, start the scenario again"  << std::endl;
+               }
+           }
+           
+      }
+    }
+}
+
+
+
 int main (int argc, char **argv)
 {
   ros::init(argc, argv, "test_movebase");
@@ -253,6 +342,8 @@ int main (int argc, char **argv)
   ROS_INFO("Waiting for action server to start...");
 
   ac = new actionlib::SimpleActionClient<sepanta_msgs::MasterAction>("SepantaMoveBaseAction", true);
+  client = nh.serviceClient<sepanta_msgs::command>("sepantamovebase/command");
+
   // wait for the action server to start
   ac->waitForServer(); //will wait for infinite time
 
@@ -267,6 +358,7 @@ int main (int argc, char **argv)
     ros::spinOnce();
     loop.sleep();
     publishStatus(status);
+    scnearioLoop();
   }
 
   thread_exit = true;
