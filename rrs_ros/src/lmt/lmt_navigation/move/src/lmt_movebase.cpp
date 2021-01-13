@@ -1,24 +1,24 @@
-#include <sepantamovebase.h>
+#include <lmt_movebase.h>
 
 // #define VIRTUALMODE
 
-SepantaMoveBase::SepantaMoveBase() : 
+LMTMoveBase::LMTMoveBase() : 
 App_exit(false),
 is_sim(false),
-_thread_PathFwr(&SepantaMoveBase::PathFwr,this),
-_thread_Logic(&SepantaMoveBase::logic_thread,this),
-_thread_Vis(&SepantaMoveBase::vis_thread,this),
-_thread_Localization(&SepantaMoveBase::Localization_thread,this)
+_thread_PathFwr(&LMTMoveBase::PathFwr,this),
+_thread_Logic(&LMTMoveBase::logic_thread,this),
+_thread_Vis(&LMTMoveBase::vis_thread,this),
+_thread_Localization(&LMTMoveBase::Localization_thread,this)
 {
     init();
 }
 
-SepantaMoveBase::~SepantaMoveBase()
+LMTMoveBase::~LMTMoveBase()
 {
 	kill();
 }
 
-double SepantaMoveBase::Quat2Rad(double orientation[])
+double LMTMoveBase::Quat2Rad(double orientation[])
 {
     tf::Quaternion q(orientation[0], orientation[1], orientation[2], orientation[3]);
     tf::Matrix3x3 m(q);
@@ -27,52 +27,52 @@ double SepantaMoveBase::Quat2Rad(double orientation[])
     return yaw;
 }
 
-void SepantaMoveBase::publish_isrobotmove()
+void LMTMoveBase::publish_isrobotmove()
 {
     std_msgs::Bool _msg;
     _msg.data = getrobotmove();
     pub_move.publish(_msg);
 }
 
-void SepantaMoveBase::setsystemstate(int value,bool forced = false)
+void LMTMoveBase::setsystemstate(int value,bool forced = false)
 {
    if ( getstatemutex() || forced)
    		system_state = value;
 }
 
-void SepantaMoveBase::setlogicstate(int value,bool forced = false)
+void LMTMoveBase::setlogicstate(int value,bool forced = false)
 {
 	if ( getstatemutex() || forced)
    		logic_state = value;
 }
 
-int SepantaMoveBase::getsystemstate()
+int LMTMoveBase::getsystemstate()
 {
    return system_state;
 }
 
-int SepantaMoveBase::getlogicstate()
+int LMTMoveBase::getlogicstate()
 {
   return logic_state;
 }
 
-bool SepantaMoveBase::getstatemutex()
+bool LMTMoveBase::getstatemutex()
 {
    return statemutex;
 }
 
-void SepantaMoveBase::setstatemutex(bool value)
+void LMTMoveBase::setstatemutex(bool value)
 {
     statemutex = value;
 }
 
-void SepantaMoveBase::say_message(string data)
+void LMTMoveBase::say_message(string data)
 {
     if ( say_enable == false ) return;
     playVoice(data);
 }
 
-void SepantaMoveBase::send_omni(double x,double y ,double w)
+void LMTMoveBase::send_omni(double x,double y ,double w)
 {
         x = x;
         y = y;
@@ -99,21 +99,21 @@ void SepantaMoveBase::send_omni(double x,double y ,double w)
         mycmd_vel_pub.publish(myTwist); 
 }
 
-void SepantaMoveBase::force_stop()
+void LMTMoveBase::force_stop()
 {
     cout<<"force stop"<<endl;
     send_omni(0,0,0);
     boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 }
 
-double SepantaMoveBase::GetDistance(double x1, double y1, double x2, double y2)
+double LMTMoveBase::GetDistance(double x1, double y1, double x2, double y2)
 {
     double x = x2-x1;
     double y = y2-y1;
     return sqrt(x*x + y*y);
 }
 
-int SepantaMoveBase::GetCurrentStep()
+int LMTMoveBase::GetCurrentStep()
 {
     for(int i=0;i<globalPathSize-1;i++)
     {
@@ -123,26 +123,26 @@ int SepantaMoveBase::GetCurrentStep()
     return globalPathSize-1;
 }
 
-void SepantaMoveBase::sepantamapengine_savemap()
+void LMTMoveBase::LMTmapengine_savemap()
 {
    std_srvs::Empty _s;
    client_map_save.call(_s);
 }
 
-void SepantaMoveBase::sepantamapengine_loadmap()
+void LMTMoveBase::LMTmapengine_loadmap()
 {
    std_srvs::Empty _s;
    client_map_load.call(_s);
 }
 
-void SepantaMoveBase::clean_costmaps()
+void LMTMoveBase::clean_costmaps()
 {
    std_srvs::Empty _s;
    client_resetcostmap.call(_s);
 }
 
 //cm cm degree
-void SepantaMoveBase::update_hector_origin(float x,float y,float yaw)
+void LMTMoveBase::update_hector_origin(float x,float y,float yaw)
 {
     geometry_msgs::PoseWithCovarianceStamped msg;
     msg.pose.pose.orientation = tf::createQuaternionMsgFromYaw(yaw);
@@ -151,14 +151,14 @@ void SepantaMoveBase::update_hector_origin(float x,float y,float yaw)
     pub_slam_origin.publish(msg);
 }
 
-void SepantaMoveBase::reset_hector_slam()
+void LMTMoveBase::reset_hector_slam()
 {
 	std_msgs::String _msg;
 	_msg.data = "reset";
 	pub_slam_reset.publish(_msg);
 }
 
-void SepantaMoveBase::read_config()
+void LMTMoveBase::read_config()
 {
         std::string path_points =  ros::package::getPath("managment") + "/maps/moveconfig.txt";
         cout<<path_points<<endl;
@@ -191,7 +191,7 @@ void SepantaMoveBase::read_config()
             
 }
 
-void SepantaMoveBase::read_file()
+void LMTMoveBase::read_file()
 {
 
         std::string path_points =  ros::package::getPath("managment") + "/maps/points.txt";
@@ -237,11 +237,11 @@ void SepantaMoveBase::read_file()
         std::cout << coutcolor_blue << "read done : " << coutcolor0 << goal_list.size()<<std::endl << std::endl;
 }
 
-void SepantaMoveBase::SaveLastPosition()
+void LMTMoveBase::SaveLastPosition()
 {
-    // std::string lastPositionPath =  ros::package::getPath("sepantamovebase") + "/files/lastPosition.txt";
+    // std::string lastPositionPath =  ros::package::getPath("LMTMovebase") + "/files/lastPosition.txt";
     // std::string str;
-    // std::ofstream text("/home/sepanta/catkin_ws/src/Sepanta3/Navigation/SepantaMoveBase/files/lastPosition.txt", std::ios::out);
+    // std::ofstream text("/home/LMT/catkin_ws/src/LMT3/Navigation/LMTMoveBase/files/lastPosition.txt", std::ios::out);
     // if (text.is_open())
     // {
     //     str = boost::lexical_cast<std::string>(position[0]);
@@ -255,7 +255,7 @@ void SepantaMoveBase::SaveLastPosition()
     // else cout << "Unable to open lastPosition file";
 }
 
-int SepantaMoveBase::find_goal_byname(string name)
+int LMTMoveBase::find_goal_byname(string name)
 {
     for ( int i = 0 ; i < goal_list.size() ; i++ )
     {
@@ -268,7 +268,7 @@ int SepantaMoveBase::find_goal_byname(string name)
     return -1;
 }
 
-nav_msgs::Path SepantaMoveBase::call_make_plan()
+nav_msgs::Path LMTMoveBase::call_make_plan()
 {
     nav_msgs::GetPlan srv;
 
@@ -288,7 +288,7 @@ nav_msgs::Path SepantaMoveBase::call_make_plan()
     return srv.response.plan;
 }
 
-void SepantaMoveBase::logic_thread()
+void LMTMoveBase::logic_thread()
 {
      boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
     std::cout<<"logic thread started"<<endl;
@@ -297,7 +297,7 @@ void SepantaMoveBase::logic_thread()
     while(ros::ok() && !App_exit)
     {
          boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-         //cout<<"issepantamove : "<< isrobotmove << endl;
+         //cout<<"isLMTmove : "<< isrobotmove << endl;
 
          if ( getlogicstate() == -1)
          {
@@ -451,7 +451,7 @@ void SepantaMoveBase::logic_thread()
     }
 }
 
-void SepantaMoveBase::exe_slam(goal_data g)
+void LMTMoveBase::exe_slam(goal_data g)
 {
     bool valid_point = false;
     //this function get goal and move robot to there
@@ -499,7 +499,7 @@ void SepantaMoveBase::exe_slam(goal_data g)
     }  
 }
 
-void SepantaMoveBase::exe_cancel()
+void LMTMoveBase::exe_cancel()
 {
 	 setstatemutex(false);
 	 setlogicstate(0,true);
@@ -513,14 +513,14 @@ void SepantaMoveBase::exe_cancel()
     
 }
 
-int SepantaMoveBase::sign(double data)
+int LMTMoveBase::sign(double data)
 {
     if(data > 0) return 1;
     else if(data < 0) return -1;
     else return 0;
 }
 
-int SepantaMoveBase::roundData(double data)
+int LMTMoveBase::roundData(double data)
 {
     if(data>=0)
         return ceil(data);
@@ -528,12 +528,12 @@ int SepantaMoveBase::roundData(double data)
         return floor(data);
 }
 
-double SepantaMoveBase::GetToPointsAngle(double x1, double y1, double x2, double y2)
+double LMTMoveBase::GetToPointsAngle(double x1, double y1, double x2, double y2)
 {
     return atan2(y2-y1,x2-x1);
 }
 
-void SepantaMoveBase::ResetLimits()
+void LMTMoveBase::ResetLimits()
 {
     desireErrorX = normal_desire_errorX;
     desireErrorY = normal_desire_errorY;
@@ -546,7 +546,7 @@ void SepantaMoveBase::ResetLimits()
     maxTethaSpeed = _normal_max_angular_speed;
 }
 
-void SepantaMoveBase::ReduceLimits()
+void LMTMoveBase::ReduceLimits()
 {
     desireErrorX = goal_desire_errorX;
     desireErrorY = goal_desire_errorY;
@@ -565,27 +565,27 @@ void SepantaMoveBase::ReduceLimits()
 //6 => turn to goal
 //8 => reached
 
-void SepantaMoveBase::setrobotmove(bool value)
+void LMTMoveBase::setrobotmove(bool value)
 {
 	isrobotmove = value;
 }
 
-bool SepantaMoveBase::getrobotmove()
+bool LMTMoveBase::getrobotmove()
 {
 	return isrobotmove;
 }
 
-void SepantaMoveBase::setlastnavigationresult(string value)
+void LMTMoveBase::setlastnavigationresult(string value)
 {
 	last_navigation_result = value;
 }
 
-string SepantaMoveBase::getlastnavigationresult()
+string LMTMoveBase::getlastnavigationresult()
 {
 	return last_navigation_result;
 }
 
-int SepantaMoveBase::calc_next_point()
+int LMTMoveBase::calc_next_point()
 {
             bool isgoalnext = false;
             if ( step == globalPathSize-1)
@@ -633,7 +633,7 @@ int SepantaMoveBase::calc_next_point()
             return isgoalnext;
 }
 
-void SepantaMoveBase::errors_update()
+void LMTMoveBase::errors_update()
 {
             //calc errorX , errorY , errorTetha 
             errorX = tempGoalPos[0]-position[0];
@@ -659,7 +659,7 @@ void SepantaMoveBase::errors_update()
             distacne_to_goal = sqrt(distacne_to_goal);
 }
 
-void SepantaMoveBase::publish_info()
+void LMTMoveBase::publish_info()
 {
         info_counter++;
         if ( info_counter>50)
@@ -673,7 +673,7 @@ void SepantaMoveBase::publish_info()
         }
 }
 
-void SepantaMoveBase::controller_update(int x,bool y,bool theta)
+void LMTMoveBase::controller_update(int x,bool y,bool theta)
 {
     if ( x == 1)
     xSpeed = (fabs(errorX_R*LKpX)<=maxLinSpeedX)?(errorX_R*LKpX):sign(errorX_R)*maxLinSpeedX;
@@ -693,7 +693,7 @@ void SepantaMoveBase::controller_update(int x,bool y,bool theta)
     send_omni(xSpeed,0,tethaSpeed); 
 }
 
-void SepantaMoveBase::PathFwr()
+void LMTMoveBase::PathFwr()
 {
 	
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -915,7 +915,7 @@ void SepantaMoveBase::PathFwr()
     }
 }
 
-void SepantaMoveBase::GetCostmap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
+void LMTMoveBase::GetCostmap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
 {
 	if(!IsCmValid)
 	{
@@ -924,7 +924,7 @@ void SepantaMoveBase::GetCostmap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
 	}
 }
 
-bool SepantaMoveBase::calc_error(double x1,double y1,double t1,double x2,double y2,double t2,double delta_t)
+bool LMTMoveBase::calc_error(double x1,double y1,double t1,double x2,double y2,double t2,double delta_t)
 {
    bool valid = true;
    double v1 = fabs(x2-x1) / delta_t;
@@ -944,7 +944,7 @@ bool SepantaMoveBase::calc_error(double x1,double y1,double t1,double x2,double 
    return valid;
 }
 
-void SepantaMoveBase::hector_problem_detected()
+void LMTMoveBase::hector_problem_detected()
 {
     if ( getlogicstate() != -1)
     {
@@ -959,7 +959,7 @@ void SepantaMoveBase::hector_problem_detected()
         }
 }
 
-void SepantaMoveBase::chatterCallbackPoints(const sepantamovebase::PointList::ConstPtr &msg)
+void LMTMoveBase::chatterCallbackPoints(const lmt_movebase::PointList::ConstPtr &msg)
 {
     if ( is_sim == false ) return;
 
@@ -981,7 +981,7 @@ void SepantaMoveBase::chatterCallbackPoints(const sepantamovebase::PointList::Co
                
 }
 
-void SepantaMoveBase::chatterCallbackTags(const sepantamovebase::PointList::ConstPtr &msg)
+void LMTMoveBase::chatterCallbackTags(const lmt_movebase::PointList::ConstPtr &msg)
 {
         std::lock_guard<std::mutex> guard(tag_mutex);
         tag_list.clear();
@@ -1005,7 +1005,7 @@ void SepantaMoveBase::chatterCallbackTags(const sepantamovebase::PointList::Cons
         }
 }
 
-void SepantaMoveBase::GetAmclPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &msg)
+void LMTMoveBase::GetAmclPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &msg)
 {
 	amclCovariance = msg->pose.covariance;
 	amclPosition[0] = msg->pose.pose.position.x;
@@ -1017,7 +1017,7 @@ void SepantaMoveBase::GetAmclPose(const geometry_msgs::PoseWithCovarianceStamped
     amclTetha = Quat2Rad(amclOrientation);
 }
 
-void SepantaMoveBase::GetPos(const geometry_msgs::PoseStamped::ConstPtr &msg)
+void LMTMoveBase::GetPos(const geometry_msgs::PoseStamped::ConstPtr &msg)
 {
     position[0] = msg->pose.position.x;
     position[1] = msg->pose.position.y;
@@ -1033,7 +1033,7 @@ void SepantaMoveBase::GetPos(const geometry_msgs::PoseStamped::ConstPtr &msg)
     //cout<<"position : "<<position[0]<<" "<<position[1]<<" "<<tetha<<endl;
 }
 
-void SepantaMoveBase::CheckHectorStatus(const std_msgs::Bool::ConstPtr &msg)
+void LMTMoveBase::CheckHectorStatus(const std_msgs::Bool::ConstPtr &msg)
 { 
     if(msg->data == false)
     {
@@ -1041,7 +1041,7 @@ void SepantaMoveBase::CheckHectorStatus(const std_msgs::Bool::ConstPtr &msg)
     }
 }
 
-void SepantaMoveBase::chatterCallback_ttsfb(const std_msgs::String::ConstPtr &msg)
+void LMTMoveBase::chatterCallback_ttsfb(const std_msgs::String::ConstPtr &msg)
 {
     if(!isttsready && msg->data == sayMessageId)
     {
@@ -1050,7 +1050,7 @@ void SepantaMoveBase::chatterCallback_ttsfb(const std_msgs::String::ConstPtr &ms
     }
 }
 
-bool SepantaMoveBase::checkcommand(sepanta_msgs::command::Request  &req,sepanta_msgs::command::Response &res)
+bool LMTMoveBase::checkcommand(lmt_msgs::command::Request  &req,lmt_msgs::command::Response &res)
 {
 
 	ROS_INFO("Service Request....");
@@ -1068,12 +1068,12 @@ bool SepantaMoveBase::checkcommand(sepanta_msgs::command::Request  &req,sepanta_
 
     if ( _cmd == "save_map")
     {
-    	sepantamapengine_savemap();
+    	LMTmapengine_savemap();
     }
 
     if ( _cmd == "load_map")
     {
-    	sepantamapengine_loadmap();
+    	LMTmapengine_loadmap();
     }
 
     if ( _cmd == "exe")
@@ -1109,7 +1109,7 @@ bool SepantaMoveBase::checkcommand(sepanta_msgs::command::Request  &req,sepanta_
     return true;
 }
 
-void SepantaMoveBase::test_vis()
+void LMTMoveBase::test_vis()
 {
 
     visualization_msgs::Marker points , points2 , points3 , points4 ;
@@ -1214,7 +1214,7 @@ void SepantaMoveBase::test_vis()
     marker_pub.publish(points);
 }
 
-void SepantaMoveBase::vis_thread()
+void LMTMoveBase::vis_thread()
 {
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
     while (ros::ok() && App_exit == false)
@@ -1224,7 +1224,7 @@ void SepantaMoveBase::vis_thread()
     }
 }
 
-void SepantaMoveBase::Localization_thread()
+void LMTMoveBase::Localization_thread()
 {
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
     int counter = 0;
@@ -1252,10 +1252,10 @@ void SepantaMoveBase::Localization_thread()
     // }
 }
 
-void SepantaMoveBase::init()
+void LMTMoveBase::init()
 {
 
-ROS_INFO("SepantaMoveBase Version 2.2 :*");
+ROS_INFO("LMTMoveBase Version 2.2 :*");
 cout<<"1"<<endl;
 coutcolor0 = "\033[0;0m";
 coutcolor_red = "\033[0;31m";
@@ -1343,16 +1343,16 @@ std::cout<<"Goal WKp : "<<_goal_kp_angular<<std::endl;
 
 cout<<"DONE"<<endl;
     //============================================================================================
-    sub_handles[0] = node_handle.subscribe("/slam_out_pose", 10, &SepantaMoveBase::GetPos,this);
+    sub_handles[0] = node_handle.subscribe("/slam_out_pose", 10, &LMTMoveBase::GetPos,this);
     //============================================================================================
-    sub_handles[1] = node_handle.subscribe("/move_base/global_costmap/costmap", 10, &SepantaMoveBase::GetCostmap,this);
+    sub_handles[1] = node_handle.subscribe("/move_base/global_costmap/costmap", 10, &LMTMoveBase::GetCostmap,this);
     //============================================================================================
-    sub_handles[2] = node_handle.subscribe("/HectorStatus", 10, &SepantaMoveBase::CheckHectorStatus,this);
+    sub_handles[2] = node_handle.subscribe("/HectorStatus", 10, &LMTMoveBase::CheckHectorStatus,this);
     //============================================================================================
-    sub_handles[4] = node_handle.subscribe("/amcl_pose", 10, &SepantaMoveBase::GetAmclPose,this);
+    sub_handles[4] = node_handle.subscribe("/amcl_pose", 10, &LMTMoveBase::GetAmclPose,this);
 
-    sub_map_points = node_handle.subscribe("points",1, &SepantaMoveBase::chatterCallbackPoints,this);
-    sub_map_tags = node_handle.subscribe("tags",1, &SepantaMoveBase::chatterCallbackTags,this);
+    sub_map_points = node_handle.subscribe("points",1, &LMTMoveBase::chatterCallbackPoints,this);
+    sub_map_tags = node_handle.subscribe("tags",1, &LMTMoveBase::chatterCallbackTags,this);
 
     //============================================================================================
     mycmd_vel_pub = node_handle.advertise<geometry_msgs::Twist>("cmd_vel", 10);
@@ -1360,7 +1360,7 @@ cout<<"DONE"<<endl;
     pub_slam_origin = node_handle.advertise<geometry_msgs::PoseWithCovarianceStamped>("/slam_origin", 1);
     pub_slam_reset = node_handle.advertise<std_msgs::String>("syscommand", 1);
     //============================================================================================
-    ros::ServiceServer service_command = n_service.advertiseService("sepantamovebase/command", &SepantaMoveBase::checkcommand,this);
+    ros::ServiceServer service_command = n_service.advertiseService("LMTMovebase/command", &LMTMoveBase::checkcommand,this);
     //============================================================================================
     pub_tts = node_handle.advertise<std_msgs::String>("/texttospeech/message", 10);
     //============================================================================================
@@ -1375,11 +1375,11 @@ cout<<"DONE"<<endl;
     //============================================================================================
     client_makeplan = node_handle.serviceClient<nav_msgs::GetPlanRequest>("move_base/make_plan");
  	client_resetcostmap = node_handle.serviceClient<std_srvs::EmptyRequest>("move_base/clear_costmaps");
- 	client_map_save = node_handle.serviceClient<std_srvs::EmptyRequest>("sepantamapengenine/save");
-    client_map_load = node_handle.serviceClient<std_srvs::EmptyRequest>("sepantamapengenine/load");
+ 	client_map_save = node_handle.serviceClient<std_srvs::EmptyRequest>("LMTmapengenine/save");
+    client_map_load = node_handle.serviceClient<std_srvs::EmptyRequest>("LMTmapengenine/load");
     //============================================================================================
-    sub_handles[4] = node_handle.subscribe("/texttospeech/queue", 10, &SepantaMoveBase::chatterCallback_ttsfb,this);
-    say_service = node_handle.serviceClient<sepanta_msgs::command>("texttospeech/say");
+    sub_handles[4] = node_handle.subscribe("/texttospeech/queue", 10, &LMTMoveBase::chatterCallback_ttsfb,this);
+    say_service = node_handle.serviceClient<lmt_msgs::command>("texttospeech/say");
     pub_voice_cmd = node_handle.advertise<std_msgs::String>("/movo/voice/text",1);
     //============================================================================================
     
@@ -1389,7 +1389,7 @@ cout<<"DONE"<<endl;
     ROS_INFO("Init done");
 }
 
-void SepantaMoveBase::playVoice(std::string text)
+void LMTMoveBase::playVoice(std::string text)
 {
     ROS_WARN_STREAM("Play voice : " << text);
     std_msgs::String msg;
@@ -1397,7 +1397,7 @@ void SepantaMoveBase::playVoice(std::string text)
     pub_voice_cmd.publish(msg);
 }
 
-void SepantaMoveBase::kill()
+void LMTMoveBase::kill()
 {
 	_thread_PathFwr.interrupt();
     _thread_PathFwr.join();

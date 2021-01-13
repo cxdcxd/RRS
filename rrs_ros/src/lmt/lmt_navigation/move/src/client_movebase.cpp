@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
-#include <sepanta_msgs/MasterAction.h>
+#include <lmt_msgs/MasterAction.h>
 #include <ros/package.h>
 #include <fstream>
 #include <iostream>
@@ -16,10 +16,10 @@
 #include <boost/thread.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
-#include <sepanta_msgs/command.h>
+#include <lmt_msgs/command.h>
 using namespace std;
 
-actionlib::SimpleActionClient<sepanta_msgs::MasterAction> * ac;
+actionlib::SimpleActionClient<lmt_msgs::MasterAction> * ac;
 
 ros::Subscriber sub_navigation_goal;
 ros::Subscriber sub_navigation_goal_name;
@@ -61,7 +61,7 @@ void thread_logic()
      {
         ROS_INFO("Sending Goal Raw");
         // send a goal to the action
-        sepanta_msgs::MasterGoal goal;
+        lmt_msgs::MasterGoal goal;
         goal.action = "exe";
         goal.goal = current_goal;
 
@@ -75,7 +75,7 @@ void thread_logic()
           actionlib::SimpleClientGoalState state = ac->getState();
           ROS_INFO("Action finished: %s",state.toString().c_str());
 
-          sepanta_msgs::MasterResult::ConstPtr _res = ac->getResult();
+          lmt_msgs::MasterResult::ConstPtr _res = ac->getResult();
 
           ROS_INFO("Action result : %s",_res->result.c_str());
         }
@@ -91,7 +91,7 @@ void thread_logic()
      {
         ROS_INFO("Sending Goal Name");
         // send a goal to the action
-        sepanta_msgs::MasterGoal goal;
+        lmt_msgs::MasterGoal goal;
         goal.action = "exe2";
         goal.iParam1 = current_goal2.x;
         goal.iParam2 = current_goal2.y;
@@ -108,7 +108,7 @@ void thread_logic()
           actionlib::SimpleClientGoalState state = ac->getState();
           ROS_INFO("Action finished: %s",state.toString().c_str());
 
-          sepanta_msgs::MasterResult::ConstPtr _res = ac->getResult();
+          lmt_msgs::MasterResult::ConstPtr _res = ac->getResult();
 
           ROS_INFO("Action result : %s",_res->result.c_str());
         }
@@ -197,7 +197,7 @@ void chatterCallbackGoal(const geometry_msgs::PoseStamped::ConstPtr& msg)
 
 void sendForceStop()
 {
-  sepanta_msgs::command srv;
+  lmt_msgs::command srv;
 
   srv.request.command = "cancel";
  
@@ -207,7 +207,7 @@ void sendForceStop()
   }
   else
   {
-    ROS_ERROR("Failed to call service, sepanta command");
+    ROS_ERROR("Failed to call service, lmt command");
   }
 }
 
@@ -341,8 +341,8 @@ int main (int argc, char **argv)
 
   ROS_INFO("Waiting for action server to start...");
 
-  ac = new actionlib::SimpleActionClient<sepanta_msgs::MasterAction>("SepantaMoveBaseAction", true);
-  client = nh.serviceClient<sepanta_msgs::command>("sepantamovebase/command");
+  ac = new actionlib::SimpleActionClient<lmt_msgs::MasterAction>("LMTMoveBaseAction", true);
+  client = nh.serviceClient<lmt_msgs::command>("lmt/movebase/command");
 
   // wait for the action server to start
   ac->waitForServer(); //will wait for infinite time

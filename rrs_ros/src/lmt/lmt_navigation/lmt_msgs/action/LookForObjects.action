@@ -1,5 +1,5 @@
 ---
-sepanta_msgs/Object[] objects
+lmt_msgs/Object[] objects
 ---
 uint8 PROGRESS_STARTED = 0
 uint8 PROGRESS_CLOUD_FILTERED = 14

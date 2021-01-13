@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     ROS_INFO("staticmapcaller started");
 
     ros::NodeHandle node_handles;
-    client_makeplan = node_handles.serviceClient<std_srvs::Empty>("sepantamapengenine/load");
+    client_makeplan = node_handles.serviceClient<std_srvs::Empty>("lmt/mapengine/load");
 
     std_srvs::Empty _srv;
     client_makeplan.call(_srv);

@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   actionlib
   actionlib_msgs 
-  sepanta_msgs
+  lmt_msgs
 )
 
 find_package(Boost COMPONENTS system thread date_time REQUIRED)
@@ -52,7 +52,7 @@ add_definitions(${PCL_DEFINITIONS})
 
 add_executable(managment src/managment.cpp)
 target_link_libraries(managment ${catkin_LIBRARIES} ${Boost_LIBRARIES}  )
-add_dependencies(managment sepanta_msgs_generate_messages_cpp)
+add_dependencies(managment lmt_msgs_generate_messages_cpp)
 
 
 

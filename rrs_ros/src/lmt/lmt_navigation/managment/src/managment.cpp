@@ -1,7 +1,7 @@
-#include "sepanta_msgs/NodeAction.h"
-#include "sepanta_msgs/ListAvailable.h"
-#include "sepanta_msgs/ListLoaded.h"
-#include "sepanta_msgs/NodeEvent.h"
+#include "lmt_msgs/NodeAction.h"
+#include "lmt_msgs/ListAvailable.h"
+#include "lmt_msgs/ListLoaded.h"
+#include "lmt_msgs/NodeEvent.h"
 #include <ros/ros.h>
 #include <ros/console.h>
 #include <ros/package.h>
@@ -31,9 +31,9 @@
 #include <boost/algorithm/string/split.hpp>
 #include <sensor_msgs/Image.h>
 
-#include <sepanta_msgs/nodestatus.h>
-#include <sepanta_msgs/nodestatuslist.h>
-#include <sepanta_msgs/kill_marker.h>
+#include <lmt_msgs/nodestatus.h>
+#include <lmt_msgs/nodestatuslist.h>
+#include <lmt_msgs/kill_marker.h>
 #include <fstream>
 #include "ros/ros.h"
 #include <math.h>
@@ -48,7 +48,7 @@
 #include <iostream>
 #include <math.h>
 #include <boost/lexical_cast.hpp>
-#include <sepanta_msgs/log.h>
+#include <lmt_msgs/log.h>
 
 using namespace std;
 using namespace boost;
@@ -106,19 +106,19 @@ void std_out(std::string msg,std::string color)
 
 //===========================================================================
 
-class sepanta_msgsMain
+class lmt_msgsMain
 {
 
 public:
-    sepanta_msgsMain(ros::NodeHandle &n)
+    lmt_msgsMain(ros::NodeHandle &n)
         : __n(n)
     {
-        __children_wait_thread = boost::thread(boost::bind(&sepanta_msgsMain::wait_thread, this));
+        __children_wait_thread = boost::thread(boost::bind(&lmt_msgsMain::wait_thread, this));
         if (regcomp(&__re_alnum, "^[[:alnum:]]+$", REG_EXTENDED) != 0) {
             throw ros::Exception("Failed to compile regex");
         }
 
-        __use_acceptable_modules_file = n.getParam("/sepanta_msgs/acceptable_modules_file",
+        __use_acceptable_modules_file = n.getParam("/lmt_msgs/acceptable_modules_file",
                                                    __acceptable_modules_file);
 
         if (__use_acceptable_modules_file) {
@@ -140,21 +140,21 @@ public:
         }
 
         ros::NodeHandle nn;
-        __srv_startall = n.advertiseService("/manager/startall", &sepanta_msgsMain::startall_node, this);
-        __srv_stopall = n.advertiseService("/manager/stopall", &sepanta_msgsMain::stopall_node, this);
-        __srv_start = n.advertiseService("/manager/start", &sepanta_msgsMain::start_node, this);
-        __srv_stop = n.advertiseService("/manager/stop", &sepanta_msgsMain::stop_node, this);
-        __srv_pause = n.advertiseService("/manager/pause", &sepanta_msgsMain::pause_node, this);
-        __srv_continue = n.advertiseService("/manager/continue", &sepanta_msgsMain::continue_node, this);
-        __srv_list_loaded = n.advertiseService("/manager/list_loaded",&sepanta_msgsMain::list_loaded, this);
-        __srv_list_avail = n.advertiseService("/manager/list_available", &sepanta_msgsMain::list_available, this);
+        __srv_startall = n.advertiseService("/manager/startall", &lmt_msgsMain::startall_node, this);
+        __srv_stopall = n.advertiseService("/manager/stopall", &lmt_msgsMain::stopall_node, this);
+        __srv_start = n.advertiseService("/manager/start", &lmt_msgsMain::start_node, this);
+        __srv_stop = n.advertiseService("/manager/stop", &lmt_msgsMain::stop_node, this);
+        __srv_pause = n.advertiseService("/manager/pause", &lmt_msgsMain::pause_node, this);
+        __srv_continue = n.advertiseService("/manager/continue", &lmt_msgsMain::continue_node, this);
+        __srv_list_loaded = n.advertiseService("/manager/list_loaded",&lmt_msgsMain::list_loaded, this);
+        __srv_list_avail = n.advertiseService("/manager/list_available", &lmt_msgsMain::list_available, this);
 
-        __pub_node_events = n.advertise<sepanta_msgs::NodeEvent>("manager/node_events", 10);
-        service_markerkill = nn.serviceClient<sepanta_msgs::kill_marker>("pgitic_kill_marker");
+        __pub_node_events = n.advertise<lmt_msgs::NodeEvent>("manager/node_events", 10);
+        service_markerkill = nn.serviceClient<lmt_msgs::kill_marker>("pgitic_kill_marker");
 
     }
 
-    ~sepanta_msgsMain()
+    ~lmt_msgsMain()
     {
         void *dont_care;
         pthread_cancel(__children_wait_thread.native_handle());
@@ -245,9 +245,9 @@ public:
             if (__children.size() == 1) {
                 __children_cond.notify_all();
             }
-            sepanta_msgs::NodeEvent msg;
+            lmt_msgs::NodeEvent msg;
             msg.header.stamp.setNow(ros::Time::now());
-            msg.event_type = sepanta_msgs::NodeEvent::NODE_STARTED;
+            msg.event_type = lmt_msgs::NodeEvent::NODE_STARTED;
             msg.node_name = progname;
             __pub_node_events.publish(msg);
 
@@ -271,8 +271,8 @@ public:
             if (pid == -1)  continue;
             lock.lock();
 
-            sepanta_msgs::NodeEvent msg;
-            msg.event_type = sepanta_msgs::NodeEvent::NODE_DIED;
+            lmt_msgs::NodeEvent msg;
+            msg.event_type = lmt_msgs::NodeEvent::NODE_DIED;
             msg.node_name = __children[pid].first;
             update_status(msg.node_name,"stop");
 
@@ -299,7 +299,7 @@ public:
                 ROS_INFO("%i/%s stopped by signal %d", pid,
                          __children[pid].first.c_str(), WSTOPSIG(status));
                 char *tmp;
-                msg.event_type = sepanta_msgs::NodeEvent::NODE_PAUSED;
+                msg.event_type = lmt_msgs::NodeEvent::NODE_PAUSED;
                 update_status(msg.node_name,"pause");
                 if (asprintf(&tmp, "%s (PID %i) stopped by signal %d",
                              __children[pid].first.c_str(), pid, WSTOPSIG(status)) != -1) {
@@ -309,7 +309,7 @@ public:
             } else if (WIFCONTINUED(status)) {
                 ROS_INFO("%i/%s continued", pid, __children[pid].first.c_str());
                 char *tmp;
-                msg.event_type = sepanta_msgs::NodeEvent::NODE_CONTINUED;
+                msg.event_type = lmt_msgs::NodeEvent::NODE_CONTINUED;
                 update_status(msg.node_name,"resume");
                 if (asprintf(&tmp, "%s (PID %i) continued",
                              __children[pid].first.c_str(), pid) != -1) {
@@ -327,7 +327,7 @@ public:
                                  __children[pid].second.c_str());
 
                         char *tmp;
-                        msg.event_type |= sepanta_msgs::NodeEvent::NODE_SEGFAULT;
+                        msg.event_type |= lmt_msgs::NodeEvent::NODE_SEGFAULT;
                         update_status(msg.node_name,"segfault");
                         if (asprintf(&tmp, "%s (PID %i) died with segfault",
                                      __children[pid].first.c_str(), pid) != -1) {
@@ -376,8 +376,8 @@ public:
         return 0;
     }
 
-    bool start_node(sepanta_msgs::NodeAction::Request &req,
-                    sepanta_msgs::NodeAction::Response &resp)
+    bool start_node(lmt_msgs::NodeAction::Request &req,
+                    lmt_msgs::NodeAction::Response &resp)
     {
 
         return fork_and_exec(get_name(req.node_file_name));
@@ -396,19 +396,19 @@ public:
         }
     }
 
-    bool pause_node(sepanta_msgs::NodeAction::Request &req,
-                    sepanta_msgs::NodeAction::Response &resp)
+    bool pause_node(lmt_msgs::NodeAction::Request &req,
+                    lmt_msgs::NodeAction::Response &resp)
     {
         return send_signal(req.node_file_name, SIGSTOP);
     }
 
-    bool continue_node(sepanta_msgs::NodeAction::Request &req,
-                       sepanta_msgs::NodeAction::Response &resp)
+    bool continue_node(lmt_msgs::NodeAction::Request &req,
+                       lmt_msgs::NodeAction::Response &resp)
     {
         return send_signal(req.node_file_name, SIGCONT);
     }
 
-    bool startall_node(sepanta_msgs::NodeAction::Request &req,sepanta_msgs::NodeAction::Response &resp)
+    bool startall_node(lmt_msgs::NodeAction::Request &req,lmt_msgs::NodeAction::Response &resp)
     {
         std::cout<<"startall"<<std::endl;
         std::string line = req.node_file_name;
@@ -460,7 +460,7 @@ public:
         }
     }
 
-    bool stopall_node(sepanta_msgs::NodeAction::Request &req, sepanta_msgs::NodeAction::Response &resp)
+    bool stopall_node(lmt_msgs::NodeAction::Request &req, lmt_msgs::NodeAction::Response &resp)
     {
         std::cout<<"stopall"<<std::endl;
         std::string line = req.node_file_name;
@@ -474,13 +474,13 @@ public:
         }
     }
 
-    bool stop_node(sepanta_msgs::NodeAction::Request &req,sepanta_msgs::NodeAction::Response &resp)
+    bool stop_node(lmt_msgs::NodeAction::Request &req,lmt_msgs::NodeAction::Response &resp)
     {
         return stopnode(req.node_file_name);
     }
 
-    bool list_loaded(sepanta_msgs::ListLoaded::Request &req,
-                     sepanta_msgs::ListLoaded::Response &resp)
+    bool list_loaded(lmt_msgs::ListLoaded::Request &req,
+                     lmt_msgs::ListLoaded::Response &resp)
     {
         for (ChildrenMap::iterator i = __children.begin(); i != __children.end(); ++i) {
             resp.nodes.clear();
@@ -489,8 +489,8 @@ public:
         return true;
     }
 
-    bool list_available(sepanta_msgs::ListAvailable::Request &req,
-                        sepanta_msgs::ListAvailable::Response &resp)
+    bool list_available(lmt_msgs::ListAvailable::Request &req,
+                        lmt_msgs::ListAvailable::Response &resp)
     {
         resp.bin_files.clear();
         for (std::list<std::string>::iterator i = __search_paths.begin();
@@ -602,9 +602,9 @@ int init_nodes()
     names.push_back("hector_calib.sh");     //12
     names.push_back("hector_rec.sh");       //13
     names.push_back("hector_main.sh");      //14
-    names.push_back("sepantamapengine");    //15
+    names.push_back("lmtmapengine");    //15
     names.push_back("move.sh");             //16
-    names.push_back("sepantamovebase");     //17
+    names.push_back("lmt_movebase");     //17
     names.push_back("object_recognition_action_server");  //18
     names.push_back("human.sh");            //19
 	names.push_back("scenario1");           //20
@@ -625,11 +625,11 @@ void publisher()
     {
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         
-        sepanta_msgs::nodestatuslist list;
+        lmt_msgs::nodestatuslist list;
 
         for ( int i = 0 ; i < node_list.size() ; i++ )
         {
-            sepanta_msgs::nodestatus ns;
+            lmt_msgs::nodestatus ns;
             ns.name = node_list.at(i).name;
             ns.status = node_list.at(i).status;
             //ns.ack = node_list.at(i).wd->ack;
@@ -705,7 +705,7 @@ void save_log(std::string id,string message)
 
 }
 
-void main_log_callback(const sepanta_msgs::log::ConstPtr &msg)
+void main_log_callback(const lmt_msgs::log::ConstPtr &msg)
 {
    save_log(msg->id,msg->message);
 }
@@ -759,10 +759,10 @@ int main(int argc, char **argv)
 
     std_out("======================================== Ready !","green");
 
-    pub_status = n.advertise<sepanta_msgs::nodestatuslist>("manager/node_status", 10);
+    pub_status = n.advertise<lmt_msgs::nodestatuslist>("manager/node_status", 10);
     sub_log = n.subscribe("/manager/log", 1, main_log_callback);
 
-    sepanta_msgsMain sepanta_msgs(n);
+    lmt_msgsMain lmt_msgs(n);
 
     boost::thread _thread_wd(&publisher);
   

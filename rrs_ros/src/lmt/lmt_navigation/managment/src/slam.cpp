@@ -9,7 +9,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include <actionlib/server/simple_action_server.h>
-#include <sepanta_msgs/slamactionAction.h>
+#include <lmt_msgs/slamactionAction.h>
 
 #include <fstream>
 #include <iostream>
@@ -27,7 +27,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
 
-#include <sepanta_msgs/maptools.h>
+#include <lmt_msgs/maptools.h>
 
 #include <cstdio>
 #include "ros/ros.h"
@@ -36,14 +36,14 @@
 #include "tf/LinearMath/Matrix3x3.h"
 #include "geometry_msgs/Quaternion.h"
 
-#include <sepanta_msgs/maptools.h>
+#include <lmt_msgs/maptools.h>
 
 using namespace std;
 using namespace boost;
 
 nav_msgs::OccupancyGrid global_map;
 
-typedef actionlib::SimpleActionServer<sepanta_msgs::slamactionAction> slam_Server;
+typedef actionlib::SimpleActionServer<lmt_msgs::slamactionAction> slam_Server;
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBase_Client;
 
 MoveBase_Client *globalClient_movebase;
@@ -58,7 +58,7 @@ ros::Publisher chatter_pub[20];
 bool first_time = false;
 
 ros::ServiceClient client;
-sepanta_msgs::maptools srv;
+lmt_msgs::maptools srv;
 
 struct goal_data
 {
@@ -347,7 +347,7 @@ void adduserpointonmap(bool marked , string id)
    //it is valid just to end of app
 }
 
-bool checkmaptools(sepanta_msgs::maptools::Request  &req,sepanta_msgs::maptools::Response &res)
+bool checkmaptools(lmt_msgs::maptools::Request  &req,lmt_msgs::maptools::Response &res)
 {
     std::string str = req.command;
     std::string id = req.id;
@@ -454,11 +454,11 @@ protected:
 
   ros::NodeHandle nh_;
 
-  actionlib::SimpleActionServer<sepanta_msgs::slamactionAction> as_;
+  actionlib::SimpleActionServer<lmt_msgs::slamactionAction> as_;
   std::string action_name_;
 
-  sepanta_msgs::slamactionFeedback feedback_;
-  sepanta_msgs::slamactionResult result_;
+  lmt_msgs::slamactionFeedback feedback_;
+  lmt_msgs::slamactionResult result_;
 
 public:
 
@@ -474,7 +474,7 @@ public:
   {
   }
 
-  void executeCB(const sepanta_msgs::slamactionGoalConstPtr &interfacegoal)
+  void executeCB(const lmt_msgs::slamactionGoalConstPtr &interfacegoal)
   {
     boost::thread Preempt_thread(&PreemptThread);
 
@@ -586,7 +586,7 @@ int main(int argc, char** argv)
 {
 
   ros::init(argc, argv, "navigation");
-  cout << "SEPANTA SLAM STARTED DONE (93/04/01)" << endl;
+  cout << "LMT SLAM STARTED DONE" << endl;
   // init_gols();
   read_file();
 
@@ -601,7 +601,7 @@ int main(int argc, char** argv)
   ros::ServiceServer service_maptools = n_service.advertiseService("AUTROBOTINSRV_maptools", checkmaptools);
 
   ros::NodeHandle n_client;
-  client = n_client.serviceClient<sepanta_msgs::maptools>("AUTROBOTINSRV_mapsaver");
+  client = n_client.serviceClient<lmt_msgs::maptools>("AUTROBOTINSRV_mapsaver");
 
   ros::NodeHandle n;
   ros::Subscriber global_map_sub_ = n.subscribe("map", 1, mapCallback);

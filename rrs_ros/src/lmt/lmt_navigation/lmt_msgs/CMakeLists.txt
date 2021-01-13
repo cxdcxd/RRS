@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(sepanta_msgs)
+project(lmt_msgs)
 
 find_package(catkin REQUIRED COMPONENTS std_msgs genmsg actionlib_msgs geometry_msgs sensor_msgs nav_msgs message_generation)
 
@@ -117,7 +117,7 @@ add_action_files(
     gesture.action
     object_party.action
     pickAndPlace.action
-    sepanta.action
+    lmt.action
     slamaction.action
     whatDidYouSay.action
     grip.action

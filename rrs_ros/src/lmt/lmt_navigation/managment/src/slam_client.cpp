@@ -10,19 +10,19 @@
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
 
-#include <sepanta_msgs/command.h>
-#include <sepanta_msgs/omnidata.h>
-#include <sepanta_msgs/sepantaAction.h> //movex movey turngl turngllocal actions
-#include <sepanta_msgs/slamactionAction.h> //slam action
+#include <lmt_msgs/command.h>
+#include <lmt_msgs/omnidata.h>
+#include <lmt_msgs/lmtAction.h> //movex movey turngl turngllocal actions
+#include <lmt_msgs/slamactionAction.h> //slam action
 
 #include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>
 
 //#include <std_msgs/Bool.h>
-#include "sepanta_msgs/stop.h"
+#include "lmt_msgs/stop.h"
 
-typedef actionlib::SimpleActionClient<sepanta_msgs::slamactionAction> SLAMClient;
-typedef actionlib::SimpleActionClient<sepanta_msgs::sepantaAction> SepantaClient;
+typedef actionlib::SimpleActionClient<lmt_msgs::slamactionAction> SLAMClient;
+typedef actionlib::SimpleActionClient<lmt_msgs::lmtAction> lmtClient;
 
 ros::ServiceClient serviceclient_odometryslam;
 ros::ServiceClient serviceclient_facestop;
@@ -31,7 +31,7 @@ ros::ServiceClient serviceclient_map;
 
 
 SLAMClient *globalSLAM;
-SepantaClient *globalSepanta;
+lmtClient *globalLMT;
 
 bool App_exit = false;
 ros::Publisher chatter_pub[20];
@@ -50,11 +50,11 @@ void goWithOdometry(string mode,int value)
 {
 
     ROS_INFO("Going %s with odometry...", mode.c_str());
-    sepanta_msgs::sepantaGoal interfacegoal;
+    lmt_msgs::LMTGoal interfacegoal;
     interfacegoal.type = mode;
     interfacegoal.value = value;
 
-    actionlib::SimpleClientGoalState state = globalSepanta->sendGoalAndWait(interfacegoal, ros::Duration(1000), ros::Duration(1000));
+    actionlib::SimpleClientGoalState state = globalLMT->sendGoalAndWait(interfacegoal, ros::Duration(1000), ros::Duration(1000));
 
     if (state == actionlib::SimpleClientGoalState::PREEMPTED)
     {
@@ -73,7 +73,7 @@ void goWithOdometry(string mode,int value)
 void goWithSlam(string where)
 {
     ROS_INFO("Going %s with slam...", where.c_str());
-    sepanta_msgs::slamactionGoal interfacegoal;
+    lmt_msgs::slamactionGoal interfacegoal;
     interfacegoal.x = 0;
     interfacegoal.y = 0;
     interfacegoal.yaw = 0;
@@ -117,7 +117,7 @@ void service_thread2()
 	    else if (service_command == "odometrycancle")
 	    {
 	         ROS_INFO("ODOMETRYCANCLE");
-	         globalSepanta->cancelGoal();
+	         globalLMT->cancelGoal();
 	         service_command = "";
 	         service_id = "";
 	         service_value = 0;
@@ -183,7 +183,7 @@ void service_thread()
     }
 }
 
-bool checkcommand(sepanta_msgs::command::Request  &req,sepanta_msgs::command::Response &res)
+bool checkcommand(lmt_msgs::command::Request  &req,lmt_msgs::command::Response &res)
 {
     std::string str = req.command;
     std::string id = req.id;
@@ -201,7 +201,7 @@ bool checkcommand(sepanta_msgs::command::Request  &req,sepanta_msgs::command::Re
 
 void omnidrive(int x,int y,int w)
 {
-   sepanta_msgs::omnidata msg_data;
+   lmt_msgs::omnidata msg_data;
    msg_data.d0 = x;
    msg_data.d1 = y;
    msg_data.d2 = w;
@@ -287,21 +287,21 @@ void checkkeypad(const std_msgs::Int32::ConstPtr &topicMsg)
     if ( value == 1)
     {
     	//manual mode start
-    	// sepanta_msgs::stop srv_stop;
+    	// lmt_msgs::stop srv_stop;
   		// srv_stop.request.command = "Manual";
   		// serviceclient_manualauto.call(srv_stop);
     }
     if ( value == 4)
     {
     	//slam mode start
-    	//sepanta_msgs::stop srv_stop;
+    	//lmt_msgs::stop srv_stop;
    		//srv_stop.request.command = "Slam";
   		//serviceclient_manualauto.call(srv_stop);
     }
     if ( value == 2)
     {
     	//manual reached
-    	//sepanta_msgs::stop srv_stop;
+    	//lmt_msgs::stop srv_stop;
   		//srv_stop.request.command = "ManualReached";
   		//serviceclient_manualauto.call(srv_stop);
         // std_msgs::Bool msg;
@@ -322,13 +322,13 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "navigation_client");
   ros::Time::init();
 
-  cout << "SEPANTA SLAM CLIENTS SERVICES STARTED DONE (93/04/05)" << endl;
+  cout << "LMT SLAM CLIENTS SERVICES STARTED DONE" << endl;
 
   ros::NodeHandle n_service;
   ros::ServiceServer service_command = n_service.advertiseService("AUTROBOTINSRV_command", checkcommand);
 
   ros::NodeHandle node_handles[15];
-  chatter_pub[0] = node_handles[0].advertise<sepanta_msgs::omnidata>("AUTROBOTIN_omnidrive", 10);
+  chatter_pub[0] = node_handles[0].advertise<lmt_msgs::omnidata>("AUTROBOTIN_omnidrive", 10);
   chatter_pub[1] = node_handles[1].advertise<std_msgs::Bool>("AUTROBOTIN_greenlight", 10);
   chatter_pub[2] = node_handles[2].advertise<std_msgs::Bool>("AUTROBOTIN_redlight", 10);
 
@@ -336,10 +336,10 @@ int main(int argc, char** argv)
   sub_handles[0] = node_handles[1].subscribe("AUTROBOTOUT_keypad", 10, checkkeypad);
 
   ros::NodeHandle n_client1;
-  serviceclient_facestop = n_client1.serviceClient<sepanta_msgs::stop>("speechOrFace_Stop");
+  serviceclient_facestop = n_client1.serviceClient<lmt_msgs::stop>("speechOrFace_Stop");
 
   ros::NodeHandle n_client2;
-  serviceclient_manualauto = n_client2.serviceClient<sepanta_msgs::stop>("manualOrAuto");
+  serviceclient_manualauto = n_client2.serviceClient<lmt_msgs::stop>("manualOrAuto");
 
   SLAMClient slamAction("slam_action", true);
   globalSLAM = &slamAction ;
@@ -348,10 +348,10 @@ int main(int argc, char** argv)
 
   //===========================================
 
-  SepantaClient sepantaAction("sepanta_action", true);
-  globalSepanta = &sepantaAction ;
-  sepantaAction.waitForServer();
-  ROS_INFO("connected to sepanta server");
+  lmtClient lmtAction("lmt_action", true);
+  globalLMT = &lmtAction ;
+  lmtAction.waitForServer();
+  ROS_INFO("connected to lmt server");
 
   ros::Rate ros_rate(20);
 

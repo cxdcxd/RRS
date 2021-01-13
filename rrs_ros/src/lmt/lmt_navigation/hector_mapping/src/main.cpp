@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 
   ros::init(argc, argv, "hector_slam");
 
-  ROS_INFO("HELLO SEPANTA... :)");
+  ROS_INFO("HELLO LMT... :)");
   HectorMappingRos sm;
 
   ros::spin();

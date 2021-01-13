@@ -49,9 +49,10 @@ install(DIRECTORY include/${PROJECT_NAME}/
 add_library(movo_hardware_interface src/movo_hardware_interface.cpp)
 target_link_libraries(movo_hardware_interface
 	${catkin_LIBRARIES})
+add_dependencies(movo_hardware_interface movo_msgs_generate_messages_cpp)
 
 add_executable(movo_hardware_interface_node src/movo_hardware_interface_node.cpp)
-add_dependencies(movo_hardware_interface_node movo_hardware_interface)
+add_dependencies(movo_hardware_interface_node movo_msgs_generate_messages_cpp movo_hardware_interface)
 
 target_link_libraries(movo_hardware_interface_node
 	movo_hardware_interface

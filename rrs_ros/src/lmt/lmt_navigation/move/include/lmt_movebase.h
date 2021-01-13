@@ -1,5 +1,5 @@
-#ifndef _SEPANTA_MOVE_BASE_H
-#define _SEPANTA_MOVE_BASE_H
+#ifndef _lmt_MOVE_BASE_H
+#define _lmt_MOVE_BASE_H
 
 #include "ros/ros.h"
 #include <tf/tf.h>
@@ -19,7 +19,7 @@
 #include "std_msgs/Int32.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Bool.h"
-#include "sepanta_msgs/omnidata.h"
+#include "lmt_msgs/omnidata.h"
 
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -39,10 +39,10 @@
 #include <termios.h>
 #include <nav_msgs/Odometry.h>
 #include <tf/transform_datatypes.h>
-#include <sepanta_msgs/command.h>
-#include <sepanta_msgs/omnidata.h>
-#include <sepanta_msgs/sepantaAction.h> //movex movey turngl turngllocal actions
-#include <sepanta_msgs/slamactionAction.h> //slam action
+#include <lmt_msgs/command.h>
+#include <lmt_msgs/omnidata.h>
+#include <lmt_msgs/lmtAction.h> //movex movey turngl turngllocal actions
+#include <lmt_msgs/slamactionAction.h> //slam action
 #include <ros/package.h>
 #include <fstream>
 #include <iostream>
@@ -66,7 +66,7 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <tbb/atomic.h>
 
-#include <sepantamovebase/PointList.h>
+#include <lmt_movebase/PointList.h>
 
 using std::string;
 using std::exception;
@@ -107,12 +107,12 @@ inline double Rad2Deg(double rad)
 }
 
 
-class SepantaMoveBase
+class LMTMoveBase
 {
 public:
 bool is_sim = true;
-SepantaMoveBase();
-~SepantaMoveBase();
+LMTMoveBase();
+~LMTMoveBase();
 double Quat2Rad(double orientation[]);
 void publish_isrobotmove();
 void say_message(string data);
@@ -120,8 +120,8 @@ void send_omni(double x,double y ,double w);
 void force_stop();
 double GetDistance(double x1, double y1, double x2, double y2);
 int GetCurrentStep();
-void sepantamapengine_savemap();
-void sepantamapengine_loadmap();
+void LMTmapengine_savemap();
+void LMTmapengine_loadmap();
 void clean_costmaps();
 void update_hector_origin(float x,float y,float yaw);
 void reset_hector_slam();
@@ -153,9 +153,9 @@ void GetAmclPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &msg);
 void GetPos(const geometry_msgs::PoseStamped::ConstPtr &msg);
 void CheckHectorStatus(const std_msgs::Bool::ConstPtr &msg);
 void chatterCallback_ttsfb(const std_msgs::String::ConstPtr &msg);
-void chatterCallbackPoints(const sepantamovebase::PointList::ConstPtr &msg);
-void chatterCallbackTags(const sepantamovebase::PointList::ConstPtr &msg);
-bool checkcommand(sepanta_msgs::command::Request  &req,sepanta_msgs::command::Response &res);
+void chatterCallbackPoints(const lmt_movebase::PointList::ConstPtr &msg);
+void chatterCallbackTags(const lmt_movebase::PointList::ConstPtr &msg);
+bool checkcommand(lmt_msgs::command::Request  &req,lmt_msgs::command::Response &res);
 bool getrobotmove();
 void playVoice(std::string text);
 void setrobotmove(bool value);
