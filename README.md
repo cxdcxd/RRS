@@ -66,3 +66,21 @@ Unity3D -> Play
     </Config>
     
     
+# Virtual Environment 
+```
+mkdir ~/python-envs
+python3 -m venv ~/python-envs/sample-env
+source ~/python-envs/sample-env/bin/activate
+pip3 install --upgrade pip
+pip3 install --upgrade setuptools
+deactivate 
+```
+
+# ML-Agent Installation
+```
+pip3 install torch -f https://download.pytorch.org/whl/torch_stable.html
+pip3 install -e ./ml-agents-envs
+pip3 install -e ./ml-agents
+```
+    
+    
