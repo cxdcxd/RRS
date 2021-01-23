@@ -82,5 +82,14 @@ pip3 install torch -f https://download.pytorch.org/whl/torch_stable.html
 pip3 install -e ./ml-agents-envs
 pip3 install -e ./ml-agents
 ```
-    
+
+# Tensor Board
+```
+tensorboard --logdir results
+```  
+
+# Train
+```
+mlagents-learn config/ppo/3DBall.yaml --run-id=first3DBallRun
+```  
     
