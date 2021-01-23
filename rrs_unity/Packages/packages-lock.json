@@ -61,6 +61,14 @@
         "com.unity.modules.unityanalytics": "1.0.0"
       }
     },
+    "com.unity.ml-agents.extensions": {
+      "version": "file:/home/lmt/Downloads/ml-agents/com.unity.ml-agents.extensions",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.unity.ml-agents": "1.7.2-preview"
+      }
+    },
     "com.unity.test-framework": {
       "version": "1.1.19",
       "depth": 0,
