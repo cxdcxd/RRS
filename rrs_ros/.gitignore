@@ -1,4 +1,4 @@
-src/consul/consul
+src/core/scripts/consul
 build/
 devel/
 third_party/

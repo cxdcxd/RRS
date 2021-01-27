@@ -89,7 +89,6 @@ public class Lidar : MonoBehaviour
      
         float[] temp = (float[])values.Clone();
 
-        bool valid = false;
         int valid_count = 0;
 
         for (int i = 0; i < temp.Length; i++)
@@ -100,31 +99,25 @@ public class Lidar : MonoBehaviour
             }
         }
 
-        if (valid_count > 90)
+       
+        for (int i = 0; i < temp.Length; i++)
         {
-            valid = true;
-        }
-
-        if (valid)
-        {
-            for (int i = 0; i < temp.Length; i++)
+            if (float.IsNaN(temp[i]) || float.IsInfinity(temp[i]) || float.IsNegativeInfinity(temp[i]) || float.IsPositiveInfinity(values[i]))
             {
-                if (float.IsNaN(temp[i]) || float.IsInfinity(temp[i]) || float.IsNegativeInfinity(temp[i]) || float.IsPositiveInfinity(values[i]))
-                {
-                    print("Bad value in laser data");
-                    temp[i] = 0;
-                }
+                print("Bad value in laser data");
+                temp[i] = 0;
             }
-
-            r_laser.angel_max = Mathf.Deg2Rad * max_degree;
-            r_laser.angel_min = Mathf.Deg2Rad * min_degree;
-            r_laser.range_max = (float)max_distance / 100;
-            r_laser.range_min = (float)min_distance / 100;
-            r_laser.ranges = temp;
-            r_laser.angel_increment = delta_degree * Mathf.Deg2Rad;
-            r_laser.scan_time = 8.7e-05f;
-            r_laser.time_increment = r_laser.scan_time / 360;
         }
+
+        r_laser.angel_max = Mathf.Deg2Rad * max_degree;
+        r_laser.angel_min = Mathf.Deg2Rad * min_degree;
+        r_laser.range_max = (float)max_distance / 100;
+        r_laser.range_min = (float)min_distance / 100;
+        r_laser.ranges = temp;
+        r_laser.angel_increment = delta_degree * Mathf.Deg2Rad;
+        r_laser.scan_time = 8.7e-05f;
+        r_laser.time_increment = r_laser.scan_time / 360;
+
        
         MemoryStream ms = new MemoryStream();
         ms = new MemoryStream();

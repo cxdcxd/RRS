@@ -31,7 +31,7 @@ using System.Text;
 using NtpClient;
 using RRS.Tools;
 
-namespace Roboland.Tools.Network
+namespace RRS.Tools.Network
 {
     class Net2NTP
     {

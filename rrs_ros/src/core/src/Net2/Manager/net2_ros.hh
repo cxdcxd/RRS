@@ -36,9 +36,9 @@
 #include <yaml-cpp/yaml.h>
 
 using namespace std;
-using namespace Roboland::Tools::Network;
+using namespace lmt::Tools::Network;
 
-namespace roboland
+namespace lmt
 {
 
 struct settings
@@ -72,6 +72,6 @@ public:
   Net2 *net2;
 };
 
-} // namespace roboland
+} // namespace lmt
 
 #endif /* _NET2_ROS_HH_ */

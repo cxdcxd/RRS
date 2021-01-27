@@ -1,6 +1,6 @@
 #include "rrs_ros.hh"
 
-namespace roboland
+namespace lmt
 {
 
   Net2TestROS::Net2TestROS(ros::NodeHandle &nh,
@@ -976,4 +976,4 @@ Net2TestROS::~Net2TestROS()
 
 }
 
-} // namespace roboland
+} // namespace lmt

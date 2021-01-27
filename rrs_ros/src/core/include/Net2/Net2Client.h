@@ -8,7 +8,7 @@
 #include <boost/thread/mutex.hpp>
 #include <memory>
 
-namespace Roboland
+namespace lmt
 {
 namespace Tools
 {

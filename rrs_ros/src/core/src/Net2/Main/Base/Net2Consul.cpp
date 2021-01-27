@@ -5,7 +5,7 @@
 
 using ppconsul::Consul;
 
-namespace Roboland
+namespace lmt
 {
 namespace Tools
 {

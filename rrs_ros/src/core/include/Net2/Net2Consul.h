@@ -26,7 +26,7 @@
 using ppconsul::Consul;
 using namespace ppconsul::agent;
 
-namespace Roboland
+namespace lmt
 {
 namespace Tools
 {

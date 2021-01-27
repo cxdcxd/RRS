@@ -72,10 +72,9 @@
 #include <Scene.pb.h>
 
 using namespace std;
-using namespace Roboland::Tools::Network;
+using namespace lmt::Tools::Network;
 
-
-namespace roboland
+namespace lmt
 {
 
 struct settings

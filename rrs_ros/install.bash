@@ -1,19 +1,19 @@
 #!/bin/bash
 
-mkdir -p src/consul/data
+mkdir -p src/core/scripts/data
 mkdir -p src/core/cfg
 
-if [ ! -e src/consul/consul ]
+if [ ! -e src/core/scripts/consul ]
 then
-    if [ ! -e src/consul/consul.zip ]
+    if [ ! -e src/core/scripts/consul.zip ]
     then
         echo
         echo "Downloading consul version 1.8.4"
         echo
-        wget https://releases.hashicorp.com/consul/1.8.4/consul_1.8.4_linux_amd64.zip -O src/consul/consul.zip
+        wget https://releases.hashicorp.com/consul/1.8.4/consul_1.8.4_linux_amd64.zip -O src/core/scripts/consul.zip
     fi
-    unzip src/consul/consul.zip -d src/consul/
-    rm src/consul/consul.zip
+    unzip src/core/scripts/consul.zip -d src/core/scripts/
+    rm src/core/scripts/consul.zip
 fi
 
 sudo apt install -y libprotobuf-dev

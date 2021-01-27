@@ -33,9 +33,9 @@
 #include "Net2/Net2AsyncClient.h"
 
 using namespace std;
-using namespace Roboland::Tools::Network;
+using namespace lmt::Tools::Network;
 
-namespace roboland
+namespace lmt
 {
 
 class Net2TestROS 
@@ -62,6 +62,6 @@ public:
   Net2 *net2;
 };
 
-} // namespace roboland
+} // namespace lmt
 
 #endif /* _NET2_TEST_ROS_HH_ */

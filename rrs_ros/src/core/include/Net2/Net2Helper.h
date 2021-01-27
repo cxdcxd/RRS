@@ -19,7 +19,7 @@
 #include "Enum.h"
 #include "NTPClient.hh"
 
-namespace Roboland
+namespace lmt
 {
 namespace Tools
 {

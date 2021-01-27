@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
   ros::NodeHandle pnh = ros::NodeHandle("~");
 
   //ROS_INFO("Creating ros node");
-  boost::shared_ptr<roboland::Net2ROS> node(new roboland::Net2ROS(nh,pnh,argc,argv));
+  boost::shared_ptr<lmt::Net2ROS> node(new lmt::Net2ROS(nh,pnh,argc,argv));
 
   ros::Rate loop(1); //1 hz
 

@@ -1,6 +1,6 @@
 #include "Net2/NTPClient.hh"
 
-namespace Roboland
+namespace lmt
 {
 namespace Tools
 {

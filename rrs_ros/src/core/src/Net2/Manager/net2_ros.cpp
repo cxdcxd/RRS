@@ -1,7 +1,7 @@
 #include "net2_ros.hh"
 #define Lab
 
-namespace roboland
+namespace lmt
 {
 
 	Net2ROS::Net2ROS(ros::NodeHandle &nh,
@@ -128,4 +128,4 @@ namespace roboland
 
 	}
 
-} // namespace roboland
+} // namespace lmt

@@ -33,7 +33,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} ")
 set(CMAKE_CXX_FLAGS_RELEASE "-DROSCONSOLE_MIN_SEVERITY=ROSCONSOLE_SEVERITY_INFO")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DROSCONSOLE_MIN_SEVERITY=ROSCONSOLE_SEVERITY_DEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DROBOLAND_DEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Dlmt_DEBUG")
 
 find_package(Boost COMPONENTS system thread date_time REQUIRED)
 find_package(PkgConfig REQUIRED)
@@ -84,21 +84,31 @@ add_library(rrsnet
 add_executable(rrs_node 
 
             src/rrs_node.cpp 
-	    src/rrs_ros.cpp 
+	        src/rrs_ros.cpp 
             src/rrs_net_test.cpp
 	    
 	    )
 
+add_executable(rrs_node_benchmark
+
+            src/rrs_node_benchmark.cpp 
+	        src/rrs_ros_benchmark.cpp 
+	    
+	    )	    
+
 target_link_libraries(rrsnet ${catkin_LIBRARIES} ${YAML_CPP_INCLUDEDIR} zmq ppconsul)
 
 target_link_libraries(rrs_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${YAML_CPP_LIBRARIES} rrsnet )
-add_dependencies(rrs_node roboland_msgs_generate_messages_cpp config_server_generate_messages_cpp)
+add_dependencies(rrs_node lmt_msgs_generate_messages_cpp config_server_generate_messages_cpp)
+
+target_link_libraries(rrs_node_benchmark ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${YAML_CPP_LIBRARIES} rrsnet )
+add_dependencies(rrs_node_benchmark lmt_msgs_generate_messages_cpp config_server_generate_messages_cpp)
 
 add_executable(net2_node src/Net2/Manager/net2_node.cpp src/Net2/Manager/net2_ros.cpp )
 target_link_libraries(net2_node ${catkin_LIBRARIES} ${Boost_LIBRARIES}  ${YAML_CPP_LIBRARIES} rrsnet )
-add_dependencies(net2_node roboland_msgs_generate_messages_cpp config_server_generate_messages_cpp)
+add_dependencies(net2_node lmt_msgs_generate_messages_cpp config_server_generate_messages_cpp)
 
 add_executable(net2_test_node src/Net2/Test/net2_test_node.cpp src/Net2/Test/net2_test_ros.cpp )
 target_link_libraries(net2_test_node ${catkin_LIBRARIES} ${Boost_LIBRARIES}  ${YAML_CPP_LIBRARIES} rrsnet )
-add_dependencies(net2_test_node roboland_msgs_generate_messages_cpp config_server_generate_messages_cpp)
+add_dependencies(net2_test_node lmt_msgs_generate_messages_cpp config_server_generate_messages_cpp)
 

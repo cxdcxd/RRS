@@ -1,9 +1,7 @@
 #include "rrs_net_test.hh"
 
-namespace roboland
+namespace lmt
 {
-
-
   RRSNetTest::RRSNetTest(ros::NodeHandle &nh,
    ros::NodeHandle &pnh,
    int argc,
@@ -332,4 +330,4 @@ RRSNetTest::~RRSNetTest()
 {
 }
 
-} // namespace roboland
+} // namespace lmt
