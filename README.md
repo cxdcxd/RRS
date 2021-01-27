@@ -39,7 +39,6 @@ setup ~/rrs_ros/devel/setup.bash
 
 ROS Side:
 ```
-consul.sh
 roslaunch rrs_ros rrs_ros.launch
 roslaunch rrs_ros rrs_moveit.launch
 ```
