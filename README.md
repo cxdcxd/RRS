@@ -39,8 +39,9 @@ setup ~/rrs_ros/devel/setup.bash
 
 ROS Side:
 ```
-roslaunch rrs_ros rrs_ros.launch
-roslaunch rrs_ros rrs_moveit.launch
+roslaunch rrs_ros rrs_ros.launch                                    //for core simulation
+roslaunch rrs_ros rrs_moveit.launch                                 //for moveit connection
+roslaunch jog_launch jaco2.launch use_moveit:=true use_rviz:=true   //for arm jogging
 ```
 
 Unity Side:
