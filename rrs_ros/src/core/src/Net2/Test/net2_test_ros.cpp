@@ -15,11 +15,9 @@ Net2TestROS::Net2TestROS(ros::NodeHandle &nh,
   Net2Config config;
 
 #ifdef Lab
-  //Home
   config.consul_network_address = "192.168.1.102";
   config.consul_network_mask = "255.255.255.0";
 #else
-  //Arsam
   config.consul_network_address = "172.25.129.84";
   config.consul_network_mask = "255.255.248.0";
 #endif

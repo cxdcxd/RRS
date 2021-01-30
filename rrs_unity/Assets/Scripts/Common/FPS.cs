@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Arsam
+namespace RRS
 {
     public class FPS : MonoBehaviour
     {

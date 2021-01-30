@@ -15,7 +15,6 @@ public class Statics
     public LogManager log_manager;
     public DataManagerXML xml_manager;
     public static Config current_config;
-    public static string user_name = "Edwin";
 
     public class Config
     {

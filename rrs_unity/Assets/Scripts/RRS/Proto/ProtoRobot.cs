@@ -6,7 +6,27 @@ using ProtoBuf;
 
 namespace RRS.Tools.Protobuf
 {
-    
+    [ProtoContract]
+    public class RRSCollision
+    {
+        [ProtoMember(1)]
+        public int collision_time;
+
+        [ProtoMember(2)]
+        public SVector3[] points;
+
+        [ProtoMember(3)]
+        public int robot_id;
+
+        [ProtoMember(4)]
+        public int collision_type;
+
+        public RRSCollision()
+        {
+
+        }
+    }
+
     [ProtoContract]
     public class RRSLaser
     {
