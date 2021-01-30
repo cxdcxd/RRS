@@ -4,12 +4,8 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
-//Arsam RRS
 using RRS.Tools.Log;
 using RRS.Tools.Protobuf;
-
-//External Dependencies
 using Consul;
 using NetMQ;
 using NetMQ.Monitoring;

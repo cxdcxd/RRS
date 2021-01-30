@@ -60,7 +60,7 @@
         </node>
 
         <!-- Viz modules -->    
-        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find movo_viz)/rviz/robot_7dof_.rviz" output="screen"/>
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rrs_ros)/rviz/main.rviz" output="screen"/>
 
 
 </launch>

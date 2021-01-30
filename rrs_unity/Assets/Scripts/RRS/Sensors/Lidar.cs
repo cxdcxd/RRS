@@ -1,8 +1,4 @@
-﻿// RRS Lidar
-// Author : Edwin Babaians
-// LMT - TUM
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.IO;
 using ProtoBuf;

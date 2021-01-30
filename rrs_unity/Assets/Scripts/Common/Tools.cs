@@ -17,7 +17,6 @@ namespace RRS.Tools
         string Id { get; set; }
     }
 
-
     public class ProcessResult
     {
         public ProcessResult()
@@ -39,23 +38,6 @@ namespace RRS.Tools
 
     public static class Tools
     {
-        //public static Bitmap Resize(this Bitmap source_image, Size box_size)
-        //{
-        //    Size image_size = source_image.Size;
-        //    if (image_size.Height <= box_size.Height && image_size.Width <= box_size.Width)
-        //    {
-        //        return source_image;
-        //    }
-        //    else
-        //    {
-        //        double height_rate = (double)image_size.Height / box_size.Height;
-        //        double width_rate = (double)image_size.Width / box_size.Width;
-        //        double rate = Math.Max(height_rate, width_rate);
-        //        Bitmap bitmap = new Bitmap(source_image, (int)(image_size.Width / rate), (int)(image_size.Height / rate));
-        //        return bitmap;
-        //    }
-        //}
-
         public static bool CheckServiceAvailablity(string remote_ip, int remote_port)
         {
             bool result = true;
@@ -98,31 +80,6 @@ namespace RRS.Tools
             return listToClone.Select(item => (T)item.Clone()).ToList();
         }
 
-        public static float getFountSize(int area_height, int area_width, float resize_factor = 0.35f)
-        {
-            float height = area_height;
-            if ((float)area_height / area_width > resize_factor)
-            {
-                height = area_width * resize_factor;
-            }
-            float font_size =  (height * 0.62f) - 8;
-            return (font_size > 8.25f) ? font_size : 8.25f;
-        }
-
-        public static byte[] GetBitmapDataFromUrl(string url)
-        {
-            try
-            {
-                WebClient wc = new WebClient();
-                return wc.DownloadData(url);
-            }
-            catch (Exception e)
-            {
-                //throw new Exception(e.Message);
-                return null;
-            }
-        }
-
         public static DateTime GetBegin(this DateTime date)
         {
             return new DateTime(date.Year, date.Month, date.Day);
@@ -152,10 +109,6 @@ namespace RRS.Tools
             string day = (date.Day < 10) ? "0" + date.Day.ToString() : date.Day.ToString();
             return year + "-" + month + "-" + day + " " + date.Hour + ":" + date.Minute + ":" + date.Second;
         }
-
-   
-
-    
 
         public static string GetTimeFromDouble(double amount)
         {
@@ -193,17 +146,8 @@ namespace RRS.Tools
             }
         }
 
-        public static string GetCurrencyFormat(this string value)
-        {
-            decimal.TryParse(value, out decimal result);
-            return result.ToString("N0");
-        }
 
-        public static string ReplaceEnNumbersWithFa(string English_number)
-        {
-            return English_number.Replace('0', '۰').Replace('1', '۱').Replace('2', '۲').Replace('3', '۳')
-                .Replace('4', '۴').Replace('5', '۵').Replace('6', '۶').Replace('7', '۷').Replace('8', '۸')
-                .Replace('9', '۹');
-        }
+
+
     }
 }
