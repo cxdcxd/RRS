@@ -7,6 +7,8 @@ using System.Text;
 using System.Timers;
 using System.Linq;
 using RRS.Tools;
+using UnityEngine;
+using LogType = RRS.Tools.Log.LogType;
 
 namespace RRS.Tools.Network
 {
@@ -18,8 +20,7 @@ namespace RRS.Tools.Network
         public event DelegateStateChanged delegateInfoServiceStateChanged;
 
         public delegate void DelegateNewLog(string log_message, LogType log_type, string section);
-        public event DelegateNewLog delegateInfoServiceNewLog;
-        public static event DelegateNewLog _delegateInfoServiceNewLog;
+        public static event DelegateNewLog delegateInfoServiceNewLog;
 
         public delegate byte[] DelegateGetResponse(ulong sequense, byte[] buffer, uint priority, ulong service_id);
         DelegateGetResponse GetResponse;
@@ -53,16 +54,10 @@ namespace RRS.Tools.Network
                     if (instance == null)
                     {
                         instance = new Net2();
-                        instance.delegateInfoServiceNewLog += Instance_delegateInfoServiceNewLog;
                     }
                     return instance;
                 }
             }
-        }
-
-        private static void Instance_delegateInfoServiceNewLog(string log_message, LogType log_type, string section)
-        {
-            _delegateInfoServiceNewLog?.Invoke(log_message, log_type, section);
         }
 
         private Net2()
@@ -132,7 +127,7 @@ namespace RRS.Tools.Network
 
         private void delegateNewLog(string log_message, LogType log_type, string section)
         {
-            _delegateInfoServiceNewLog?.Invoke(log_message, log_type, section);
+            delegateInfoServiceNewLog?.Invoke(log_message, log_type, section);
         }
 
         public static Net2HandlerSubscriber Subscriber(string name)
@@ -392,7 +387,12 @@ namespace RRS.Tools.Network
                     this.net2_config = net2_config;
                     local_network_address = net2_config.local_network_address;
 
-                    net2_ntp = new Net2NTPClient(net2_config.ntp_server_host_name);
+                    Net2NTPClient.delegateNewLogx += delegateNewLog;
+                    net2_ntp = new Net2NTPClient(net2_config.ntp_server_host_name,true);
+
+
+                    delegateNewLog("test", LogType.INFO, "test");
+
                     net2_consul = new Net2Consul("http://" + net2_config.consul_network_address + ":" + net2_config.consul_network_port, net2_config.consul_mode);
 
                     main_timer = new System.Timers.Timer();
@@ -461,11 +461,6 @@ namespace RRS.Tools.Network
             {
                 delegateInfoServiceStateChanged?.Invoke(instance);
             }
-        }
-
-        private void Net2_service_delegateNewLog(string log_message, Log.LogType log_type, string section)
-        {
-            delegateInfoServiceNewLog?.Invoke(log_message, log_type, section);
         }
 
         private void DisposingChannel(ulong id)
@@ -603,7 +598,7 @@ namespace RRS.Tools.Network
                     state = Net2State.STOPPED;
 
                     net2_consul.removeService(NameSpace);
-
+                    Net2NTPClient.delegateNewLogx -= delegateNewLog;
                     net2_config.name_space = "";
 
             
@@ -614,6 +609,12 @@ namespace RRS.Tools.Network
                 }
             }
         }
+
+        void HandleDelegateNewLog(string log_message, LogType log_type, string section)
+        {
+        }
+
+
         private interface INet2Handler
         {
             void SetInstance(Net2Base instance);

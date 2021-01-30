@@ -57,8 +57,6 @@ public class Statics
         ProcessResult result = xml_manager.loadXML<Config>(folder_path + "config.xml");
         current_config = (Config)result.Result;
 
-        
-
         net2_config = new Net2Config();
         net2_config.consul_mode = RRS.Tools.Network.Net2ConsulMode.CLIENT;
 
@@ -73,9 +71,9 @@ public class Statics
 
         log_manager.addLog("rrs started", RRS.Tools.Log.LogType.INFO, "main");
 
+        Net2.delegateInfoServiceNewLog += Net2__delegateInfoServiceNewLog;
         Net2.Init(net2_config);
-        Net2._delegateInfoServiceNewLog += Net2__delegateInfoServiceNewLog;
-
+       
     }
 
     private void Net2__delegateInfoServiceNewLog(string log_message, RRS.Tools.Log.LogType log_type, string section)

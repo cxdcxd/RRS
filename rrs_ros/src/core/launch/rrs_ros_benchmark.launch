@@ -6,6 +6,6 @@
         <node pkg="rrs_ros" type="net2_node" name="net2_node" output="screen"/>
 	
         <!-- Viz modules -->    
-        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find movo_viz)/rviz/robot_7dof_.rviz" output="screen"/>
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rrs_ros)/rviz/benchmark.rviz" output="screen"/>
 
 </launch>
