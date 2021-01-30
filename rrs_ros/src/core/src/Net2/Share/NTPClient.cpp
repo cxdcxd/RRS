@@ -35,7 +35,7 @@ long NTPClient::get()
 
 long NTPClient::sync(std::string host_name, int port)
 {
-  ROS_INFO_STREAM("NTP Client calling " << host_name.c_str());
+  //ROS_INFO_STREAM("NTP Client calling " << host_name.c_str());
 
   int sockfd, n;  // Socket file descriptor and the n return result from writing/reading from the socket.
 
@@ -77,6 +77,8 @@ long NTPClient::sync(std::string host_name, int port)
 
   // Convert the port number integer to network big-endian style and save it to the server address structure.
 
+ //ROS_INFO("NTP Client 0 ");
+
   serv_addr.sin_port = htons( port );
 
   // Call up the server using its IP address and port number.
@@ -97,6 +99,8 @@ long NTPClient::sync(std::string host_name, int port)
 
   if ( n < 0 )
     error( "ERROR reading from socket" );
+
+  //ROS_INFO("NTP Client 1 ");
 
   // These two fields contain the time-stamp seconds as the packet left the NTP server.
   // The number of seconds correspond to the seconds passed since 1900.
@@ -120,16 +124,18 @@ long NTPClient::sync(std::string host_name, int port)
 
   std::chrono::duration<double> diff = this->time_end-this->time_start;
 
+  //ROS_INFO("NTP Client 2 ");
+
   double diff2 = diff.count() * 1000;
 
   long result = (long)(diff2);
 
   this->time_offset = final - result;
 
-  //std::cout << final << std::endl;
+  //std::cout << "SYNC DONE " << final << std::endl;
 
   // Print the time we got from the server, accounting for local timezone and conversion from UTC time.
-  printf( "Time: %s", ctime( ( const time_t* ) &txTm ) );
+  //printf( "Time: %s", ctime( ( const time_t* ) &txTm ) );
 
   return final;
 }

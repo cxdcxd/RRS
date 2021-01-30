@@ -10,13 +10,13 @@ Net2Helper::Net2Helper(const Net2Config &config, std::string settings_local_ip)
 {
   this->net2_config = config;
   this->local_ip = settings_local_ip;
-  //std::cout << "Sync with ntp client " << this->net2_config.ntp_server_host_name << " " << this->net2_config.ntp_server_port << std::endl;
-
+  
   //NTP Sync
   ntp_client = new NTPClient();
-  //ntp_client->sync(this->net2_config.ntp_server_host_name,this->net2_config.ntp_server_port);
+  ntp_client->sync(this->net2_config.ntp_server_host_name,this->net2_config.ntp_server_port);
 
-   //std::cout << "Sync with ntp client" << std::endl;
+  std::cout << "NTP sync successful" << std::endl;
+  std::cout << "Time : "  << getTime() << std::endl;
 }
 
 Net2Helper::~Net2Helper()
