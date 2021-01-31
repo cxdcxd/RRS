@@ -149,6 +149,12 @@ public:
   float delta_t_point_cloud = 0;
   float delta_t_lidar = 0;
 
+  int size_imu = 0;
+  int size_camera_rgb = 0;
+  int size_camera_depth = 0;
+  int size_point_cloud = 0;
+  int size_lidar = 0;
+
   void update();
   int test_step = 0;
   ~BenchmarkROS();

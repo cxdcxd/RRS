@@ -454,7 +454,7 @@ public class Movo : MonoBehaviour
 
     }
 
-    private void Subscriber_rrs_joint_command_delegateNewData(ulong sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
+    private void Subscriber_rrs_joint_command_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
     {
         MemoryStream ms = new MemoryStream(buffer);
         RRSJointCommand cmd = Serializer.Deserialize<RRSJointCommand>(ms);
@@ -468,19 +468,19 @@ public class Movo : MonoBehaviour
         }
     }
 
-    private void Subscriber_rrs_command_delegateNewData(ulong sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
+    private void Subscriber_rrs_command_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
     {
         //RRS Command
         //print("Get RRS Command");
     }
 
-    private void Subscriber_navigation_state_delegateNewData(ulong sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
+    private void Subscriber_navigation_state_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
     {
         //Navigation Status
         //print("Get Navigation Status");
     }
 
-    private void Subscriber_planner_viz_delegateNewData(ulong sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
+    private void Subscriber_planner_viz_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
     {
         MemoryStream ms = new MemoryStream(buffer);
 
@@ -506,7 +506,7 @@ public class Movo : MonoBehaviour
         sendJointTF();
     }
 
-    private void Subscriber_cmd_vel_delegateNewData(ulong sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
+    private void Subscriber_cmd_vel_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
     {
         MemoryStream ms = new MemoryStream(buffer);
         RVector3 cmd = Serializer.Deserialize<RVector3>(ms);

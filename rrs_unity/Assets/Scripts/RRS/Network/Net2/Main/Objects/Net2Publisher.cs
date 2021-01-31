@@ -69,7 +69,7 @@ namespace RRS.Tools.Network
             {
                 if (internal_state == Net2State.STARTED)
                 {
-                    ulong diff = GetTime() - last_send_receive_time;
+                    long diff = GetTime() - last_send_receive_time;
                     if (diff > 2000)
                     {
                         Send(new byte[1], 10);

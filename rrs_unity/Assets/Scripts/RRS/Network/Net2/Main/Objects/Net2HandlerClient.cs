@@ -32,7 +32,7 @@ namespace RRS.Tools.Network
                 base._AddInstance();
             }
 
-            public ulong Send(byte[] data, uint priority = 0)
+            public long Send(byte[] data, uint priority = 0)
             {
                 if ((this as INet2Handler).Instance != null)
                 {
@@ -45,7 +45,7 @@ namespace RRS.Tools.Network
             {
                 if ((this as INet2Handler).Instance != null)
                 {
-                    ulong seq = ((this as INet2Handler).Instance as Net2Client).Send(data, priority);
+                    long seq = ((this as INet2Handler).Instance as Net2Client).Send(data, priority);
                     if (seq != 0)
                     {
                         return new Net2Responder(this, seq, timeout);

@@ -10,6 +10,8 @@ using Consul;
 using NetMQ;
 using NetMQ.Monitoring;
 using ProtoBuf;
+using UnityEngine;
+using LogType = RRS.Tools.Log.LogType;
 
 namespace RRS.Tools.Network
 {
@@ -24,8 +26,8 @@ namespace RRS.Tools.Network
 
             public delegate void DelegateNewLog(string log_message, LogType log_type, string section);
             public event DelegateNewLog delegateNewLog;
-            
-            public delegate ulong DelegateGetTime();
+
+            public delegate long DelegateGetTime();
             public event DelegateGetTime delegateGetTime;
 
             public delegate void DelegateDisposing(ulong id);
@@ -42,7 +44,7 @@ namespace RRS.Tools.Network
 
             #endregion
 
-            public ulong start_time;
+            public long start_time;
 
             public static ulong last_id = 0;
 
@@ -54,8 +56,8 @@ namespace RRS.Tools.Network
             protected Task task;
             protected TransmitedData bytes_send;
             protected TransmitedData bytes_receive;
-            protected ulong req_sequence = 1;
-            protected ThreadPriority thread_priority = ThreadPriority.Highest;
+            protected long req_sequence = 1;
+            protected System.Threading.ThreadPriority thread_priority = System.Threading.ThreadPriority.Highest;
             protected Net2State internal_state = Net2State.STOPPED;
             protected string section;
             protected bool thread_exit = false;
@@ -64,7 +66,7 @@ namespace RRS.Tools.Network
             protected int local_port = 0;
             protected string local_ip = "";
             protected uint connection_count = 0;
-            protected ulong last_send_receive_time = 0;
+            protected long last_send_receive_time = 0;
             protected object update_lock = null;
 
             private List<Message> send_queue;
@@ -354,11 +356,12 @@ namespace RRS.Tools.Network
             {
                 Message msg = new Message();
                 msg.header = new Header();
+             
                 msg.header.sequence = req_sequence++;
 
                 if (delegateGetTime != null)
                     msg.header.time_span = delegateGetTime();
-
+                    
                 msg.header.source_channel_name = Name;
                 msg.header.priority = priority;
                 msg.payload = buffer;
@@ -385,7 +388,7 @@ namespace RRS.Tools.Network
                 delegateSendChanged?.Invoke(id);
             }
 
-            protected ulong GetTime()
+            protected long GetTime()
             {
                 return delegateGetTime?.Invoke() ?? 0;
             }

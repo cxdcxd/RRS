@@ -8,12 +8,12 @@ namespace RRS.Tools.Network
 {
     public class Net2Responder
     {
-        ulong sequence;
+        long sequence;
         byte[] buffer;
         object @lock;
         uint timeout;
 
-        public Net2Responder(Net2.Net2HandlerBase channel_handler, ulong sequence, uint timeout)
+        public Net2Responder(Net2.Net2HandlerBase channel_handler, long sequence, uint timeout)
         {
             @lock = new object();
             this.timeout = timeout;
@@ -22,7 +22,7 @@ namespace RRS.Tools.Network
             channel_handler.delegateNewData += Channel_handler_delegateNewData;
         }
 
-        private void Channel_handler_delegateNewData(ulong sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
+        private void Channel_handler_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
         {
             if (this.sequence == sequence)
             {

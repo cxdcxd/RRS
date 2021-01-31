@@ -50,7 +50,7 @@ public class Robot : MonoBehaviour
         publisher_lidar_1.Send(buffer);
     }
 
-    private void Subscriber_cmd_vel_delegateNewData(ulong sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
+    private void Subscriber_cmd_vel_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
     {
         MemoryStream ms = new MemoryStream(buffer);
         RVector3 cmd = Serializer.Deserialize<RVector3>(ms);

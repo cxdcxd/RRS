@@ -6,6 +6,21 @@ using System.Text;
 
 namespace RRS.Tools.Protobuf
 {
+
+    [ProtoContract]
+    public class RRSHeader
+    {
+        [ProtoMember(1)]
+        public ulong time = 0;
+        [ProtoMember(2)]
+        public ulong sequence = 0;
+
+        public RRSHeader()
+        {
+
+        }
+    }
+
     [ProtoContract]
     public class Net2StationInfo
     {
@@ -96,9 +111,9 @@ namespace RRS.Tools.Protobuf
         [ProtoMember(4)]
         public string remote_channel_name;
         [ProtoMember(5)]
-        public ulong time_span = 0;
+        public long time_span = 0;
         [ProtoMember(6)]
-        public ulong sequence = 0;
+        public long sequence = 0;
         [ProtoMember(7)]
         public string source_ip = "";
         [ProtoMember(8)]

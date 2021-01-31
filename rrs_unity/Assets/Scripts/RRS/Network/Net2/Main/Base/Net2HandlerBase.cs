@@ -24,7 +24,7 @@ namespace RRS.Tools.Network
             public delegate void DelegateNewLog(string log_message, LogType log_type, string section);
             public event DelegateNewLog delegateNewLog;
 
-            public delegate void DelegateNewData(ulong sequence, byte[] buffer, uint priority, Net2HandlerBase sender);
+            public delegate void DelegateNewData(long sequence, byte[] buffer, uint priority, Net2HandlerBase sender);
             public event DelegateNewData delegateNewData;
 
             public delegate void DelegateSendChanged(Net2HandlerBase sender);
@@ -53,7 +53,7 @@ namespace RRS.Tools.Network
                 delegateStateChanged?.Invoke(this);
             }
 
-            protected void Net2_instance_delegateNewData(ulong sequence, byte[] buffer, uint priority, ulong id)
+            protected void Net2_instance_delegateNewData(long sequence, byte[] buffer, uint priority, ulong id)
             {
                 delegateNewData?.Invoke(sequence, buffer, priority, this);
             }

@@ -20,7 +20,7 @@ namespace RRS.Tools.Network
             public delegate ProcessResult DelegateGetServiceInfo(string name);
             public event DelegateGetServiceInfo delegateGetServiceInfo;
 
-            public delegate void DelegateNewData(ulong sequence, byte[] buffer, uint priority, ulong id);
+            public delegate void DelegateNewData(long sequence, byte[] buffer, uint priority, ulong id);
             public event DelegateNewData delegateNewData;
 
             AgentService info;
@@ -30,7 +30,7 @@ namespace RRS.Tools.Network
                 this.name = name;
             }
 
-            public ulong Send(byte[] data, uint priority = 0)
+            public long Send(byte[] data, uint priority = 0)
             {
                 if (internal_state == Net2State.CONNECTED)
                 {
@@ -119,7 +119,7 @@ namespace RRS.Tools.Network
             {
                 if (internal_state == Net2State.STARTED)
                 {
-                    ulong diff = GetTime() - start_time;
+                    long diff = GetTime() - start_time;
                     if (diff > 2000)
                     {
                         reportLog("Stopping cause monitor failure", LogType.WARN, section);

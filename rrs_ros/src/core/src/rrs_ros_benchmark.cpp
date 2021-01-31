@@ -170,6 +170,7 @@ void BenchmarkROS::publishLidar(char* data, int size, uint64_t xtime)
 pub_lidar.publish(scan_msg);
 
 delta_t_lidar = this->net2->getTime() - xtime;
+size_lidar = size;
 
 }
 
@@ -194,6 +195,7 @@ void BenchmarkROS::publishCameraColor(char* data, int size, uint64_t xtime)
   pub_camera_color.publish(out_msg.toImageMsg());
 
   delta_t_camera_rgb = this->net2->getTime() - xtime;
+  size_camera_rgb = size;
 }
 
 void BenchmarkROS::publishCameraDepth(char* data, int size, uint64_t xtime)
@@ -218,6 +220,7 @@ void BenchmarkROS::publishCameraDepth(char* data, int size, uint64_t xtime)
 
   last_depth_frame_time = xtime;
   delta_t_camera_depth = this->net2->getTime() - xtime;
+  size_camera_depth = size;
 }
 
 void BenchmarkROS::publishPointCloud()
@@ -313,6 +316,7 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr BenchmarkROS::MatToPoinXYZ()
       }
     }
 
+  size_point_cloud = cloud->points.size();
   return cloud;
 }
 
@@ -358,6 +362,7 @@ void BenchmarkROS::publishIMU(char* data, int size, uint64_t xtime)
   pub_imu.publish(out_msg);
 
   delta_t_imu = this->net2->getTime() - xtime;
+  size_imu = size;
 }
 
 std::vector<char> BenchmarkROS::callbackDataLidar(std::vector<char> buffer, uint64_t priority, std::string sender)
@@ -415,6 +420,13 @@ void BenchmarkROS::update()
      ROS_INFO_STREAM("Latency camera rgb : " << delta_t_camera_rgb);
      ROS_INFO_STREAM("Latency camera depth : " << delta_t_camera_depth);
      ROS_INFO_STREAM("Latency point cloud : " << delta_t_point_cloud);
+
+     ROS_INFO_STREAM("Size imu : " << size_imu);
+     ROS_INFO_STREAM("Size lidar : " << size_lidar);
+     ROS_INFO_STREAM("Size camera rgb : " << size_camera_rgb);
+     ROS_INFO_STREAM("Size camera depth : " << size_camera_depth);
+     ROS_INFO_STREAM("Point size point cloud : " << size_point_cloud);
+
      ROS_INFO_STREAM("======================");  
    }
 }

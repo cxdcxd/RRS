@@ -12,7 +12,7 @@ namespace RRS.Tools.Network
     class Net2NTPClient
     {
         Stopwatch stop_watch;
-        ulong time_offset = 0;
+        long time_offset = 0;
         string host_name;
 
         public delegate void DelegateNewLog(string log_message, LogType log_type, string section);
@@ -35,18 +35,20 @@ namespace RRS.Tools.Network
                 stop_watch.Stop();
                 var utcNow = DateTime.Now;
                 stop_watch.Start();
-                time_offset = (ulong)(utcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+                time_offset = (long)(utcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
             }
 
         }
 
-        public ulong get()
+        public long get()
         {
-            ulong result = 0;
+            long result = 0;
 
             double diff = stop_watch.Elapsed.TotalMilliseconds;
 
-            result = (ulong)(diff) + time_offset;
+            //result = (long)(diff) + time_offset;
+            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+            result = (long)t.TotalMilliseconds;
 
             return result;
         }
@@ -60,7 +62,7 @@ namespace RRS.Tools.Network
                 stop_watch.Stop();
                 var utcNow = connection.GetUtc();
                 stop_watch.Start();
-                time_offset = (ulong)(utcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+                time_offset = (long)(utcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
                 reportLog("NTP Sync successful", LogType.INFO, "NTPClient");
                 reportLog("Current time is : " + get(), LogType.INFO, "NTPClient");
 

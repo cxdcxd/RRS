@@ -22,9 +22,9 @@ namespace RRS.Tools.Network
         public delegate void DelegateNewLog(string log_message, LogType log_type, string section);
         public static event DelegateNewLog delegateInfoServiceNewLog;
 
-        public delegate byte[] DelegateGetResponse(ulong sequense, byte[] buffer, uint priority, ulong service_id);
+        public delegate byte[] DelegateGetResponse(long sequense, byte[] buffer, uint priority, ulong service_id);
         DelegateGetResponse GetResponse;
-        public delegate void DelegateNewData(ulong sequense, byte[] buffer, uint priority, Net2HandlerBase sender);
+        public delegate void DelegateNewData(long sequense, byte[] buffer, uint priority, Net2HandlerBase sender);
         public event DelegateNewData delegateInfoServiceRequested;
 
         private bool is_handle_intternal_service_calls = true;
@@ -81,7 +81,7 @@ namespace RRS.Tools.Network
 
         #region  CreateObjects
 
-        private ulong getTime()
+        private long getTime()
         {
             return net2_ntp.get();
         }
@@ -527,7 +527,7 @@ namespace RRS.Tools.Network
             }
         }
 
-        private byte[] ResponseCallback(ulong sequense, byte[] buffer, uint priority, ulong service_id)
+        private byte[] ResponseCallback(long sequense, byte[] buffer, uint priority, ulong service_id)
         {
             Net2StationInfo station_info = new Net2StationInfo();
             station_info.host_name = NameSpace;
