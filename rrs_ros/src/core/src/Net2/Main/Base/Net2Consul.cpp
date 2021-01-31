@@ -227,7 +227,7 @@ void Net2Consul::mThread()
   }
 }
 
-void Net2Consul::advertiseService(const std::string &name, unsigned int port,const std::string &address,std::string time)
+void Net2Consul::advertiseService(const std::string &name, uint64_t port,const std::string &address,std::string time)
 {
   {
     boost::mutex::scoped_lock (mutex_send);

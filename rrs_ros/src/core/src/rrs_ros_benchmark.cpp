@@ -135,7 +135,7 @@ bool BenchmarkROS::saveYaml()
   return false;
 }
 
-void BenchmarkROS::publishLidar(char* data, int size)
+void BenchmarkROS::publishLidar(char* data, int size, uint64_t xtime)
 {
   //1
  RSSLaser laser_msg;
@@ -168,9 +168,12 @@ void BenchmarkROS::publishLidar(char* data, int size)
 }
 
 pub_lidar.publish(scan_msg);
+
+delta_t_lidar = this->net2->getTime() - xtime;
+
 }
 
-void BenchmarkROS::publishCameraColor(char* data, int size)
+void BenchmarkROS::publishCameraColor(char* data, int size, uint64_t xtime)
 {
   //3
 	std::vector<unsigned char> data_byte;
@@ -189,10 +192,11 @@ void BenchmarkROS::publishCameraColor(char* data, int size)
   out_msg.header.stamp = ros::Time::now();
   out_msg.header.frame_id = "base_link";
   pub_camera_color.publish(out_msg.toImageMsg());
-  
+
+  delta_t_camera_rgb = this->net2->getTime() - xtime;
 }
 
-void BenchmarkROS::publishCameraDepth(char* data, int size)
+void BenchmarkROS::publishCameraDepth(char* data, int size, uint64_t xtime)
 {
   //4
   std::vector<unsigned char> data_byte;
@@ -212,6 +216,8 @@ void BenchmarkROS::publishCameraDepth(char* data, int size)
   out_msg.header.frame_id = "base_link";
   pub_camera_depth.publish(out_msg.toImageMsg());
 
+  last_depth_frame_time = xtime;
+  delta_t_camera_depth = this->net2->getTime() - xtime;
 }
 
 void BenchmarkROS::publishPointCloud()
@@ -229,86 +235,88 @@ void BenchmarkROS::publishPointCloud()
       pub_camera_point.publish(point_cloud2);
       last_color_frame_updated = false;
       last_depth_frame_updated = false;
+
+      delta_t_point_cloud = this->net2->getTime() - last_depth_frame_time;
   }
 }
 
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr BenchmarkROS::MatToPoinXYZ()
 {
-      pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
 
-      //Image h and w
-      float rows = last_depth_frame.rows;
-      float cols = last_depth_frame.cols;
+    //Image h and w
+    float rows = last_depth_frame.rows;
+    float cols = last_depth_frame.cols;
 
-      //default far and near clipping distance
-      float zFar = 5;
-      float zNear = 0.5;
+    //default far and near clipping distance
+    float zFar = 5;
+    float zNear = 0.5;
 
-      const double v0 = p_cx;
-      const double u0 = p_cy;
-      const double fy =  p_fy;
-      const double fx = p_fx;
+    const double v0 = p_cx;
+    const double u0 = p_cy;
+    const double fy =  p_fy;
+    const double fx = p_fx;
 
-      cloud->is_dense = true;
-     
-      for (unsigned int u = 0; u < rows; ++u) 
+    cloud->is_dense = true;
+    
+    for (uint64_t u = 0; u < rows; ++u) 
+    {
+      for (uint64_t v = 0; v < cols; ++v) 
       {
-        for (unsigned int v = 0; v < cols; ++v) 
-        {
-            float Xw = 0, Yw = 0, Zw = 0;
-            char R = 255 , G = 255 , B = 255;
-          
-            float d = last_depth_frame.at<cv::Vec3b>(u, v)[0];
+          float Xw = 0, Yw = 0, Zw = 0;
+          char R = 255 , G = 255 , B = 255;
+        
+          float d = last_depth_frame.at<cv::Vec3b>(u, v)[0];
 
-            if (  d > 0 &&  d < 255 )
-            {
+          if (  d > 0 &&  d < 255 )
+          {
 
-            float distance = ( d / 255 ) * (zFar - zNear) + zNear ;
-            distance = distance * p_distance;
+          float distance = ( d / 255 ) * (zFar - zNear) + zNear ;
+          distance = distance * p_distance;
 
-            pcl::PointXYZRGB newPoint;
+          pcl::PointXYZRGB newPoint;
 
-            Xw = (distance);
+          Xw = (distance);
 
-            // //calculate x-coordinate
-            // float alpha_h = (M_PI - p_h) / 2;
-            // float gamma_i_h = alpha_h + (float)v*(p_h / cols);
-            // Yw = distance / tan(gamma_i_h);
+          // //calculate x-coordinate
+          // float alpha_h = (M_PI - p_h) / 2;
+          // float gamma_i_h = alpha_h + (float)v*(p_h / cols);
+          // Yw = distance / tan(gamma_i_h);
 
-            // //calculate y-coordinate
-            // float alpha_v = 2 * M_PI - (p_v / 2);
-            // float gamma_i_v = alpha_v + (float)u*(p_v / rows);
-            // Zw = distance * tan(gamma_i_v)*-1;
+          // //calculate y-coordinate
+          // float alpha_v = 2 * M_PI - (p_v / 2);
+          // float gamma_i_v = alpha_v + (float)u*(p_v / rows);
+          // Zw = distance * tan(gamma_i_v)*-1;
 
-            Yw = (float) ((v - v0) * Xw / fx);
-            Zw = (float) ((u - u0) * Xw / fy);
+          Yw = (float) ((v - v0) * Xw / fx);
+          Zw = (float) ((u - u0) * Xw / fy);
 
-            //ROS_INFO_STREAM(Xw << " " << Yw << " " << Zw);
+          //ROS_INFO_STREAM(Xw << " " << Yw << " " << Zw);
 
-            B = last_color_frame.at<cv::Vec3b>(u, v)[0];
-            G = last_color_frame.at<cv::Vec3b>(u, v)[1];
-            R = last_color_frame.at<cv::Vec3b>(u, v)[2];
+          B = last_color_frame.at<cv::Vec3b>(u, v)[0];
+          G = last_color_frame.at<cv::Vec3b>(u, v)[1];
+          R = last_color_frame.at<cv::Vec3b>(u, v)[2];
 
-            newPoint.x = Xw;
-            newPoint.y = -Yw;
-            newPoint.z = -Zw;
-            newPoint.r = R;
-            newPoint.g = G;
-            newPoint.b = B;
+          newPoint.x = Xw;
+          newPoint.y = -Yw;
+          newPoint.z = -Zw;
+          newPoint.r = R;
+          newPoint.g = G;
+          newPoint.b = B;
 
 
-            //Add the point to the cloud
-            cloud->points.push_back(newPoint);
+          //Add the point to the cloud
+          cloud->points.push_back(newPoint);
 
-            }
-          
-        }
+          }
+        
       }
+    }
 
-    return cloud;
+  return cloud;
 }
 
-void BenchmarkROS::publishIMU(char* data, int size)
+void BenchmarkROS::publishIMU(char* data, int size, uint64_t xtime)
 {
   //13
   RRSIMU imu_msg;
@@ -348,48 +356,67 @@ void BenchmarkROS::publishIMU(char* data, int size)
   out_msg.header.frame_id = "base_link"; 
 
   pub_imu.publish(out_msg);
+
+  delta_t_imu = this->net2->getTime() - xtime;
 }
 
-std::vector<char> BenchmarkROS::callbackDataLidar(std::vector<char> buffer, unsigned int priority, std::string sender)
+std::vector<char> BenchmarkROS::callbackDataLidar(std::vector<char> buffer, uint64_t priority, std::string sender)
 {
   //1
   std::vector<char> result;
   if ( priority == 10 ) return result;
-  publishLidar(&buffer[0],buffer.size());
+  publishLidar(&buffer[0],buffer.size(),priority);
   return result;
 }
 
-std::vector<char> BenchmarkROS::callbackDataCameraColor(std::vector<char> buffer, unsigned int priority, std::string sender)
+std::vector<char> BenchmarkROS::callbackDataCameraColor(std::vector<char> buffer, uint64_t priority, std::string sender)
 {
   //ROS_INFO("GET CAMERA COLOR");
   //3
   std::vector<char> result;
   if ( priority == 10 ) return result;
-  publishCameraColor(&buffer[0],buffer.size());
+  publishCameraColor(&buffer[0],buffer.size(),priority);
   return result;
 }
 
-std::vector<char> BenchmarkROS::callbackDataCameraDepth(std::vector<char> buffer, unsigned int priority, std::string sender)
+std::vector<char> BenchmarkROS::callbackDataCameraDepth(std::vector<char> buffer, uint64_t priority, std::string sender)
 {
   //4
   std::vector<char> result;
   if ( priority == 10 ) return result;
-  publishCameraDepth(&buffer[0],buffer.size());
+  publishCameraDepth(&buffer[0],buffer.size(),priority);
   return result;
 }
 
-std::vector<char> BenchmarkROS::callbackDataIMU(std::vector<char> buffer, unsigned int priority, std::string sender)
+std::vector<char> BenchmarkROS::callbackDataIMU(std::vector<char> buffer, uint64_t priority, std::string sender)
 {
   //13
   std::vector<char> result;
   if ( priority == 10 ) return result;
-  publishIMU(&buffer[0],buffer.size());
+  publishIMU(&buffer[0],buffer.size(),priority);
   return result;
 }
 
 void BenchmarkROS::update()
 {
    publishPointCloud();
+
+   benchmark_index++;
+
+   if ( benchmark_index >= 100 )
+   {
+     benchmark_index = 0;
+
+     ROS_INFO_STREAM("Time : " << this->net2->getTime());
+     ROS_INFO_STREAM("Last depth time : " << last_depth_frame_time);
+
+     ROS_INFO_STREAM("Latency imu : " << delta_t_imu);
+     ROS_INFO_STREAM("Latency lidar : " << delta_t_lidar);
+     ROS_INFO_STREAM("Latency camera rgb : " << delta_t_camera_rgb);
+     ROS_INFO_STREAM("Latency camera depth : " << delta_t_camera_depth);
+     ROS_INFO_STREAM("Latency point cloud : " << delta_t_point_cloud);
+     ROS_INFO_STREAM("======================");  
+   }
 }
 
 void BenchmarkROS::kill()

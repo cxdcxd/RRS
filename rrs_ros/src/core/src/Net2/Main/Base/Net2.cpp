@@ -219,7 +219,7 @@ void Net2::removeService(const std::string &name)
   net2_consul->removeService(name);
 }
 
-void Net2::advertiseService(const std::string &name, unsigned int local_port)
+void Net2::advertiseService(const std::string &name, uint64_t local_port)
 {
   std::string station_ip = net2_helper->getStationIp();
   //ROS_INFO_STREAM("AD Station IP " << station_ip << " " << name);

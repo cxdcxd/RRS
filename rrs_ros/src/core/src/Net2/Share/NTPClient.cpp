@@ -18,9 +18,9 @@ void NTPClient::error( char* msg )
   exit( 0 ); // Quit the process.
 }
 
-long NTPClient::get()
+uint64_t NTPClient::get()
 {
-  long result = 0;
+  uint64_t result = 0;
 
   this->time_end = std::chrono::steady_clock::now();
 
@@ -28,7 +28,10 @@ long NTPClient::get()
 
   int diff2 = diff.count() * 1000;
 
-  result = (long)(diff2) + (long)time_offset;
+  //result = (long)(diff2) + (long)time_offset + 200;
+  result = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+  //td::cout << now << std::endl;
 
   return result;
 }
@@ -114,10 +117,11 @@ long NTPClient::sync(std::string host_name, int port)
   // This leaves the seconds since the UNIX epoch of 1970.
   // (1900)------------------(1970)**************************************(Time Packet Left the Server)
 
-  //TODO We have 200 ms difference in our time and sync time
   time_t txTm = ( time_t ) ( packet.txTm_s - 2208988800 );
 
   int f = packet.txTm_f / 10000000 ;
+
+    //TODO We have 200 ms difference in our time and sync time
   long final = ((long)txTm) * 1000 + f;
 
   this->time_end = std::chrono::steady_clock::now();

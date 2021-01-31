@@ -94,11 +94,11 @@ public:
 
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr MatToPoinXYZ();
 
-  std::vector<char> callbackDataLidar(std::vector<char> buffer, unsigned int priority, std::string sender);
-  std::vector<char> callbackDataCameraColor(std::vector<char> buffer, unsigned int priority, std::string sender);
-  std::vector<char> callbackDataCameraDepth(std::vector<char> buffer, unsigned int priority, std::string sender);
-  std::vector<char> callbackDataIMU(std::vector<char> buffer, unsigned int priority, std::string sender);
-  std::vector<char> callbackDataPoints(std::vector<char> buffer, unsigned int priority, std::string sender);
+  std::vector<char> callbackDataLidar(std::vector<char> buffer, uint64_t priority, std::string sender);
+  std::vector<char> callbackDataCameraColor(std::vector<char> buffer, uint64_t priority, std::string sender);
+  std::vector<char> callbackDataCameraDepth(std::vector<char> buffer, uint64_t priority, std::string sender);
+  std::vector<char> callbackDataIMU(std::vector<char> buffer, uint64_t priority, std::string sender);
+  std::vector<char> callbackDataPoints(std::vector<char> buffer, uint64_t priority, std::string sender);
   
   void callback(rrs_ros::ParamConfig &config, uint32_t level);
 
@@ -119,6 +119,8 @@ public:
   cv::Mat last_depth_frame;
   bool last_depth_frame_updated = false;
 
+  uint64_t last_depth_frame_time = 0;
+
   double a = 0;
 
   float p_distance = 1;
@@ -127,10 +129,10 @@ public:
   float p_cx = 400.0;
   float p_cy = 300.0;
 
-  void publishLidar(char* data, int size);
-  void publishIMU(char* data, int size);
-  void publishCameraDepth(char* data, int size);
-  void publishCameraColor(char* data, int size);
+  void publishLidar(char* data, int size,uint64_t xtime);
+  void publishIMU(char* data, int size,uint64_t xtime);
+  void publishCameraDepth(char* data, int size,uint64_t xtime);
+  void publishCameraColor(char* data, int size,uint64_t xtime);
   void publishPointCloud();
 
   bool is_file_exist(const char *fileName);
@@ -141,11 +143,18 @@ public:
   YAML::Node m_config;
   settings m_settings;
 
+  float delta_t_imu = 0;
+  float delta_t_camera_rgb = 0;
+  float delta_t_camera_depth = 0;
+  float delta_t_point_cloud = 0;
+  float delta_t_lidar = 0;
+
   void update();
   int test_step = 0;
   ~BenchmarkROS();
   void kill();
   Net2 *net2;
+  int benchmark_index = 0;
 };
 
 } // namespace rrs

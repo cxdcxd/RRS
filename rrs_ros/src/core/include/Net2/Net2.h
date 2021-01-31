@@ -47,7 +47,7 @@ class Net2
 {
   std::function<void (std::string sender)> delegateStateChanged;
   std::function<void (const std::string &log_message, LogType log_type, const std::string &section)> delegateNewLog;
-  std::function<std::vector<char> (std::vector<char> buffer, unsigned int priority, std::string sender)> delegateNewData;
+  std::function<std::vector<char> (std::vector<char> buffer, uint64_t priority, std::string sender)> delegateNewData;
 
   bool is_handle_intternal_service_calls = true;
 public:
@@ -95,7 +95,7 @@ public:
 private:
   void Net2_service_delegateStateChanged(std::string sender);
   void Net2_service_delegateNewLog(const std::string &log_message, LogType log_type, const std::string &section);
-  std::vector<char> Net2_service_delegateNewData(std::vector<char> buffer, unsigned int priority, std::string sender);
+  std::vector<char> Net2_service_delegateNewData(std::vector<char> buffer, uint64_t priority, std::string sender);
   void Net2_consul_delegateGetEvent(ProcessResult<int> result, const std::string &key);
 
 public:
@@ -103,7 +103,7 @@ public:
 
   ProcessResult<int> getAsyncService(const std::string &name);
 
-  void advertiseService(const std::string &name, unsigned int local_port);
+  void advertiseService(const std::string &name, uint64_t local_port);
 
 private:
   void Main_timer_Elapsed();

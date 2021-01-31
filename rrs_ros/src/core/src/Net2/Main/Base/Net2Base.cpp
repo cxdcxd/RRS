@@ -184,7 +184,7 @@ ProcessResult<int> Net2Base::finalSend(Message message)
   return result;
 }
 
-ProcessResult<int> Net2Base::send(char* data,int size, unsigned int priority)
+ProcessResult<int> Net2Base::send(char* data,int size, uint64_t priority)
 {
   last_send_receive_time = callbackGetTime();
   Message msg = createMessage(data,size);
@@ -192,7 +192,7 @@ ProcessResult<int> Net2Base::send(char* data,int size, unsigned int priority)
   return finalSend(msg);
 }
 
-ProcessResult<std::shared_ptr<Message>> Net2Base::sendSync(char* data,int size, unsigned int priority, unsigned int send_time_out)
+ProcessResult<std::shared_ptr<Message>> Net2Base::sendSync(char* data,int size, uint64_t priority, uint64_t send_time_out)
 {
   ProcessResult<std::shared_ptr<Message>> result;
   result.success = false;
@@ -294,7 +294,8 @@ void Net2Base::reportData(Message packet, std::string sender)
   
   if ( delegateNewData )
   {
-      unsigned int priority = packet.header().priority();
+      uint64_t priority = packet.header().time_span();
+
       std::string buffer = packet.payload();
       std::vector<char> vector_buffer;
 
@@ -305,10 +306,6 @@ void Net2Base::reportData(Message packet, std::string sender)
 
       delegateNewData(vector_buffer,priority,sender);
   }
-
-
-
-    
 
   //   if (network_type == Net2NetworkType::SERVICE)
   //   {

@@ -55,7 +55,7 @@ private:
 
 public:
   Net2Consul(const std::string &uri,Net2ConsulMode mode);
-  void advertiseService(const std::string &name, unsigned int port, const std::string &address, std::__cxx11::string time);
+  void advertiseService(const std::string &name, uint64_t port, const std::string &address, std::__cxx11::string time);
   void removeService(const std::string &name);
   void shutdown();
   ppconsul::ServiceInfo getServiceInfo(const std::string &name);

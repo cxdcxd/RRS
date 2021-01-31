@@ -17,8 +17,8 @@ namespace Network
 class Net2Client : public Net2Base
 {
 private:
-  unsigned int time_out = 1000;
-  unsigned int time_out_counter = 0;
+  uint64_t time_out = 1000;
+  uint64_t time_out_counter = 0;
   std::shared_ptr<Message> result_message = nullptr;
   bool wait_for_reply = false;
   boost::mutex mutex;
@@ -31,7 +31,7 @@ protected:
 
 public:
   ProcessResult<int> Start(const std::string &name) override;
-  ProcessResult<std::shared_ptr<Message>> sendSync(char* buffer,int size, unsigned int priority = 0, unsigned int send_time_out = 0) override;
+  ProcessResult<std::shared_ptr<Message>> sendSync(char* buffer,int size, uint64_t priority = 0, uint64_t send_time_out = 0) override;
   ProcessResult<int> Start(const std::string &remote_ip, int remote_port) override;
 };
 }

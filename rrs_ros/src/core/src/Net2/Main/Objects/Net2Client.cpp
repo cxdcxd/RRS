@@ -49,7 +49,7 @@ ProcessResult<int> Net2Client::Start(const std::string &name)
   return res;
 }
 
-ProcessResult<std::shared_ptr<Message>> Net2Client::sendSync(char* buffer,int size, unsigned int priority, unsigned int send_time_out)
+ProcessResult<std::shared_ptr<Message>> Net2Client::sendSync(char* buffer,int size, uint64_t priority, uint64_t send_time_out)
 {
   ProcessResult<std::shared_ptr<Message>> res;
 

@@ -62,10 +62,10 @@ protected:
   bool is_auto_connection = true;
   bool req_wait = false;
 
-  unsigned int time_out_read_ms = 10;
-  unsigned int time_out_write_ms = 10;
-  unsigned int local_port = 0;
-  unsigned int remote_port = 0;
+  uint64_t time_out_read_ms = 10;
+  uint64_t time_out_write_ms = 10;
+  uint64_t local_port = 0;
+  uint64_t remote_port = 0;
 
   int service_counter = 0;
   int time_out_write_ts;
@@ -78,8 +78,8 @@ protected:
 
   unsigned long long sequence = 0;
   unsigned long long req_sequence = 0;
-  long last_send_receive_time = 0;
-  unsigned int connection_count = 0;
+  uint64_t last_send_receive_time = 0;
+  uint64_t connection_count = 0;
 
   std::shared_ptr<void> update_mutex = nullptr;
 
@@ -106,7 +106,7 @@ public:
   //Events
   std::function<void (std::string sender)> delegateStateChanged;
   std::function<void (const std::string &log_message, LogType log_type, const std::string &section)> delegateNewLog;
-  std::function<std::vector<char> (std::vector<char> buffer, unsigned int priority, std::string sender)> delegateNewData;
+  std::function<std::vector<char> (std::vector<char> buffer, uint64_t priority, std::string sender)> delegateNewData;
   std::function<void (std::string sender)> delegateSendChanged;
   std::function<void (std::string sender)> delegateReceiveChanged;
   std::function<void (std::string name)> callbackRemoveService;
@@ -114,8 +114,8 @@ public:
   std::function<ProcessResult<ppconsul::ServiceInfo> (std::string name)> callbackGetServiceInfo;
   std::function<long ()> callbackGetTime;
 
-  virtual ProcessResult<int> send(char *data, int size, unsigned int priority = 0);
-  virtual ProcessResult<std::shared_ptr<Message>> sendSync(char *data, int size, unsigned int priority = 0, unsigned int send_time_out = 0);
+  virtual ProcessResult<int> send(char *data, int size, uint64_t priority = 0);
+  virtual ProcessResult<std::shared_ptr<Message>> sendSync(char *data, int size, uint64_t priority = 0, uint64_t send_time_out = 0);
 
   bool getIsReqWait() const;
   std::string getLastDesireName() const;
