@@ -51,7 +51,7 @@ public class Lidar : MonoBehaviour
             int count = 0;
             RaycastHit hit;
 
-            for (float i = max_degree; i > min_degree; i -= delta_degree, count++)
+            for (float i = min_degree; i < max_degree; i += delta_degree, count++)
             {
                 target_pos.y = transform.position.y;
                 target_pos.x = Mathf.Cos((i + robot_rotation) * Mathf.Deg2Rad) * (max_distance / 100) + transform.position.x;
