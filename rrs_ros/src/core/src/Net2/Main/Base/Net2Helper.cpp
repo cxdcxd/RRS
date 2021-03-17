@@ -16,7 +16,7 @@ Net2Helper::Net2Helper(const Net2Config &config, std::string settings_local_ip)
   ntp_client->sync(this->net2_config.ntp_server_host_name,this->net2_config.ntp_server_port);
 
   std::cout << "NTP sync successful" << std::endl;
-  std::cout << "Time : "  << getTime() << std::endl;
+  std::cout << "Time : "  << getTimenano() << std::endl;
 }
 
 Net2Helper::~Net2Helper()
@@ -163,9 +163,14 @@ std::string Net2Helper::getStationIp()
   return "";
 }
 
-long Net2Helper::getTime()
+uint64_t Net2Helper::getTimenano()
 {
-  return ntp_client->get();
+  return ntp_client->getnano();
+}
+
+uint64_t Net2Helper::getTimemili()
+{
+  return ntp_client->getmili();
 }
 
 long Net2Helper::syncTime()

@@ -67,10 +67,92 @@ namespace lmt
     pub_camera_depth = nh.advertise<sensor_msgs::Image>("net2/camera/depth_raw", 1);
     pub_imu = nh.advertise<sensor_msgs::Imu>("net2/imu",1);
     pub_camera_point = nh.advertise<pcl::PCLPointCloud2>("net2/camera/points", 1);
-  
+
+    sub_ros_sharp_camera_color = nh.subscribe("/unity_image/compressed",1, &BenchmarkROS::chatterCallbackImageColor, this);
+    sub_ros_sharp_camera_depth = nh.subscribe("/unity_depth/compressed",1, &BenchmarkROS::chatterCallbackImageDepth, this);
+    sub_ros_sharp_lidar = nh.subscribe("/unity_laser/laser",1, &BenchmarkROS::chatterCallbackLaser, this);
+    sub_ros_sharp_joy = nh.subscribe("/unity/joy",1, &BenchmarkROS::chatterCallbackJoy, this);
+
+    sub_ros_2_camera_color = nh.subscribe("/chatter_image/compressed",1, &BenchmarkROS::chatterCallbackImageColorRRROS2, this);
+    sub_ros_2_camera_depth = nh.subscribe("/chatter_depth/compressed",1, &BenchmarkROS::chatterCallbackImageDepthRRROS2, this);
+    sub_ros_2_lidar = nh.subscribe("/scan",1, &BenchmarkROS::chatterCallbackLaserRRROS2, this);
+    sub_ros_2_joy = nh.subscribe("/chatter/joy",1, &BenchmarkROS::chatterCallbackJoyRRROS2, this);
+  }
+
+
+  void BenchmarkROS::chatterCallbackImageColorRRROS2(const sensor_msgs::CompressedImage::ConstPtr& msg)
+  {
+    uint64_t sec = msg->header.stamp.sec;
+    uint64_t nsec = msg->header.stamp.nsec;
+    uint64_t mtime = sec * 1000000000 + nsec;
+    delta_ros2_t_camera_rgb = this->net2->getTimenano() - mtime;
+  }
+
+  void BenchmarkROS::chatterCallbackImageDepthRRROS2(const sensor_msgs::CompressedImage::ConstPtr& msg)
+  {
+    uint64_t sec = msg->header.stamp.sec;
+    uint64_t nsec = msg->header.stamp.nsec;
+    uint64_t mtime = sec * 1000000000 + nsec;
+    delta_ros2_t_camera_depth = this->net2->getTimenano() - mtime;
+  }
+
+  void BenchmarkROS::chatterCallbackJoyRRROS2(const sensor_msgs::Joy::ConstPtr& msg)
+  {
+    uint64_t sec = msg->header.stamp.sec;
+    uint64_t nsec = msg->header.stamp.nsec;
+    uint64_t mtime = sec * 1000000000 + nsec;
+    delta_ros2_t_joy = this->net2->getTimenano() - mtime;
+  }
+
+  void BenchmarkROS::chatterCallbackLaserRRROS2(const sensor_msgs::LaserScan::ConstPtr& msg)
+  {
+    uint64_t sec = msg->header.stamp.sec;
+    uint64_t nsec = msg->header.stamp.nsec;
+    uint64_t mtime = sec * 1000000000 + nsec;
+    delta_ros2_t_lidar = this->net2->getTimenano() - mtime;
+  }
+
+  void BenchmarkROS::chatterCallbackImageColor(const sensor_msgs::CompressedImage::ConstPtr& msg)
+  {
+    //ROS_WARN("Got rosharp images");
+    uint64_t sec = msg->header.stamp.sec;
+    uint64_t nsec = msg->header.stamp.nsec;
+    uint64_t mtime = sec * 1000000000 + nsec;
+    delta_rs_t_camera_rgb = this->net2->getTimenano() - mtime;
+    //ROS_WARN_STREAM("image delta " << mtime  << " " << this->net2->getTime());
+  }
+
+  void BenchmarkROS::chatterCallbackImageDepth(const sensor_msgs::CompressedImage::ConstPtr& msg)
+  {
+    //ROS_WARN("Got rosharp depth");
+     uint64_t sec = msg->header.stamp.sec;
+    uint64_t nsec = msg->header.stamp.nsec;
+    uint64_t mtime = sec * 1000000000 + nsec;
+    delta_rs_t_camera_depth = this->net2->getTimenano() - mtime;
+    //ROS_WARN_STREAM("depth delta " << delta.toNSec());
+  }
+
+  void BenchmarkROS::chatterCallbackJoy(const sensor_msgs::Joy::ConstPtr& msg)
+  {
+    //ROS_WARN("Got rosharp joy");
+     uint64_t sec = msg->header.stamp.sec;
+    uint64_t nsec = msg->header.stamp.nsec;
+    uint64_t mtime = sec * 1000000000 + nsec;
+    delta_rs_t_joy = this->net2->getTimenano() - mtime;
+    //ROS_WARN_STREAM("joy delta " << delta.toNSec());
+  }
+
+  void BenchmarkROS::chatterCallbackLaser(const sensor_msgs::LaserScan::ConstPtr& msg)
+  {
+    //ROS_WARN("Got rosharp laser");
+     uint64_t sec = msg->header.stamp.sec;
+    uint64_t nsec = msg->header.stamp.nsec;
+    uint64_t mtime = sec * 1000000000 + nsec;
+    delta_rs_t_lidar = this->net2->getTimenano() - mtime;
+    //ROS_WARN_STREAM("laser delta " << delta.toNSec());
   }
   
-  bool BenchmarkROS::loadYaml()
+bool BenchmarkROS::loadYaml()
   {
     try
     {
@@ -169,7 +251,7 @@ void BenchmarkROS::publishLidar(char* data, int size, uint64_t xtime)
 
 pub_lidar.publish(scan_msg);
 
-delta_t_lidar = this->net2->getTime() - xtime;
+delta_t_lidar = this->net2->getTimenano() - xtime;
 size_lidar = size;
 
 }
@@ -194,7 +276,7 @@ void BenchmarkROS::publishCameraColor(char* data, int size, uint64_t xtime)
   out_msg.header.frame_id = "base_link";
   pub_camera_color.publish(out_msg.toImageMsg());
 
-  delta_t_camera_rgb = this->net2->getTime() - xtime;
+  delta_t_camera_rgb = this->net2->getTimenano() - xtime;
   size_camera_rgb = size;
 }
 
@@ -219,7 +301,7 @@ void BenchmarkROS::publishCameraDepth(char* data, int size, uint64_t xtime)
   pub_camera_depth.publish(out_msg.toImageMsg());
 
   last_depth_frame_time = xtime;
-  delta_t_camera_depth = this->net2->getTime() - xtime;
+  delta_t_camera_depth = this->net2->getTimenano() - xtime;
   size_camera_depth = size;
 }
 
@@ -239,7 +321,7 @@ void BenchmarkROS::publishPointCloud()
       last_color_frame_updated = false;
       last_depth_frame_updated = false;
 
-      delta_t_point_cloud = this->net2->getTime() - last_depth_frame_time;
+      delta_t_point_cloud = this->net2->getTimenano() - last_depth_frame_time;
   }
 }
 
@@ -361,7 +443,7 @@ void BenchmarkROS::publishIMU(char* data, int size, uint64_t xtime)
 
   pub_imu.publish(out_msg);
 
-  delta_t_imu = this->net2->getTime() - xtime;
+  delta_t_imu = this->net2->getTimenano() - xtime;
   size_imu = size;
 }
 
@@ -412,14 +494,14 @@ void BenchmarkROS::update()
    {
      benchmark_index = 0;
 
-     ROS_INFO_STREAM("Time : " << this->net2->getTime());
+     ROS_INFO_STREAM("Time : " << this->net2->getTimenano());
      ROS_INFO_STREAM("Last depth time : " << last_depth_frame_time);
 
-     ROS_INFO_STREAM("Latency imu : " << delta_t_imu);
-     ROS_INFO_STREAM("Latency lidar : " << delta_t_lidar);
-     ROS_INFO_STREAM("Latency camera rgb : " << delta_t_camera_rgb);
-     ROS_INFO_STREAM("Latency camera depth : " << delta_t_camera_depth);
-     ROS_INFO_STREAM("Latency point cloud : " << delta_t_point_cloud);
+     ROS_INFO_STREAM("Latency imu : " << ((float)delta_t_imu) / 1000000);
+     ROS_INFO_STREAM("Latency lidar : " << ((float)delta_t_lidar) / 1000000);
+     ROS_INFO_STREAM("Latency camera rgb : " << ((float)delta_t_camera_rgb) / 1000000);
+     ROS_INFO_STREAM("Latency camera depth : " << ((float)delta_t_camera_depth) / 1000000);
+     ROS_INFO_STREAM("Latency point cloud : " << ((float)delta_t_point_cloud) / 1000000);
 
      ROS_INFO_STREAM("Size imu : " << size_imu);
      ROS_INFO_STREAM("Size lidar : " << size_lidar);
@@ -427,6 +509,16 @@ void BenchmarkROS::update()
      ROS_INFO_STREAM("Size camera depth : " << size_camera_depth);
      ROS_INFO_STREAM("Point size point cloud : " << size_point_cloud);
 
+     ROS_INFO_STREAM("Latency rs joy : " << ((float)delta_rs_t_joy) / 1000000);
+     ROS_INFO_STREAM("Latency rs lidar : " << ((float)delta_rs_t_lidar) / 1000000);
+     ROS_INFO_STREAM("Latency rs camera rgb : " << ((float)delta_rs_t_camera_rgb) / 1000000);
+     ROS_INFO_STREAM("Latency rs camera depth : " << ((float)delta_rs_t_camera_depth) / 1000000);
+
+     ROS_INFO_STREAM("Latency ros2 joy : " << ((float)delta_ros2_t_joy) / 1000000);
+     ROS_INFO_STREAM("Latency ros2 lidar : " << ((float)delta_ros2_t_lidar) / 1000000);
+     ROS_INFO_STREAM("Latency ros2 camera rgb : " << ((float)delta_ros2_t_camera_rgb) / 1000000);
+     ROS_INFO_STREAM("Latency ros2 camera depth : " << ((float)delta_ros2_t_camera_depth) / 1000000);
+     
      ROS_INFO_STREAM("======================");  
    }
 }

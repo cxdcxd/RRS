@@ -112,7 +112,7 @@ public:
   std::function<void (std::string name)> callbackRemoveService;
   std::function<void (std::string name,int port)> callbackAdvertiseService;
   std::function<ProcessResult<ppconsul::ServiceInfo> (std::string name)> callbackGetServiceInfo;
-  std::function<long ()> callbackGetTime;
+  std::function<uint64_t ()> callbackGetTime;
 
   virtual ProcessResult<int> send(char *data, int size, uint64_t priority = 0);
   virtual ProcessResult<std::shared_ptr<Message>> sendSync(char *data, int size, uint64_t priority = 0, uint64_t send_time_out = 0);

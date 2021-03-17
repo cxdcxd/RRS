@@ -77,7 +77,8 @@ public:
   std::chrono::time_point<std::chrono::steady_clock> time_end;
   void error( char* msg );
   long sync(std::string ntp_host_name, int port);
-  uint64_t get();
+  uint64_t getnano();
+  uint64_t getmili();
 };
 }
 }

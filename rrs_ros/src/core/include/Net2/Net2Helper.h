@@ -36,7 +36,8 @@ public:
   std::string getStationIp();
   std::vector<std::string> getAllInterfaceIps();
   NTPClient *ntp_client;
-  long getTime();
+  uint64_t getTimenano();
+  uint64_t getTimemili();
   long syncTime();
   std::string local_ip;
 

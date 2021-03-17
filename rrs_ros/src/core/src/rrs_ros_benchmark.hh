@@ -42,6 +42,7 @@
 #include "sensor_msgs/CameraInfo.h"
 #include "sensor_msgs/LaserScan.h"
 #include "sensor_msgs/Image.h"
+#include "sensor_msgs/Joy.h"
 #include "sensor_msgs/PointCloud2.h"
 #include "visualization_msgs/Marker.h"
 
@@ -113,6 +114,26 @@ public:
   ros::Publisher pub_imu;
   ros::Publisher pub_camera_point;
 
+  ros::Subscriber sub_ros_sharp_lidar;
+  ros::Subscriber sub_ros_sharp_camera_color;
+  ros::Subscriber sub_ros_sharp_camera_depth;
+  ros::Subscriber sub_ros_sharp_joy;
+
+  ros::Subscriber sub_ros_2_lidar;
+  ros::Subscriber sub_ros_2_camera_color;
+  ros::Subscriber sub_ros_2_camera_depth;
+  ros::Subscriber sub_ros_2_joy;
+
+  void chatterCallbackImageColor(const sensor_msgs::CompressedImage::ConstPtr& msg);
+  void chatterCallbackImageDepth(const sensor_msgs::CompressedImage::ConstPtr& msg);
+  void chatterCallbackJoy(const sensor_msgs::Joy::ConstPtr& msg);
+  void chatterCallbackLaser(const sensor_msgs::LaserScan::ConstPtr& msg);
+
+  void chatterCallbackImageColorRRROS2(const sensor_msgs::CompressedImage::ConstPtr& msg);
+  void chatterCallbackImageDepthRRROS2(const sensor_msgs::CompressedImage::ConstPtr& msg);
+  void chatterCallbackJoyRRROS2(const sensor_msgs::Joy::ConstPtr& msg);
+  void chatterCallbackLaserRRROS2(const sensor_msgs::LaserScan::ConstPtr& msg);
+
   cv::Mat last_color_frame;
   bool last_color_frame_updated = false;
 
@@ -143,11 +164,23 @@ public:
   YAML::Node m_config;
   settings m_settings;
 
-  float delta_t_imu = 0;
-  float delta_t_camera_rgb = 0;
-  float delta_t_camera_depth = 0;
-  float delta_t_point_cloud = 0;
-  float delta_t_lidar = 0;
+  uint64_t delta_t_imu = 0;
+  uint64_t delta_t_camera_rgb = 0;
+  uint64_t delta_t_camera_depth = 0;
+  uint64_t delta_t_point_cloud = 0;
+  uint64_t delta_t_lidar = 0;
+
+  uint64_t delta_rs_t_joy = 0;
+  uint64_t delta_rs_t_camera_rgb = 0;
+  uint64_t delta_rs_t_camera_depth = 0;
+  uint64_t delta_rs_t_point_cloud = 0;
+  uint64_t delta_rs_t_lidar = 0;
+  
+  uint64_t delta_ros2_t_joy = 0;
+  uint64_t delta_ros2_t_camera_rgb = 0;
+  uint64_t delta_ros2_t_camera_depth = 0;
+  uint64_t delta_ros2_t_point_cloud = 0;
+  uint64_t delta_ros2_t_lidar = 0;
 
   int size_imu = 0;
   int size_camera_rgb = 0;

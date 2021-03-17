@@ -33,7 +33,7 @@ std::shared_ptr<Net2Publisher> Net2::publisher(const std::string &name)
     publisher->callbackAdvertiseService = std::bind(&Net2::advertiseService,this,std::placeholders::_1,std::placeholders::_2);
     publisher->callbackRemoveService = std::bind(&Net2::removeService,this,std::placeholders::_1);
     publisher->callbackGetServiceInfo = std::bind(&Net2::getService ,this,std::placeholders::_1);
-    publisher->callbackGetTime = std::bind(&Net2::getTime,this);
+    publisher->callbackGetTime = std::bind(&Net2::getTimemili,this);
 
     addChannel(publisher);
     return publisher;
@@ -53,7 +53,7 @@ std::shared_ptr<Net2Subscriber> Net2::subscriber()
     subscriber->callbackAdvertiseService = std::bind(&Net2::advertiseService,this,std::placeholders::_1,std::placeholders::_2);
     subscriber->callbackRemoveService = std::bind(&Net2::removeService,this,std::placeholders::_1);
     subscriber->callbackGetServiceInfo = std::bind(&Net2::getService ,this,std::placeholders::_1);
-    subscriber->callbackGetTime = std::bind(&Net2::getTime,this);
+    subscriber->callbackGetTime = std::bind(&Net2::getTimemili,this);
 
     addChannel(subscriber);
     return subscriber;
@@ -74,7 +74,7 @@ std::shared_ptr<Net2Service> Net2::service(const std::string &name)
     service->callbackAdvertiseService = std::bind(&Net2::advertiseService,this,std::placeholders::_1,std::placeholders::_2);
     service->callbackRemoveService = std::bind(&Net2::removeService,this,std::placeholders::_1);
     service->callbackGetServiceInfo = std::bind(&Net2::getService ,this,std::placeholders::_1);
-    service->callbackGetTime = std::bind(&Net2::getTime,this);
+    service->callbackGetTime = std::bind(&Net2::getTimemili,this);
 
     addChannel(service);
     return service;
@@ -94,7 +94,7 @@ std::shared_ptr<Net2Client> Net2::clinet()
     client->callbackAdvertiseService = std::bind(&Net2::advertiseService,this,std::placeholders::_1,std::placeholders::_2);
     client->callbackRemoveService = std::bind(&Net2::removeService,this,std::placeholders::_1);
     client->callbackGetServiceInfo = std::bind(&Net2::getService ,this,std::placeholders::_1);
-    client->callbackGetTime = std::bind(&Net2::getTime,this);
+    client->callbackGetTime = std::bind(&Net2::getTimemili,this);
 
     addChannel(client);
     return client;
@@ -114,7 +114,7 @@ std::shared_ptr<Net2AsyncClient> Net2::asynclient()
     asynclient->callbackAdvertiseService = std::bind(&Net2::advertiseService,this,std::placeholders::_1,std::placeholders::_2);
     asynclient->callbackRemoveService = std::bind(&Net2::removeService,this,std::placeholders::_1);
     asynclient->callbackGetServiceInfo = std::bind(&Net2::getService ,this,std::placeholders::_1);
-    asynclient->callbackGetTime = std::bind(&Net2::getTime,this);
+    asynclient->callbackGetTime = std::bind(&Net2::getTimemili,this);
 
     addChannel(asynclient);
     return asynclient;
@@ -203,9 +203,14 @@ ProcessResult<ppconsul::ServiceInfo> Net2::getService(std::string name)
   return result;
 }
 
-long Net2::getTime()
+uint64_t Net2::getTimemili()
 {
-  return net2_helper->getTime();
+  return net2_helper->getTimemili();
+}
+
+uint64_t Net2::getTimenano()
+{
+  return net2_helper->getTimenano();
 }
 
 void Net2::boostThread()
@@ -223,7 +228,7 @@ void Net2::advertiseService(const std::string &name, uint64_t local_port)
 {
   std::string station_ip = net2_helper->getStationIp();
   //ROS_INFO_STREAM("AD Station IP " << station_ip << " " << name);
-  net2_consul->advertiseService(name, local_port, station_ip, std::to_string(net2_helper->getTime()));
+  net2_consul->advertiseService(name, local_port, station_ip, std::to_string(net2_helper->getTimemili()));
 }
 
 void Net2::Main_timer_Elapsed()
@@ -234,7 +239,7 @@ void Net2::Main_timer_Elapsed()
     //ROS_INFO_STREAM("TIMER Station IP " << station_ip << " " << "station-" + getHostName());
     if (station_ip != "")
     {
-      net2_consul->advertiseService("station-" + getHostName(), 0, station_ip, std::to_string(net2_helper->getTime()));
+      net2_consul->advertiseService("station-" + getHostName(), 0, station_ip, std::to_string(net2_helper->getTimemili()));
     }
 
     {

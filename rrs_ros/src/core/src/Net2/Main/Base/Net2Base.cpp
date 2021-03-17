@@ -294,7 +294,7 @@ void Net2Base::reportData(Message packet, std::string sender)
   
   if ( delegateNewData )
   {
-      uint64_t priority = packet.header().time_span();
+      uint64_t priority = packet.header().time_span_s() * 1000000000 + packet.header().time_span_ns();
 
       std::string buffer = packet.payload();
       std::vector<char> vector_buffer;
@@ -556,7 +556,7 @@ Message Net2Base::createMessage(char* buffer,int size)
   Header *header = new Header;
 
   header->set_sequence(req_sequence);
-  header->set_time_span(callbackGetTime());
+  header->set_time_span_s(callbackGetTime()); //TODO ad ns
   header->set_source_channel_name(getName());
 
   msg.set_payload(buffer,size);

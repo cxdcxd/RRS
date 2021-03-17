@@ -841,6 +841,7 @@ std::vector<char> Net2TestROS::callbackDataLidar2(std::vector<char> buffer, unsi
 
 std::vector<char> Net2TestROS::callbackDataCameraColor(std::vector<char> buffer, unsigned int priority, std::string sender)
 {
+
   //ROS_INFO("GET CAMERA COLOR");
   //3
   std::vector<char> result;
@@ -851,6 +852,7 @@ std::vector<char> Net2TestROS::callbackDataCameraColor(std::vector<char> buffer,
 
 std::vector<char> Net2TestROS::callbackDataCameraDepth(std::vector<char> buffer, unsigned int priority, std::string sender)
 {
+
   //4
   std::vector<char> result;
   if ( priority == 10 ) return result;
@@ -860,6 +862,7 @@ std::vector<char> Net2TestROS::callbackDataCameraDepth(std::vector<char> buffer,
 
 std::vector<char> Net2TestROS::callbackDataCameraNormal(std::vector<char> buffer, unsigned int priority, std::string sender)
 {
+
   //4r
   std::vector<char> result;
   if ( priority == 10 ) return result;
@@ -869,6 +872,7 @@ std::vector<char> Net2TestROS::callbackDataCameraNormal(std::vector<char> buffer
 
 std::vector<char> Net2TestROS::callbackDataCameraInfo(std::vector<char> buffer, unsigned int priority, std::string sender)
 {
+
   //5
   std::vector<char> result;
   if ( priority == 10 ) return result;
@@ -878,6 +882,7 @@ std::vector<char> Net2TestROS::callbackDataCameraInfo(std::vector<char> buffer, 
 
 std::vector<char> Net2TestROS::callbackDataCameraSegment(std::vector<char> buffer, unsigned int priority, std::string sender)
 {
+
   //6
   std::vector<char> result;
   if ( priority == 10 ) return result;

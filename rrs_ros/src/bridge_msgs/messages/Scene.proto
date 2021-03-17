@@ -28,12 +28,13 @@ message Header
    optional Mode mode = 2 [default = COMMAND];
    optional string source_channel_name = 3;
    optional string remote_channel_name = 4;
-   optional uint64 time_span = 5 [default = 0];
+   optional uint64 time_span_s = 5 [default = 0];
    optional uint64 sequence = 6 [default = 0];
    optional string source_ip = 7;
    optional string remote_ip = 8;
    optional uint32 priority = 9 [default = 0];
    optional bytes zmq_router_address = 10;
+   optional uint64 time_span_ns = 11 [default = 0];
 }
 
 message Message 

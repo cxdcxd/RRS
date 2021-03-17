@@ -65,7 +65,8 @@ public:
   std::thread  *thread;
 
   void boostThread();
-  long getTime();
+  uint64_t getTimemili();
+  uint64_t getTimenano();
   ProcessResult<ppconsul::ServiceInfo> getService(std::string name);
 
   static std::shared_ptr<Net2> instance;

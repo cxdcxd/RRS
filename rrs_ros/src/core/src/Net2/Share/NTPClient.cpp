@@ -18,7 +18,7 @@ void NTPClient::error( char* msg )
   exit( 0 ); // Quit the process.
 }
 
-uint64_t NTPClient::get()
+uint64_t NTPClient::getnano()
 {
   uint64_t result = 0;
 
@@ -29,7 +29,25 @@ uint64_t NTPClient::get()
   int diff2 = diff.count() * 1000;
 
   //result = (long)(diff2) + (long)time_offset + 200;
-  result = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+  result = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count(); 
+
+  //td::cout << now << std::endl;
+
+  return result;
+}
+
+uint64_t NTPClient::getmili()
+{
+  uint64_t result = 0;
+
+  this->time_end = std::chrono::steady_clock::now();
+
+  std::chrono::duration<double> diff = this->time_end-this->time_start;
+
+  int diff2 = diff.count() * 1000;
+
+  //result = (long)(diff2) + (long)time_offset + 200;
+  result = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count(); 
 
   //td::cout << now << std::endl;
 
