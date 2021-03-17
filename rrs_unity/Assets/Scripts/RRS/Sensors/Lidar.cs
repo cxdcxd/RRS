@@ -5,6 +5,7 @@ using ProtoBuf;
 using System;
 using System.Threading;
 using RRS.Tools.Protobuf;
+using Newtonsoft.Json;
 
 public class Lidar : MonoBehaviour
 {
@@ -119,6 +120,8 @@ public class Lidar : MonoBehaviour
         ms = new MemoryStream();
         Serializer.Serialize<RRSLaser>(ms, r_laser);
 
+
+
         byte[] data = ms.ToArray();
         return data;
     }
@@ -136,6 +139,9 @@ public class Lidar : MonoBehaviour
         {
             calcScan();
             byte[] buffer = getBuffer();
+
+          
+
             delegateLidarDataChanged?.Invoke(buffer);
             timer = 0;
        }

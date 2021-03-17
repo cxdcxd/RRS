@@ -63,6 +63,7 @@ public class Benchmark : MonoBehaviour
     private void Color_camera_delegateCameraDataChanged(byte[] buffer)
     {
         publisher_camera_rgb_net2.Send(buffer);
+        UnityEngine.Debug.Log("net image publisherd");
     }
 
     private void Depth_camera_delegateCameraDataChanged(byte[] buffer)

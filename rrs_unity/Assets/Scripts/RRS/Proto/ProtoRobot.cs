@@ -26,7 +26,7 @@ namespace RRS.Tools.Protobuf
 
         }
     }
-
+    
     [ProtoContract]
     public class RRSLaser
     {

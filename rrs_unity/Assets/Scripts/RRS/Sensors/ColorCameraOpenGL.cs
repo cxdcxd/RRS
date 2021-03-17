@@ -43,7 +43,7 @@ public class ColorCameraOpenGL : MonoBehaviour
 
     public enum Mode
     {
-        a, b, c, d, e, f
+        depth, flow, objectid, catid, normals, color
     }
 
     public Mode mode;
@@ -104,11 +104,11 @@ public class ColorCameraOpenGL : MonoBehaviour
             opticalFlowMaterial = new Material(opticalFlowShader);
         opticalFlowMaterial.SetFloat("_Sensitivity", opticalFlowSensitivity);
 
-        if (mode == Mode.a) SetupCameraWithReplacementShader(SensorCamera, uberReplacementShader, ReplacementMode.ObjectId);
-        if (mode == Mode.b) SetupCameraWithReplacementShader(SensorCamera, uberReplacementShader, ReplacementMode.CatergoryId);
-        if (mode == Mode.c) SetupCameraWithReplacementShader(SensorCamera, uberReplacementShader, ReplacementMode.DepthCompressed, Color.white);
-        if (mode == Mode.d) SetupCameraWithReplacementShader(SensorCamera, uberReplacementShader, ReplacementMode.Normals);
-        if (mode == Mode.e) SetupCameraWithPostShader(SensorCamera, opticalFlowMaterial, DepthTextureMode.Depth | DepthTextureMode.MotionVectors);
+        if (mode == Mode.objectid) SetupCameraWithReplacementShader(SensorCamera, uberReplacementShader, ReplacementMode.ObjectId);
+        if (mode == Mode.catid) SetupCameraWithReplacementShader(SensorCamera, uberReplacementShader, ReplacementMode.CatergoryId);
+        if (mode == Mode.depth) SetupCameraWithReplacementShader(SensorCamera, uberReplacementShader, ReplacementMode.DepthCompressed, Color.white);
+        if (mode == Mode.normals) SetupCameraWithReplacementShader(SensorCamera, uberReplacementShader, ReplacementMode.Normals);
+        if (mode == Mode.flow) SetupCameraWithPostShader(SensorCamera, opticalFlowMaterial, DepthTextureMode.Depth | DepthTextureMode.MotionVectors);
 
     }
 

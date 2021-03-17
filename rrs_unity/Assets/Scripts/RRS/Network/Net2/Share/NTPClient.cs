@@ -9,8 +9,16 @@ using RRS.Tools.Log;
 
 namespace RRS.Tools.Network
 {
+    class Net2Time
+    {
+        public long sec;
+        public long nsec;
+    }
+
     class Net2NTPClient
     {
+        public static DateTime UNIX_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+
         Stopwatch stop_watch;
         long time_offset = 0;
         string host_name;
@@ -40,17 +48,19 @@ namespace RRS.Tools.Network
 
         }
 
-        public long get()
+        public Net2Time get()
         {
-            long result = 0;
-
-            double diff = stop_watch.Elapsed.TotalMilliseconds;
-
+            Net2Time time = new Net2Time();
+          
+            //double diff = stop_watch.Elapsed.TotalMilliseconds;
             //result = (long)(diff) + time_offset;
-            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-            result = (long)t.TotalMilliseconds;
-
-            return result;
+          
+            TimeSpan timeSpan = DateTime.Now.ToUniversalTime() - UNIX_EPOCH;
+            double msecs = timeSpan.TotalMilliseconds;
+            time.sec = (uint)(msecs / 1000);
+            time.nsec = (uint)((msecs / 1000 - time.sec) * 1e+9);
+        
+            return time;
         }
 
         public void sync(string host_name)

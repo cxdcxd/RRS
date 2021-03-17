@@ -108,7 +108,7 @@ namespace RRS.Tools.Network
                 task = Task.Factory.StartNew(monitor.Start);
 
                 setState(Net2State.STARTED);
-                start_time = GetTime();
+                start_time = GetTime().sec;
 
                 socket.Connect(path);
 
@@ -119,8 +119,8 @@ namespace RRS.Tools.Network
             {
                 if (internal_state == Net2State.STARTED)
                 {
-                    long diff = GetTime() - start_time;
-                    if (diff > 2000)
+                    long diff = GetTime().sec - start_time;
+                    if (diff > 2)
                     {
                         reportLog("Stopping cause monitor failure", LogType.WARN, section);
                         throw new Exception("monitor failure");

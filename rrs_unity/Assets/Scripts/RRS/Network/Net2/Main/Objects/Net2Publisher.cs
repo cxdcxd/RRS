@@ -30,7 +30,7 @@ namespace RRS.Tools.Network
                     addToSendQueue(msg);
                 }
 
-                last_send_receive_time = GetTime();
+                last_send_receive_time = GetTime().sec;
             }
 
             protected override void _SocketBuilder()
@@ -55,7 +55,7 @@ namespace RRS.Tools.Network
 
                 setState(Net2State.STARTED);
 
-                start_time = GetTime();
+                start_time = GetTime().sec;
 
                 reportLog("Publisher " + Name + " is ready on " + local_port, LogType.INFO, section);
             }
@@ -69,8 +69,8 @@ namespace RRS.Tools.Network
             {
                 if (internal_state == Net2State.STARTED)
                 {
-                    long diff = GetTime() - last_send_receive_time;
-                    if (diff > 2000)
+                    long diff = GetTime().sec - last_send_receive_time;
+                    if (diff > 2)
                     {
                         Send(new byte[1], 10);
                     }

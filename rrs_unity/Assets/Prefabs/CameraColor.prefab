@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4994667982591779735}
   - component: {fileID: 4994667982591779736}
-  - component: {fileID: 4994667982591779738}
+  - component: {fileID: 399709057}
   m_Layer: 0
   m_Name: CameraColor
   m_TagString: Untagged
@@ -25,7 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4994667982591779734}
-  m_LocalRotation: {x: 0.000000029802315, y: 0.00000050663937, z: -0.00000068545324, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -75,7 +75,7 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &4994667982591779738
+--- !u!114 &399709057
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -93,9 +93,9 @@ MonoBehaviour:
   Width: 800
   Height: 600
   Frequency: 20
-  JpegQuality: 85
+  JpegQuality: 70
   FieldOfView: 60
-  MinDistance: 0.2
-  MaxDistance: 100
+  MinDistance: 0.1
+  MaxDistance: 1000
   mode: 5
   CubemapSize: 1024

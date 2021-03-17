@@ -13,7 +13,7 @@ Net2Helper::Net2Helper(const Net2Config &config, std::string settings_local_ip)
   
   //NTP Sync
   ntp_client = new NTPClient();
-  ntp_client->sync(this->net2_config.ntp_server_host_name,this->net2_config.ntp_server_port);
+  //ntp_client->sync(this->net2_config.ntp_server_host_name,this->net2_config.ntp_server_port);
 
   std::cout << "NTP sync successful" << std::endl;
   std::cout << "Time : "  << getTimenano() << std::endl;

@@ -77,6 +77,8 @@ namespace lmt
     sub_ros_2_camera_depth = nh.subscribe("/chatter_depth/compressed",1, &BenchmarkROS::chatterCallbackImageDepthRRROS2, this);
     sub_ros_2_lidar = nh.subscribe("/scan",1, &BenchmarkROS::chatterCallbackLaserRRROS2, this);
     sub_ros_2_joy = nh.subscribe("/chatter/joy",1, &BenchmarkROS::chatterCallbackJoyRRROS2, this);
+
+    ROS_INFO("STARTED");
   }
 
 

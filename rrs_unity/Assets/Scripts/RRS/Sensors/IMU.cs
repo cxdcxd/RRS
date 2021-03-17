@@ -6,6 +6,7 @@ using RRS.Tools;
 using RRS.Tools.Protobuf;
 using ProtoBuf;
 using System.IO;
+using Newtonsoft.Json;
 
 public class IMU : MonoBehaviour
 {
@@ -122,6 +123,10 @@ public class IMU : MonoBehaviour
             MemoryStream ms = new MemoryStream();
             ms = new MemoryStream();
             Serializer.Serialize<RRSIMU>(ms, imu_msg);
+
+            //string json = JsonConvert.SerializeObject(imu_msg);
+            //byte[] size = System.Text.Encoding.ASCII.GetBytes(json);
+            //UnityEngine.Debug.Log("IMU2 size " + size.Length.ToString());
 
             byte[] data = ms.ToArray();
 

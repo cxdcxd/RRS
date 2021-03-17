@@ -61,7 +61,7 @@ namespace RRS.Tools.Network
                 task = monitor.StartAsync();
 
                 setState(Net2State.STARTED);
-                start_time = GetTime();
+                start_time = GetTime().sec;
 
                 reportLog("Router is ready on " + local_port, LogType.INFO, section);
             }
@@ -79,7 +79,11 @@ namespace RRS.Tools.Network
                     ack_message.header.sequence = packet.header.sequence;
                     ack_message.header.mode = Header.Mode.ACK;
                     ack_message.header.message_type = Header.Type.ROUTER;
-                    ack_message.header.time_span = GetTime();
+
+                    Net2Time mtime = GetTime();
+                    ack_message.header.time_span_s = mtime.sec;
+                    ack_message.header.time_span_ns = mtime.nsec;
+                   
                     ack_message.header.zmq_router_address = packet.header.zmq_router_address;
 
                     addToSendQueue(ack_message);

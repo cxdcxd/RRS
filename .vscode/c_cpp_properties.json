@@ -1,0 +1,30 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/lmt/RRS/rrs_ros/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/lmt/RRS/rrs_ros/src/movo/movo_common/movo_third_party/eband_local_planner-master/include/**",
+        "/home/lmt/RRS/rrs_ros/src/lmt/lmt_navigation/hector_mapping/include/**",
+        "/home/lmt/RRS/rrs_ros/src/third_party/jog_control/jog_controller/include/**",
+        "/home/lmt/RRS/rrs_ros/src/movo/movo_common/movo_third_party/joint_trajectory_controller/include/**",
+        "/home/lmt/RRS/rrs_ros/src/lmt/lmt_navigation/move/include/**",
+        "/home/lmt/RRS/rrs_ros/src/lmt/lmt_navigation/managment/include/**",
+        "/home/lmt/RRS/rrs_ros/src/movo/movo_common/movo_navigation/movo_assisted_teleop/include/**",
+        "/home/lmt/RRS/rrs_ros/src/lmt/movo_hardware_interface/include/**",
+        "/home/lmt/RRS/rrs_ros/src/movo/movo_robot/movo_sensor_filters/range_sensor_filters/include/**",
+        "/home/lmt/RRS/rrs_ros/src/movo/movo_common/movo_third_party/robot_self_filter/include/**",
+        "/home/lmt/RRS/rrs_ros/src/movo/movo_common/movo_third_party/robot_state_publisher/include/**",
+        "/home/lmt/RRS/rrs_ros/src/core/include/**",
+        "/home/lmt/RRS/rrs_ros/src/movo/movo_common/movo_third_party/simple_grasping/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}

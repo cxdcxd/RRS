@@ -111,7 +111,7 @@ namespace RRS.Tools.Protobuf
         [ProtoMember(4)]
         public string remote_channel_name;
         [ProtoMember(5)]
-        public long time_span = 0;
+        public long time_span_s = 0;
         [ProtoMember(6)]
         public long sequence = 0;
         [ProtoMember(7)]
@@ -122,6 +122,8 @@ namespace RRS.Tools.Protobuf
         public uint priority = 0;
         [ProtoMember(10)]
         public byte[] zmq_router_address;
+        [ProtoMember(11)]
+        public long time_span_ns = 0;
 
         public Header()
         {

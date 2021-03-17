@@ -27,7 +27,7 @@ namespace RRS.Tools.Network
             public delegate void DelegateNewLog(string log_message, LogType log_type, string section);
             public event DelegateNewLog delegateNewLog;
 
-            public delegate long DelegateGetTime();
+            public delegate Net2Time DelegateGetTime();
             public event DelegateGetTime delegateGetTime;
 
             public delegate void DelegateDisposing(ulong id);
@@ -360,8 +360,12 @@ namespace RRS.Tools.Network
                 msg.header.sequence = req_sequence++;
 
                 if (delegateGetTime != null)
-                    msg.header.time_span = delegateGetTime();
-                    
+                {
+                    Net2Time mtime = delegateGetTime();
+                    msg.header.time_span_s = mtime.sec;
+                    msg.header.time_span_ns = mtime.nsec;
+                }
+
                 msg.header.source_channel_name = Name;
                 msg.header.priority = priority;
                 msg.payload = buffer;
@@ -388,9 +392,9 @@ namespace RRS.Tools.Network
                 delegateSendChanged?.Invoke(id);
             }
 
-            protected long GetTime()
+            protected Net2Time GetTime()
             {
-                return delegateGetTime?.Invoke() ?? 0;
+                return delegateGetTime?.Invoke() ?? new Net2Time();
             }
 
             protected virtual void StopMonitor()

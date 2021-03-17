@@ -81,7 +81,7 @@ namespace RRS.Tools.Network
 
         #region  CreateObjects
 
-        private long getTime()
+        private Net2Time getTime()
         {
             return net2_ntp.get();
         }
@@ -503,14 +503,14 @@ namespace RRS.Tools.Network
 
         private void advertiseService(string name, int local_port)
         {
-            net2_consul.advertiseService(name, local_port, getStationIP(), getTime().ToString());
+            net2_consul.advertiseService(name, local_port, getStationIP(), getTime().sec.ToString());
         }
 
         private void Main_timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (state == Net2State.STARTED)
             {
-                //net2_consul.advertiseService(NameSpace, 0, getStationIP(), getTime().ToString());
+                //net2_consul.advertiseService(NameSpace, 0, getStationIP(), getTime().sec.ToString());
 
                 lock (@lock)
                 {
