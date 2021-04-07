@@ -1,4 +1,4 @@
-# Realistic Robotic Simulator
+# Realistic Robotic Simulator (RRS)
 
 ![Alt text](sample.png?raw=true "Title")
 
