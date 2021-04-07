@@ -46,9 +46,10 @@ roslaunch jog_launch jaco2.launch use_moveit:=true use_rviz:=true   //for arm jo
 
 Unity Side:
 ```
-git clone https://github.com/Unity-Technologies/ml-agents.git
-open unity asset manager and select the package.json from com.unity.ml-agents
-open unity asset manager and select the package.json from com.unity.ml-agents.extensions
+wget https://github.com/Unity-Technologies/ml-agents/archive/release_12.zip
+unzip release_12.zip -d ml-agent
+open unity package manager and select the package.json from com.unity.ml-agents
+open unity package manager and select the package.json from com.unity.ml-agents.extensions
 Unity3D -> Play
 ```
 
