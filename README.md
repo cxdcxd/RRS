@@ -53,21 +53,21 @@ open unity package manager and select the package.json from com.unity.ml-agents.
 Unity3D -> Play
 ```
 
-# Settings (rrs_ros)
-    ntp_server_host_name: test               //define the ntp server hostname
-    local_network_address: 192.168.92.139    //local ip address
-    consul_network_address: 192.168.92.139   //consul ip address
+# Settings (rrs_ros) (RRS/rrs_ros/src/core/cfg/config.yaml) 
+    ntp_server_host_name: test               //define the ntp server hostname (current RRS is not using ntp ignored)
+    local_network_address: 127.0.0.1         //local ip address
+    consul_network_address: 127.0.0.1        //consul ip address
     consul_network_mask: 255.255.255.0       //consul network mask
     consul_network_port: 8500                //consul network port
     
-# Settings (rrs_unity)
+# Settings (rrs_unity) (
     <?xml version="1.0" encoding="utf-8"?>
     <Config xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <consul_network_address>192.168.92.138</consul_network_address>
-      <local_network_address>192.168.92.1</local_network_address>
+      <consul_network_address>127.0.0.1</consul_network_address>
+      <local_network_address>127.0.0.1</local_network_address>
       <consul_network_port>8500</consul_network_port>
       <consul_network_mask>255.255.255.0</consul_network_mask>
-      <ntp_server_host_name>test</ntp_server_host_name>
+      <ntp_server_host_name>test</ntp_server_host_name> //define the ntp server hostname (current RRS is not using ntp ignored)
       <use_relative_origin>false</use_relative_origin>
     </Config>
     
