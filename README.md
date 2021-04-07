@@ -38,9 +38,14 @@ setup ~/rrs_ros/devel/setup.bash
 # Run
 
 ROS Side:
+##Benchmark
 ```
-roslaunch rrs_ros rrs_ros.launch                                    //for core simulation
-roslaunch rrs_ros rrs_moveit.launch                                 //for moveit connection
+roslaunch rrs_ros rrs_ros_benchmark.launch                          //for benchmark scene
+```
+##Movo Robot Simulator
+```
+roslaunch rrs_ros rrs_ros.launch                                    //for core robot simulation
+roslaunch rrs_ros rrs_moveit.launch                                 //for moveit 
 roslaunch jog_launch jaco2.launch use_moveit:=true use_rviz:=true   //for arm jogging 
 ```
 
@@ -50,6 +55,16 @@ wget https://github.com/Unity-Technologies/ml-agents/archive/release_12.zip
 unzip release_12.zip -d ml-agent
 open unity package manager and select the package.json from com.unity.ml-agents
 open unity package manager and select the package.json from com.unity.ml-agents.extensions
+```
+
+##Benchmark
+```
+Open the scenes/BenchMark
+Unity3D -> Play
+```
+##Movo Robot Simulator
+```
+open the scenes/Demo
 Unity3D -> Play
 ```
 
