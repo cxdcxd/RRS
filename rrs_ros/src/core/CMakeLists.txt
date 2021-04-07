@@ -48,7 +48,7 @@ generate_messages(DEPENDENCIES std_msgs geometry_msgs)
 
 
 generate_dynamic_reconfigure_options(
- cfg/Param.cfg
+ reconfigure/Param.cfg
 )
 
 catkin_package(
