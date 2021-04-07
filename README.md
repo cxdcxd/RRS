@@ -60,7 +60,7 @@ Unity3D -> Play
     consul_network_mask: 255.255.255.0       //consul network mask
     consul_network_port: 8500                //consul network port
     
-# Settings (rrs_unity) (/RRS/rrs_unity/Config/config.xml)
+# Settings (rrs_unity) (RRS/rrs_unity/Config/config.xml)
     <?xml version="1.0" encoding="utf-8"?>
     <Config xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <consul_network_address>127.0.0.1</consul_network_address>
