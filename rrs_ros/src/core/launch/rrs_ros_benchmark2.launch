@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
- <launch>
-        <!-- Unity2ROS modules -->
-        <node pkg="rrs_ros" type="consul.sh" name="consul" output="log" args="$(find rrs_ros)/scripts"/>
-	   
-        <node pkg="rrs_ros" type="net2_node" name="net2_node" output="screen"/>
-	
-       
-</launch>

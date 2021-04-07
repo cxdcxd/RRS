@@ -27,7 +27,7 @@ namespace RosSharp.RosBridgeClient
     public class RosSocket
     {
         public IProtocol protocol;
-        public enum SerializerEnum { Microsoft, Newtonsoft_JSON, Newtonsoft_BSON}
+        public enum SerializerEnum { Newtonsoft_JSON, Newtonsoft_BSON}
 
         private Dictionary<string, Publisher> Publishers = new Dictionary<string, Publisher>();
         private Dictionary<string, Subscriber> Subscribers = new Dictionary<string, Subscriber>();
@@ -36,16 +36,11 @@ namespace RosSharp.RosBridgeClient
         private ISerializer Serializer;
         private object SubscriberLock = new object();
 
-        public RosSocket(IProtocol protocol, SerializerEnum serializer = SerializerEnum.Microsoft)
+        public RosSocket(IProtocol protocol, SerializerEnum serializer = SerializerEnum.Newtonsoft_JSON)
         {
             this.protocol = protocol;
             switch (serializer)
             {
-                case SerializerEnum.Microsoft:
-                    {
-                        Serializer = new MicrosoftSerializer();
-                        break;
-                    }
                 case SerializerEnum.Newtonsoft_JSON:
                     {
                         Serializer = new NewtonsoftJsonSerializer();

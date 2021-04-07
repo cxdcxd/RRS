@@ -47,7 +47,7 @@ namespace RosSharp.RosBridgeClient
                 Debug.LogWarning("Failed to connect to RosBridge at: " + RosBridgeServerUrl);
         }
 
-        public static RosSocket ConnectToRos(Protocol protocolType, string serverUrl, EventHandler onConnected = null, EventHandler onClosed = null, RosSocket.SerializerEnum serializer = RosSocket.SerializerEnum.Microsoft)
+        public static RosSocket ConnectToRos(Protocol protocolType, string serverUrl, EventHandler onConnected = null, EventHandler onClosed = null, RosSocket.SerializerEnum serializer = RosSocket.SerializerEnum.Newtonsoft_JSON)
         {
             IProtocol protocol = ProtocolInitializer.GetProtocol(protocolType, serverUrl);
             protocol.OnConnected += onConnected;
