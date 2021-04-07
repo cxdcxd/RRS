@@ -45,7 +45,12 @@ roslaunch jog_launch jaco2.launch use_moveit:=true use_rviz:=true   //for arm jo
 ```
 
 Unity Side:
+```
+git clone https://github.com/Unity-Technologies/ml-agents.git
+open unity asset manager and select the package.json from com.unity.ml-agents
+open unity asset manager and select the package.json from com.unity.ml-agents.extensions
 Unity3D -> Play
+```
 
 # Settings (rrs_ros)
     ntp_server_host_name: test               //define the ntp server hostname
