@@ -13,7 +13,7 @@
     Ubuntu 18.04
     ROS Melodic-->
 
-# Seutp and Installation
+# Setup and Installation
 
 1) Install [ROS](http://wiki.ros.org/melodic/Installation/Ubuntu)
 
@@ -71,7 +71,7 @@ Unity3D -> Play
     </Config>
     
     
-# Virtual Environment 
+# Virtual Environment  (for RL development)
 ```
 mkdir ~/python-envs
 python3 -m venv ~/python-envs/sample-env
@@ -81,19 +81,19 @@ pip3 install --upgrade setuptools
 deactivate 
 ```
 
-# ML-Agent Installation
+# ML-Agent Installation (for RL development)
 ```
 pip3 install torch -f https://download.pytorch.org/whl/torch_stable.html
 pip3 install -e ./ml-agents-envs
 pip3 install -e ./ml-agents
 ```
 
-# Tensor Board
+# Tensor Board (for RL development)
 ```
 tensorboard --logdir results
 ```  
 
-# Train
+# Train (for RL development)
 ```
 mlagents-learn config/ppo/3DBall.yaml --run-id=first3DBallRun
 ```  
