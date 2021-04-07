@@ -38,11 +38,11 @@ setup ~/rrs_ros/devel/setup.bash
 # Run
 
 ROS Side:
-##Benchmark
+## Benchmark
 ```
 roslaunch rrs_ros rrs_ros_benchmark.launch                          //for benchmark scene
 ```
-##Movo Robot Simulator
+## Movo Robot Simulator
 ```
 roslaunch rrs_ros rrs_ros.launch                                    //for core robot simulation
 roslaunch rrs_ros rrs_moveit.launch                                 //for moveit 
@@ -57,12 +57,12 @@ open unity package manager and select the package.json from com.unity.ml-agents
 open unity package manager and select the package.json from com.unity.ml-agents.extensions
 ```
 
-##Benchmark
+## Benchmark
 ```
 Open the scenes/BenchMark
 Unity3D -> Play
 ```
-##Movo Robot Simulator
+## Movo Robot Simulator
 ```
 open the scenes/Demo
 Unity3D -> Play
