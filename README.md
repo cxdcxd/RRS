@@ -4,7 +4,7 @@
 
 | OS  | Kernel Version | ROS Version | Nvidia Driver Version | CUDA Version | Unity Version | Ml Agents
 | --- | ----------| ----------- | ------------ | ------------ | ------------ | ------------ 
-| Ubuntu 18.04.05 LTS | 5.4.0-58-generic | ROS Melodic | 460.27.04 | 11.2 | Unity 2020.2.1f1 | 12
+| Ubuntu 18.04.05 LTS | 5.4.0-58-generic | ROS Melodic | 460.27.04 | 11.2 | Unity 2020.2.1f1 | 1.0.0
 
 <!--# Unity Version
     2020.2.1f1-->
