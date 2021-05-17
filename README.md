@@ -1,6 +1,6 @@
 # Realistic Robotic Simulator (RRS)
 
-![Alt text](sample.png?raw=true "Title")
+![Alt text](sample2.png?raw=true "Title")
 
 | OS  | Kernel Version | ROS Version | Nvidia Driver Version | CUDA Version | Unity Version | Ml Agents
 | --- | ----------| ----------- | ------------ | ------------ | ------------ | ------------ 
