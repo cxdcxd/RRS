@@ -23,7 +23,8 @@ add_message_files(DIRECTORY msg FILES
                                 PanTiltActuatorFdbk.msg
                                 PVA.msg
                                 PanTiltCmd.msg
-                                PanTiltFdbk.msg)
+                                PanTiltFdbk.msg
+                                JacoAngularVelocityCmd7DOF.msg)
 
 generate_messages(DEPENDENCIES std_msgs geometry_msgs)
 catkin_package(CATKIN_DEPENDS message_runtime std_msgs geometry_msgs)

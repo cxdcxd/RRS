@@ -460,7 +460,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
   m_Model: {fileID: 0}
-  m_InferenceDevice: 0
+  m_InferenceDevice: 1
   m_BehaviorType: 1
   m_BehaviorName: PushBlock
   TeamId: 0
@@ -4206,7 +4206,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &710655969702820629
 Transform:
   m_ObjectHideFlags: 0
@@ -4473,7 +4473,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &710655969921970596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4864,6 +4864,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RRS
       objectReference: {fileID: 0}
+    - target: {fileID: 1379534738559918720, guid: e6acaa578409b23e3a22b66cdbd480a1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1379534738559918722, guid: e6acaa578409b23e3a22b66cdbd480a1, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -5016,6 +5020,10 @@ PrefabInstance:
     - target: {fileID: 594807511307316983, guid: a79227d96e55ad48db76861d66123f22, type: 3}
       propertyPath: m_Name
       value: movo
+      objectReference: {fileID: 0}
+    - target: {fileID: 594807511307316983, guid: a79227d96e55ad48db76861d66123f22, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 594807511667407115, guid: a79227d96e55ad48db76861d66123f22, type: 3}
       propertyPath: m_ParentAnchorPosition.x

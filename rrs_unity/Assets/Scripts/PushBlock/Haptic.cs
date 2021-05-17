@@ -22,7 +22,7 @@ public enum DoF
 
 public class Haptic : MonoBehaviour
 {
-    public static SystemMode system_mode = SystemMode.TeleoperationReal;
+    public static SystemMode system_mode = SystemMode.TeleoperationSim;
     public static DoF system_dof = DoF.two;
 
     public Vector3 current_speed = new Vector3(0, 0, 0);
