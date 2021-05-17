@@ -116,4 +116,50 @@ tensorboard --logdir results
 ```
 mlagents-learn config/ppo/3DBall.yaml --run-id=first3DBallRun
 ```  
-    
+## NMPC-MP Installation
+
+Instructions on setting up the framework
+
+
+moveit_visual_tools
+
+
+relaxedik
+
+
+Install moveit under link: https://moveit.ros.org/install/
+
+
+If not, install the Eigen
+
+
+Install libccd under link: https://github.com/danfis/libccd
+Git clone the package.
+Follow the instruction on that site, but make sure compiling it in double precision, otherwise, compiling fcl library later may go error.
+Using camke to compile is recommended. If using cmake, run "cmake -G "Unix Makefiles" -DENABLE_DOUBLE_PRECISION=ON .." to enable double precision
+
+
+Install fcl(The Flexible Collision Library) under link: https://github.com/flexible-collision-library/fcl
+Git clone the package.
+Make sure to run "git checkout 1bddc981de578d971cc59eb54f5d248c9d803b25" to go to this older checkout point and then
+Follow the instruction on that site. In the end run make to compile the code and then run sudo make install to install the libs into working path.
+
+
+Install nlopt(a nonlinear optimization library) under link: https://nlopt.readthedocs.io/en/latest/
+Download the compressed file and then,
+compile it by:
+mkdir build && cd build
+cmake ..
+make
+sudo make install
+
+
+Git clone this repository.
+For melodic ros version, in file src/mpc/src/class/moveitTool.cpp and file src/mpc/include/moveitTool.h, change the const Eigen::Affine3d& getEEFTransform() const function definition to const Eigen::Isometry3d& getEEFTransform() const function definition. Because the getGlobalLinkTransform function for melodic version moveit returns Isometry3d reference, instead of Affine3d reference
+
+
+kinova_control, kinova_description and j2s7s300_moveit_config pacakges in the kinova-ros folder are extracted and modified from the official package under link https://github.com/Kinovarobotics/kinova-ros. Only these 3 packages are modifed and used for the simulation of our project.
+
+
+Run catkin build to complie mpc package for our mpc based planner, kinova for 3 kinova ros packages, chomp_jaco2 for chomp and ompl planners testing used for benchmark.
+Note: Remember to source the moveit workspace first, and then source this workspace. Otherwise, the path of the those 3 kinova ros packages will be overwritten for unknown reason.
