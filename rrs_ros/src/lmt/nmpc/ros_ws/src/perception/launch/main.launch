@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node name="octomap_test" pkg="perception_mpc" type="exampleOctomap" output="screen"/>  
+  <node pkg="tf" type="static_transform_publisher" name = "world2obstacle"
+  args="0 0 0 0 0 0 /world /obstacle 100" />
+</launch>

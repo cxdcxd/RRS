@@ -1,0 +1,4 @@
+<launch>
+	<node name="movo_arm_to_feasible" pkg="mpc" type="control_movo_joint.py"
+	        respawn="false" output="screen"/>       
+</launch>

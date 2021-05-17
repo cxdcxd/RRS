@@ -1,0 +1,14 @@
+scp:
+  improve_ratio_threshold: 0.25
+  min_trust_box_size: 0.0001
+  min_approx_improve: 0.001
+  min_approx_improve_frac: 0.001
+  max_iter: 20
+  trust_shrink_ratio: 0.1
+  trust_expand_ratio: 1.5
+  cnt_tolerance: 0.01
+  max_penalty_coe_inc_num: 5
+  penalty_coe_increase_ratio: 5
+  penalty_coe: 10
+  trust_box_size: 0.1
+  verbosity: false

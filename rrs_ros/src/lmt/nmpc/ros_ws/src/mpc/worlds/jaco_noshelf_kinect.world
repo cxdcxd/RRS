@@ -1,0 +1,1409 @@
+<sdf version='1.6'>
+  <world name='default'>
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+    </model>
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose frame=''>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>-1.99596 -2.56474 2.40469 0 0.545797 1.04018</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>1</shadows>
+    </scene>
+    <wind/>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0</latitude_deg>
+      <longitude_deg>0</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <state world_name='default'>
+      <sim_time>1048 821000000</sim_time>
+      <real_time>114 34475900</real_time>
+      <wall_time>1611061084 414618862</wall_time>
+      <iterations>93401</iterations>
+      <model name='ground_plane'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='j2s7s300'>
+        <pose frame=''>-4e-06 2e-06 1e-06 1.7e-05 3.1e-05 0</pose>
+        <scale>1 1 1</scale>
+        <link name='j2s7s300_link_1'>
+          <pose frame=''>-5e-06 3e-06 0.15675 -3.14156 6.1e-05 3.14153</pose>
+          <velocity>-3e-06 9e-06 -1e-05 -0.000201 -6e-06 8.1e-05</velocity>
+          <acceleration>-0.015262 0.030504 -0.00974 -0.260895 -0.107934 0.139181</acceleration>
+          <wrench>-0.011411 0.022808 -0.007283 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_2'>
+          <pose frame=''>-1.8e-05 0.001609 0.275501 -1.57073 -0.241521 3.14152</pose>
+          <velocity>-2.7e-05 2.7e-05 -1.3e-05 -0.000274 -0.011289 0.000135</velocity>
+          <acceleration>-0.078035 0.089031 -0.008016 -0.245176 -0.040503 0.998268</acceleration>
+          <wrench>-0.065916 0.075205 -0.006771 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_3'>
+          <pose frame=''>0.049005 0.001622 0.474552 -3.1415 -0.241489 3.14148</pose>
+          <velocity>-0.002322 6.2e-05 0.000543 -0.001309 -0.011413 -0.004426</velocity>
+          <acceleration>-0.200623 0.13221 0.011153 -0.187609 -0.409046 0.230023</acceleration>
+          <wrench>-0.169467 0.111678 0.009421 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_4'>
+          <pose frame=''>0.098031 0.001635 0.673591 -1.57292 1.54148 -0.002252</pose>
+          <velocity>-0.004589 0.000117 0.000984 -0.001675 -0.016789 -0.004058</velocity>
+          <acceleration>-0.223554 0.089768 -0.17033 2.72937 -0.113658 1.06006</acceleration>
+          <wrench>-0.15119 0.06071 -0.115194 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_5'>
+          <pose frame=''>-0.109182 -0.009738 0.6675 1.53733 0.499027 1.55465</pose>
+          <velocity>-0.004532 0.000957 -0.002558 -0.000675 -0.01713 -0.003848</velocity>
+          <acceleration>-0.21954 -0.113967 -0.385534 2.91972 -0.87589 0.238925</acceleration>
+          <wrench>-0.101647 -0.052767 -0.178502 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_6'>
+          <pose frame=''>-0.212887 -0.009729 0.664439 -0.489336 -0.110588 -0.1508</pose>
+          <velocity>-0.004409 0.001387 -0.004236 0.007019 -0.021464 -0.008586</velocity>
+          <acceleration>-0.085033 0.166179 0.245778 -0.773822 1.10296 1.05869</acceleration>
+          <wrench>-0.03937 0.076941 0.113795 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_7'>
+          <pose frame=''>-0.193809 0.079998 0.615964 -1.08137 0.110637 2.99083</pose>
+          <velocity>-0.002523 0.001581 -0.003067 0.008322 -0.022404 -0.009057</velocity>
+          <acceleration>0.086415 0.854 1.78048 -2.06829 1.0065 1.99264</acceleration>
+          <wrench>0.085551 0.84546 1.76267 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_finger_1'>
+          <pose frame=''>-0.174659 0.164595 0.534644 1.65361 0.408848 1.354</pose>
+          <velocity>3.8e-05 0.002402 -0.001479 -0.056872 -0.003903 -0.001252</velocity>
+          <acceleration>-0.193262 1.50918 1.58332 0.361079 -1.07343 -0.57364</acceleration>
+          <wrench>-0.001933 0.015092 0.015833 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_finger_2'>
+          <pose frame=''>-0.195267 0.195605 0.583607 -1.89482 0.561088 1.333</pose>
+          <velocity>0.001616 -0.017397 -0.012992 -1.58034 0.014932 -0.567239</velocity>
+          <acceleration>27.6787 -90.4088 -102.816 -2.61178 -0.337031 -1.10841</acceleration>
+          <wrench>0.276787 -0.904088 -1.02816 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_finger_3'>
+          <pose frame=''>-0.151518 0.188954 0.588521 -1.50853 0.565753 1.3669</pose>
+          <velocity>-0.001393 6.6e-05 -0.001995 -1.29227 0.289337 0.056693</velocity>
+          <acceleration>-6.91226 -20.7419 -32.2332 -1.06571 -0.424895 1.31362</acceleration>
+          <wrench>-0.069123 -0.207419 -0.322332 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_finger_tip_1'>
+          <pose frame=''>-0.166475 0.202919 0.514412 1.65362 0.408982 1.35403</pose>
+          <velocity>0.000271 0.001615 -0.003422 -0.052252 -0.005742 -0.003063</velocity>
+          <acceleration>-0.769065 0.803391 -0.639676 2.05666 1.32187 -2.46131</acceleration>
+          <wrench>-0.007691 0.008034 -0.006397 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_finger_tip_2'>
+          <pose frame=''>-0.187062 0.233516 0.562605 -1.89545 0.563969 1.33182</pose>
+          <velocity>0.022299 -0.077977 -0.084999 0.312903 -0.455883 1.76821</velocity>
+          <acceleration>0.492625 -5.34849 20.9647 0.242202 0.266806 1.75837</acceleration>
+          <wrench>0.004926 -0.053485 0.209647 0 -0 0</wrench>
+        </link>
+        <link name='j2s7s300_link_finger_tip_3'>
+          <pose frame=''>-0.143488 0.22687 0.567464 -1.5085 0.566875 1.36697</pose>
+          <velocity>-0.010168 -0.029156 -0.053837 1.9329 -0.486388 -0.109637</velocity>
+          <acceleration>0.708009 3.40229 -1.60582 -1.94441 -0.780288 1.01852</acceleration>
+          <wrench>0.00708 0.034023 -0.016058 0 -0 0</wrench>
+        </link>
+        <link name='root'>
+          <pose frame=''>-4e-06 2e-06 1e-06 1.7e-05 3.1e-05 0</pose>
+          <velocity>4e-06 -1e-06 3e-06 2e-06 -2.2e-05 -5.1e-05</velocity>
+          <acceleration>0.000391 -0.004339 0.004633 0.061385 -0.008263 -0.111868</acceleration>
+          <wrench>0.000183 -0.00203 0.002168 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='kinect'>
+        <pose frame=''>0.043791 -0.864004 1.24777 -0.016273 0.741243 1.51313</pose>
+        <scale>1 1 1</scale>
+        <link name='kinect::link'>
+          <pose frame=''>0.043791 -0.864004 1.24777 -0.016273 0.741243 1.51313</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 -98 0 -0 0</acceleration>
+          <wrench>0 0 -9.8 0 -0 0</wrench>
+        </link>
+      </model>
+      <light name='sun'>
+        <pose frame=''>0 0 10 0 -0 0</pose>
+      </light>
+    </state>
+    <model name='kinect'>
+      <pose frame=''>0.044817 -0.875286 0.036 0 -0 0</pose>
+      <link name='kinect::link'>
+        <inertial>
+          <mass>0.1</mass>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>0.073 0.276 0.072</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://kinect/meshes/kinect.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <sensor name='camera' type='depth'>
+          <update_rate>20</update_rate>
+          <camera name='__default__'>
+            <horizontal_fov>1.0472</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>3</far>
+            </clip>
+          </camera>
+          <plugin name='camera_plugin' filename='libgazebo_ros_openni_kinect.so'>
+            <baseline>0.2</baseline>
+            <alwaysOn>1</alwaysOn>
+            <updateRate>0.0</updateRate>
+            <cameraName>camera_ir</cameraName>
+            <imageTopicName>/camera/color/image_raw</imageTopicName>
+            <cameraInfoTopicName>/camera/color/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>/camera/depth/image_raw</depthImageTopicName>
+            <depthImageCameraInfoTopicName>/camera/depth/camera_info</depthImageCameraInfoTopicName>
+            <pointCloudTopicName>/camera/depth/points</pointCloudTopicName>
+            <frameName>camera_link</frameName>
+            <pointCloudCutoff>0.5</pointCloudCutoff>
+            <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+            <distortionK1>0</distortionK1>
+            <distortionK2>0</distortionK2>
+            <distortionK3>0</distortionK3>
+            <distortionT1>0</distortionT1>
+            <distortionT2>0</distortionT2>
+            <CxPrime>0</CxPrime>
+            <Cx>0</Cx>
+            <Cy>0</Cy>
+            <focalLength>0</focalLength>
+            <hackBaseline>0</hackBaseline>
+          </plugin>
+        </sensor>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>1</kinematic>
+      </link>
+    </model>
+    <model name='j2s7s300'>
+      <link name='root'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 0.1255 0 -0 0</pose>
+          <mass>0.46784</mass>
+          <inertia>
+            <ixx>0.000951271</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.000951271</iyy>
+            <iyz>0</iyz>
+            <izz>0.000374272</izz>
+          </inertia>
+        </inertial>
+        <collision name='root_fixed_joint_lump__j2s7s300_link_base_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/base.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='root_fixed_joint_lump__j2s7s300_link_base_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/base.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='connect_root_and_world' type='fixed'>
+        <child>root</child>
+        <parent>world</parent>
+      </joint>
+      <link name='j2s7s300_link_1'>
+        <pose frame=''>0 0 0.15675 3.14159 -0 3.14159</pose>
+        <inertial>
+          <pose frame=''>0 -0.002 -0.0605 0 -0 0</pose>
+          <mass>0.7477</mass>
+          <inertia>
+            <ixx>0.00152032</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00152032</iyy>
+            <iyz>0</iyz>
+            <izz>0.00059816</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_1_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/shoulder.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_1_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/shoulder.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2s7s300_link_1_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/ring_big.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_1' type='revolute'>
+        <child>j2s7s300_link_1</child>
+        <parent>root</parent>
+        <axis>
+          <xyz>-0 0 -1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2s7s300_link_2'>
+        <pose frame=''>0 0.0016 0.2755 1.5708 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 -0.103563 0 0 -0 0</pose>
+          <mass>0.8447</mass>
+          <inertia>
+            <ixx>0.00247074</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.000380115</iyy>
+            <iyz>0</iyz>
+            <izz>0.00247074</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_2_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/arm_half_1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_2_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/arm_half_1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2s7s300_link_2_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/ring_big.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_2' type='revolute'>
+        <child>j2s7s300_link_2</child>
+        <parent>j2s7s300_link_1</parent>
+        <axis>
+          <xyz>-0 -1 -0</xyz>
+          <limit>
+            <lower>0.820305</lower>
+            <upper>5.46288</upper>
+            <effort>80</effort>
+            <velocity>0.628319</velocity>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2s7s300_link_3'>
+        <pose frame=''>-0 0.0016 0.0705 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 -0.102245 0 -0 0</pose>
+          <mass>0.8447</mass>
+          <inertia>
+            <ixx>0.00247074</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00247074</iyy>
+            <iyz>0</iyz>
+            <izz>0.000380115</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_3_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/arm_half_2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_3_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/arm_half_2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2s7s300_link_3_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/ring_big.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_3' type='revolute'>
+        <child>j2s7s300_link_3</child>
+        <parent>j2s7s300_link_2</parent>
+        <axis>
+          <xyz>0 -0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2s7s300_link_4'>
+        <pose frame=''>-0 0.0016 -0.1345 1.5708 -0 -3.14159</pose>
+        <inertial>
+          <pose frame=''>0 0.081 -0.0086 0 -0 0</pose>
+          <mass>0.6763</mass>
+          <inertia>
+            <ixx>0.00142022</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.000304335</iyy>
+            <iyz>0</iyz>
+            <izz>0.00142022</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_4_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/forearm.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_4_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/forearm.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2s7s300_link_4_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/ring_small.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_4' type='revolute'>
+        <child>j2s7s300_link_4</child>
+        <parent>j2s7s300_link_3</parent>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0.523599</lower>
+            <upper>5.75959</upper>
+            <effort>40</effort>
+            <velocity>0.628319</velocity>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2s7s300_link_5'>
+        <pose frame=''>-0 -0.0098 0.0728 -3.14159 0 0</pose>
+        <inertial>
+          <pose frame=''>0 0.002885 -0.054193 0 -0 0</pose>
+          <mass>0.463</mass>
+          <inertia>
+            <ixx>0.000432132</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.000432132</iyy>
+            <iyz>0</iyz>
+            <izz>9.26e-05</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_5_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/wrist_spherical_1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_5_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/wrist_spherical_1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2s7s300_link_5_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/ring_small.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_5' type='revolute'>
+        <child>j2s7s300_link_5</child>
+        <parent>j2s7s300_link_4</parent>
+        <axis>
+          <xyz>-0 0 -1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2s7s300_link_6'>
+        <pose frame=''>0 -0.0098 0.17655 -1.5708 -0 3.14159</pose>
+        <inertial>
+          <pose frame=''>0 0.049721 -0.002856 0 -0 0</pose>
+          <mass>0.463</mass>
+          <inertia>
+            <ixx>0.000432132</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>9.26e-05</iyy>
+            <iyz>0</iyz>
+            <izz>0.000432132</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_6_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/wrist_spherical_2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_6_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/wrist_spherical_2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2s7s300_link_6_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/ring_small.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_6' type='revolute'>
+        <child>j2s7s300_link_6</child>
+        <parent>j2s7s300_link_5</parent>
+        <axis>
+          <xyz>-0 -1 -0</xyz>
+          <limit>
+            <lower>1.13446</lower>
+            <upper>5.14872</upper>
+            <effort>20</effort>
+            <velocity>0.837758</velocity>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2s7s300_link_7'>
+        <pose frame=''>-0 -0.0098 0.0728 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 -0.06 0 -0 0</pose>
+          <mass>0.99</mass>
+          <inertia>
+            <ixx>0.000345324</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.000345324</iyy>
+            <iyz>0</iyz>
+            <izz>0.0005816</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_7_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/hand_3finger.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_7_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/hand_3finger.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2s7s300_link_7_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/ring_small.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_7' type='revolute'>
+        <child>j2s7s300_link_7</child>
+        <parent>j2s7s300_link_6</parent>
+        <axis>
+          <xyz>0 -0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2s7s300_link_finger_1'>
+        <pose frame=''>0.00279 0.02146 -0.04187 -1.5708 0.649262 1.35961</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_finger_1_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_finger_1_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_finger_1' type='revolute'>
+        <child>j2s7s300_link_finger_1</child>
+        <parent>j2s7s300_link_7</parent>
+        <axis>
+          <xyz>-0.977783 0.209619 -0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.51</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='j2s7s300_link_finger_tip_1'>
+        <pose frame=''>0.010517 0.057502 -0.066083 -1.5708 0.649262 1.35961</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_finger_tip_1_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_finger_tip_1_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_finger_tip_1' type='revolute'>
+        <child>j2s7s300_link_finger_tip_1</child>
+        <parent>j2s7s300_link_finger_1</parent>
+        <axis>
+          <xyz>-0.977783 0.209619 -0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>2</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='j2s7s300_link_finger_2'>
+        <pose frame=''>0.02226 -0.03687 -0.04202 -1.5708 0.649262 -1.38614</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_finger_2_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_finger_2_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_finger_2' type='revolute'>
+        <child>j2s7s300_link_finger_2</child>
+        <parent>j2s7s300_link_7</parent>
+        <axis>
+          <xyz>0.983 0.183608 -0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.51</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='j2s7s300_link_finger_tip_2'>
+        <pose frame=''>0.029028 -0.073105 -0.066233 -1.5708 0.649262 -1.38614</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_finger_tip_2_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_finger_tip_2_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_finger_tip_2' type='revolute'>
+        <child>j2s7s300_link_finger_tip_2</child>
+        <parent>j2s7s300_link_finger_2</parent>
+        <axis>
+          <xyz>0.983 0.183608 -0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>2</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='j2s7s300_link_finger_3'>
+        <pose frame=''>-0.02226 -0.03687 -0.04202 -1.5708 0.649262 -1.75545</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_finger_3_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_finger_3_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_finger_3' type='revolute'>
+        <child>j2s7s300_link_finger_3</child>
+        <parent>j2s7s300_link_7</parent>
+        <axis>
+          <xyz>0.983 -0.183608 -0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.51</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='j2s7s300_link_finger_tip_3'>
+        <pose frame=''>-0.029028 -0.073105 -0.066233 -1.5708 0.649262 -1.75545</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2s7s300_link_finger_tip_3_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2s7s300_link_finger_tip_3_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/siqihu/MasterThesis/ma-siqi/ros_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2s7s300_joint_finger_tip_3' type='revolute'>
+        <child>j2s7s300_link_finger_tip_3</child>
+        <parent>j2s7s300_link_finger_3</parent>
+        <axis>
+          <xyz>0.983 -0.183608 -0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>2</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <plugin name='gazebo_ros_control' filename='libgazebo_ros_control.so'>
+        <robotNamespace>j2s7s300</robotNamespace>
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        <legacyModeNS>1</legacyModeNS>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2s7s300_joint_1_ft_sensor_topic</topicName>
+        <jointName>j2s7s300_joint_1</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2s7s300_joint_2_ft_sensor_topic</topicName>
+        <jointName>j2s7s300_joint_2</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2s7s300_joint_3_ft_sensor_topic</topicName>
+        <jointName>j2s7s300_joint_3</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2s7s300_joint_4_ft_sensor_topic</topicName>
+        <jointName>j2s7s300_joint_4</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2s7s300_joint_5_ft_sensor_topic</topicName>
+        <jointName>j2s7s300_joint_5</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2s7s300_joint_6_ft_sensor_topic</topicName>
+        <jointName>j2s7s300_joint_6</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <static>0</static>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2s7s300_joint_7_ft_sensor_topic</topicName>
+        <jointName>j2s7s300_joint_7</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <pose frame=''>0 0 0 0 -0 0</pose>
+    </model>
+  </world>
+</sdf>

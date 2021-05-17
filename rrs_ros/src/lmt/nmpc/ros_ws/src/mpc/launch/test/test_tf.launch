@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="tf" type="static_transform_publisher" name = "kinect_tf" args="0.076046 -1.07788 1.76996 -0.025004 0.61688 1.55457 /world /camera_depth 100" />
+</launch>

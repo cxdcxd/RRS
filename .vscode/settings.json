@@ -69,5 +69,9 @@
     "python.autoComplete.extraPaths": [
         "/home/lmt/RRS/rrs_ros/devel/lib/python2.7/dist-packages",
         "/opt/ros/melodic/lib/python2.7/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/lmt/RRS/rrs_ros/devel/lib/python2.7/dist-packages",
+        "/opt/ros/melodic/lib/python2.7/dist-packages"
     ]
 }

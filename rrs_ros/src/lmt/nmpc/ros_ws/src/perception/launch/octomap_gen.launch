@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+<!--	<node pkg="tf" type="static_transform_publisher" name = "mpc_base2movo_left_arm_base" args="0 0 -0.09425 0 0 0   /left_base_link /left_mpc_base_link 10" />
+	<node pkg="tf" type="static_transform_publisher" name = "mpc_ee2movo_left_arm_ee" args="0 0 0 0.5 -0.5 0.5 -0.5  /left_ee_link /left_mpc_ee_link 10" />
+	<node pkg="tf" type="static_transform_publisher" name = "mpc_base2movo_right_arm_base" args="0 0 -0.09425 0 0 0   /right_base_link /right_mpc_base_link 10" />
+	<node pkg="tf" type="static_transform_publisher" name = "mpc_ee2movo_right_arm_ee" args="0 0 0 0.5 -0.5 0.5 -0.5  /right_ee_link /right_mpc_ee_link 10" />
+        <node pkg="tf" type="static_transform_publisher" name = "kinect2tilt" args="0.20 -0.11 -0.05 -1.65 -0.01 -1.57 /tilt_link /camera_link 10" />-->
+
+
+
+  <node name="octomap_server" pkg="octomap_server" type="octomap_server_node">
+    <param name="resolution" type="double" value="0.05" />
+    <!--<param name="frame_id" type="string" value="left_mpc_base_link" />-->
+    <param name="frame_id" type="string" value="world" />
+    <param name="sensor_model/max_range" type="double" value="5.0" />
+    <param name="latch" type="bool" value="false" />
+    <remap from="cloud_in" to="/cloud_server/out/filtered_cloud" />
+  </node>
+  <node name="cloud_sever_node" pkg="perception_mpc" type="cloud_server" output="screen"/>
+</launch>

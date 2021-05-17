@@ -459,8 +459,8 @@ public class Movo : MonoBehaviour
         MemoryStream ms = new MemoryStream(buffer);
         RRSJointCommand cmd = Serializer.Deserialize<RRSJointCommand>(ms);
 
-        //print("Get Goal");
-        //print(cmd.goal.Length);
+        print("Get Goal");
+        print(cmd.goal.Length);
 
         for ( int i = 0; i < cmd.goal.Length; i++)
         {

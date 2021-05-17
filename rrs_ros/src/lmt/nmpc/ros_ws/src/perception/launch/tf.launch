@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	
+	<node pkg="tf" type="static_transform_publisher" name = "mpc_base2movo_left_arm_base" args="0 0 -0.09425 0 0 0   /left_base_link /left_mpc_base_link 100" />
+	<node pkg="tf" type="static_transform_publisher" name = "mpc_ee2movo_left_arm_ee" args="0 0 0 0.5 -0.5 0.5 -0.5  /left_ee_link /left_mpc_ee_link 100" />
+	<node pkg="tf" type="static_transform_publisher" name = "mpc_base2movo_right_arm_base" args="0 0 -0.09425 0 0 0   /right_base_link /right_mpc_base_link 100" />
+	<node pkg="tf" type="static_transform_publisher" name = "mpc_ee2movo_right_arm_ee" args="0 0 0 0.5 -0.5 0.5 -0.5  /right_ee_link /right_mpc_ee_link 100" />
+	<node pkg="tf" type="static_transform_publisher" name = "kinect2tilt" args="0.18 0 0 -1.57 0 -1.57 /tilt_link /camera_link 10" />
+</launch>

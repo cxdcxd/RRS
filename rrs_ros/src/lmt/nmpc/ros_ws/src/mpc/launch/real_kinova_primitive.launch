@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <arg name="kinova_robotType" default="j2s7s300"/>
+  <arg name="kinova_robotName" default="$(arg kinova_robotType)"/>
+
+
+  <!-- The name of the parameter under which the URDF is loaded -->
+  <param name="arm_robot_description"
+    command="$(find xacro)/xacro --inorder '$(find kinova_description)/urdf/$(arg kinova_robotType)_standalone.xacro'" />
+  <arg name="arm_robot_description" default="arm_robot_description"/>
+  <!-- The semantic description that corresponds to the URDF -->
+  <param name="$(arg arm_robot_description)_semantic" textfile="$(find j2s7s300_moveit_config)/config/j2s7s300.srdf" />
+
+  <!-- convert joint states to TF transforms for rviz, etc -->
+<!--   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+        respawn="false" output="screen">
+      <remap from="/joint_states" to="/$(arg kinova_robotName)/joint_states"/>
+     <remap from="/joint_states" to="/j2s7s300_driver/out/joint_state"/>
+  </node> -->
+
+  <node pkg="tf" type="static_transform_publisher" name = "base2origin" args="0 0 0.79 0 0 -1.51313   /origin /world 100" />
+
+  <!--  rviz visualization-->
+<!--   <arg name="command_args" value="-d $(find mpc)/config/real_robot_rviz_vis.rviz" />
+  <node name="rviz_vis"  pkg="rviz" type="rviz" respawn="false"
+        args="$(arg command_args)"/>
+ -->
+  <!--include file="$(find mpc)/launch/example.launch"/-->
+  <node name="main_real_node" pkg="mpc" type="main_real" output="screen">
+    <rosparam file="$(find mpc)/config/nlmpc.yaml" command="load" />
+    <remap from="robot_description" to="arm_robot_description"/>
+  </node>
+<!--  <node name="test_robotModel_node" pkg="mpc" type="RobotModel" output="screen"/>-->
+  <!--node name="im_marker" pkg="mpc" type="set_marker_goal"/-->
+
+</launch>
