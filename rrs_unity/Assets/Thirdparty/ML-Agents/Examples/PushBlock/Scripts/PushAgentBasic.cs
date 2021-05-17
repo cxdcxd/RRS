@@ -3,7 +3,7 @@
 using System.Collections;
 using UnityEngine;
 using Unity.MLAgents;
-using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Sensors;
 
 public class PushAgentBasic : Agent
 {
@@ -13,6 +13,7 @@ public class PushAgentBasic : Agent
     public GameObject ground;
 
     public GameObject area;
+    public Haptic haptic_ref;
 
     /// <summary>
     /// The area bounds.
@@ -76,7 +77,28 @@ public class PushAgentBasic : Agent
 
         SetResetParameters();
     }
-
+    /// <summary>
+    /// Added to collect Observation about the actual orientation and velocity of the agent and the actual position of the block 
+    /// </summary>
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        //Agent, block and goal position
+        sensor.AddObservation(this.transform.localPosition - block.transform.localPosition);
+        //UnityEngine.Debug.Log(this.transform.localPosition - block.transform.localPosition);
+        sensor.AddObservation(block.transform.localRotation);
+        sensor.AddObservation(goal.transform.localPosition);
+        //sensor.AddObservation(block.transform.localPosition);
+        //if (goal.transform.localPosition.x == 0)
+        //{
+        //    sensor.AddObservation(goal.transform.localPosition.z - block.transform.localPosition.z);
+        //}
+        //else if (goal.transform.localPosition.z == 0)
+        //{
+        //    sensor.AddObservation(goal.transform.localPosition.x - block.transform.localPosition.x);
+        //}
+        //Agent velocity
+        //sensor.AddObservation(m_BlockRb.velocity);
+    }
     /// <summary>
     /// Use the ground's bounds to pick a random spawn position.
     /// </summary>
@@ -116,6 +138,17 @@ public class PushAgentBasic : Agent
     }
 
     /// <summary>
+    /// Called when the agent collides with the block. 
+    /// </summary>
+    //public void OnCollisionEnter(Collision col)
+    //{
+    //    if (col.gameObject.name == "Block")
+    //        // We use a reward of 0.1.
+    //    {
+    //AddReward(0.01f);
+
+    //}
+    /// <summary>
     /// Swap ground material, wait time seconds, then swap back to the regular material.
     /// </summary>
     IEnumerator GoalScoredSwapGroundMaterial(Material mat, float time)
@@ -128,72 +161,152 @@ public class PushAgentBasic : Agent
     /// <summary>
     /// Moves the agent according to the selected action.
     /// </summary>
-    public void MoveAgent(ActionSegment<int> act)
+    public void MoveAgent(float[] act)
     {
         var dirToGo = Vector3.zero;
         var rotateDir = Vector3.zero;
 
-        var action = act[0];
+        var action = Mathf.FloorToInt(act[0]);
 
-        switch (action)
+        //print("Move Agent " + action);
+        //print("mode " + Haptic.system_mode);
+        //print("Dof " + Haptic.system_dof);
+        // print("Dof " + Haptic.system_dof);
+
+        if (Haptic.system_mode == SystemMode.TeleoperationSim || Haptic.system_mode == SystemMode.Training || Haptic.system_mode == SystemMode.TestingSim)
         {
-            case 1:
-                dirToGo = transform.forward * 1f;
-                break;
-            case 2:
-                dirToGo = transform.forward * -1f;
-                break;
-            case 3:
-                rotateDir = transform.up * 1f;
-                break;
-            case 4:
-                rotateDir = transform.up * -1f;
-                break;
-            case 5:
-                dirToGo = transform.right * -0.75f;
-                break;
-            case 6:
-                dirToGo = transform.right * 0.75f;
-                break;
+            if (Haptic.system_dof == DoF.three)
+            {
+                // Goalies and Strikers have slightly different action spaces.
+                switch (action)
+                {
+                    case 1:
+                        dirToGo = transform.forward * 1f;
+                        break;
+                    case 2:
+                        dirToGo = transform.forward * -1f;
+                        break;
+                    case 3:
+                        rotateDir = transform.up * 1f;
+                        break;
+                    case 4:
+                        rotateDir = transform.up * -1f;
+                        break;
+                    case 5:
+                        dirToGo = transform.right * -0.75f;
+                        break;
+                    case 6:
+                        dirToGo = transform.right * 0.75f;
+                        break;
+                }
+
+                transform.Rotate(rotateDir, Time.fixedDeltaTime * 200f);
+
+                m_AgentRb.AddForce(dirToGo * m_PushBlockSettings.agentRunSpeed, ForceMode.VelocityChange);
+
+            }
+            else if ( Haptic.system_dof == DoF.two)
+            {
+                // Goalies and Strikers have slightly different action spaces.
+                switch (action)
+                {
+                    case 4:
+                        dirToGo = transform.forward * 1f;
+                        break;
+                    case 3:
+                        dirToGo = transform.forward * -1f;
+                        break;
+                    case 1:
+                        dirToGo = transform.right * 1f;
+                        break;
+                    case 2:
+                        dirToGo = transform.right * -1f;
+                        break;
+                }
+
+                m_AgentRb.AddForce(dirToGo * m_PushBlockSettings.agentRunSpeed, ForceMode.VelocityChange);
+            }
         }
-        transform.Rotate(rotateDir, Time.fixedDeltaTime * 200f);
-        m_AgentRb.AddForce(dirToGo * m_PushBlockSettings.agentRunSpeed,
-            ForceMode.VelocityChange);
+        else if (Haptic.system_mode == SystemMode.TestingReal || Haptic.system_mode == SystemMode.TeleoperationReal)
+        {
+            //Real
+            HapticCommand cmd = new HapticCommand();
+            cmd.velocity_linear = new RVector3();
+            cmd.velocity_angular = new RVector3();
+
+
+            if (Haptic.system_dof == DoF.two)
+            {
+                // Goalies and Strikers have slightly different action spaces.
+                switch (action)
+                {
+                    case 4:
+                        cmd.velocity_linear.z = 1;
+                        break;
+                    case 3:
+                        cmd.velocity_linear.z = -1;
+                        break;
+                    case 1:
+                        cmd.velocity_linear.x = 1;
+                        break;
+                    case 2:
+                        cmd.velocity_linear.x = -1;
+                        break;
+                }
+            }
+            else
+            {
+                //TDB
+            }
+
+            //cmd.velocity_linear.x = dirToGo.x; //right and left
+            //cmd.velocity_linear.z = dirToGo.z; //up and down#
+
+            print(cmd.velocity_linear.x + " " + cmd.velocity_linear.z);
+
+            print("Send data to robot " );
+            Statics2.network_real.sendMessage(cmd);
+        }
+        
     }
 
     /// <summary>
     /// Called every step of the engine. Here the agent takes an action.
     /// </summary>
-    public override void OnActionReceived(ActionBuffers actionBuffers)
-
+    public override void OnActionReceived(float[] vectorAction)
     {
         // Move the agent using the action.
-        MoveAgent(actionBuffers.DiscreteActions);
+        MoveAgent(vectorAction);
 
         // Penalty given each step to encourage agent to finish task quickly.
         AddReward(-1f / MaxStep);
     }
 
-    public override void Heuristic(in ActionBuffers actionsOut)
+    public override void Heuristic(float[] actionsOut)
     {
-        var discreteActionsOut = actionsOut.DiscreteActions;
-        discreteActionsOut[0] = 0;
-        if (Input.GetKey(KeyCode.D))
+        actionsOut[0] = 0;
+      
+        if (haptic_ref.current_speed.x > 0 && haptic_ref.current_speed.z == 0)
         {
-            discreteActionsOut[0] = 3;
+            actionsOut[0] = 1; //Right
         }
-        else if (Input.GetKey(KeyCode.W))
+        else if (haptic_ref.current_speed.x < 0 && haptic_ref.current_speed.z == 0)
         {
-            discreteActionsOut[0] = 1;
+            actionsOut[0] = 2; //Left
         }
-        else if (Input.GetKey(KeyCode.A))
+        else if (haptic_ref.current_speed.z > 0 && haptic_ref.current_speed.x == 0)
         {
-            discreteActionsOut[0] = 4;
+            actionsOut[0] = 4; //Up
         }
-        else if (Input.GetKey(KeyCode.S))
+        else if (haptic_ref.current_speed.z < 0 && haptic_ref.current_speed.x == 0)
         {
-            discreteActionsOut[0] = 2;
+            actionsOut[0] = 3; //Down
         }
+        else
+        {
+            actionsOut[0] = 0; //Stop
+        }
+      
     }
 
     /// <summary>
@@ -217,14 +330,36 @@ public class PushAgentBasic : Agent
     /// </summary>
     public override void OnEpisodeBegin()
     {
-        var rotation = Random.Range(0, 4);
-        var rotationAngle = rotation * 90f;
-        area.transform.Rotate(new Vector3(0f, rotationAngle, 0f));
+        //var rotation = 0;
+        //rotation = Random.Range(0, 4);
+        //UnityEngine.Debug.Log(rotation);
+        //float rotationAngle = 0f;
+        //rotationAngle = rotation * 90f;
+        //UnityEngine.Debug.Log(rotationAngle);
+        //goal.transform.Rotate(0.0f, 90.0f, 0.0f);
+
+        //if (goal.transform.rotation.eulerAngles.y == 0)
+        //{
+        //    goal.transform.localPosition = new Vector3(0f, -0.03f, -10.3f);
+        //}
+        //else if (goal.transform.rotation.eulerAngles.y == 90.0f)
+        //{
+        //    goal.transform.localPosition = new Vector3(10.3f, -0.03f, 0f);
+        //}
+        //else if (goal.transform.rotation.eulerAngles.y == 180.0f)
+        //{
+        //    goal.transform.localPosition = new Vector3(0f, -0.03f, 10.3f);
+        //}
+        //else if (goal.transform.rotation.eulerAngles.y == 270.0f)
+        //{
+        //    goal.transform.localPosition = new Vector3(-10.3f, -0.03f, 0f);
+        //}
 
         ResetBlock();
         transform.position = GetRandomSpawnPos();
         m_AgentRb.velocity = Vector3.zero;
         m_AgentRb.angularVelocity = Vector3.zero;
+         
 
         SetResetParameters();
     }
@@ -239,9 +374,9 @@ public class PushAgentBasic : Agent
 
     public void SetBlockProperties()
     {
-        var scale = m_ResetParams.GetWithDefault("block_scale", 2);
+        //var scale = m_ResetParams.GetWithDefault("block_scale", 2);
         //Set the scale of the block
-        m_BlockRb.transform.localScale = new Vector3(scale, 0.75f, scale);
+        //m_BlockRb.transform.localScale = new Vector3(scale, 0.75f, scale);
 
         // Set the drag of the block
         m_BlockRb.drag = m_ResetParams.GetWithDefault("block_drag", 0.5f);

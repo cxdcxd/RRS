@@ -57,7 +57,7 @@ public class Robot : MonoBehaviour
 
         speed.x = cmd.x * 15;
         speed.y = cmd.y * 15;
-        speed.z = cmd.theta * 10;
+        speed.z = cmd.z * 10;
 
         print(speed.x + " " + speed.y + " " + speed.z);
     }

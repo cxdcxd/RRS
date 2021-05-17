@@ -11,13 +11,12 @@ namespace Unity.MLAgentsExamples
     [System.Serializable]
     public class BodyPart
     {
-        [Header("Body Part Info")] [Space(10)] public ConfigurableJoint joint;
+        [Header("Body Part Info")][Space(10)] public ConfigurableJoint joint;
         public Rigidbody rb;
         [HideInInspector] public Vector3 startingPos;
         [HideInInspector] public Quaternion startingRot;
 
-        [Header("Ground & Target Contact")]
-        [Space(10)]
+        [Header("Ground & Target Contact")][Space(10)]
         public GroundContact groundContact;
 
         public TargetContact targetContact;
@@ -25,8 +24,7 @@ namespace Unity.MLAgentsExamples
         [FormerlySerializedAs("thisJDController")]
         [HideInInspector] public JointDriveController thisJdController;
 
-        [Header("Current Joint Settings")]
-        [Space(10)]
+        [Header("Current Joint Settings")][Space(10)]
         public Vector3 currentEularJointRotation;
 
         [HideInInspector] public float currentStrength;
@@ -34,8 +32,7 @@ namespace Unity.MLAgentsExamples
         public float currentYNormalizedRot;
         public float currentZNormalizedRot;
 
-        [Header("Other Debug Info")]
-        [Space(10)]
+        [Header("Other Debug Info")][Space(10)]
         public Vector3 currentJointForce;
 
         public float currentJointForceSqrMag;
@@ -102,8 +99,7 @@ namespace Unity.MLAgentsExamples
 
     public class JointDriveController : MonoBehaviour
     {
-        [Header("Joint Drive Settings")]
-        [Space(10)]
+        [Header("Joint Drive Settings")][Space(10)]
         public float maxJointSpring;
 
         public float jointDampen;
@@ -113,7 +109,6 @@ namespace Unity.MLAgentsExamples
         [HideInInspector] public Dictionary<Transform, BodyPart> bodyPartsDict = new Dictionary<Transform, BodyPart>();
 
         [HideInInspector] public List<BodyPart> bodyPartsList = new List<BodyPart>();
-        const float k_MaxAngularVelocity = 50.0f;
 
         /// <summary>
         /// Create BodyPart object and add it to dictionary.
@@ -127,7 +122,7 @@ namespace Unity.MLAgentsExamples
                 startingPos = t.position,
                 startingRot = t.rotation
             };
-            bp.rb.maxAngularVelocity = k_MaxAngularVelocity;
+            bp.rb.maxAngularVelocity = 100;
 
             // Add & setup the ground contact script
             bp.groundContact = t.GetComponent<GroundContact>();
@@ -141,15 +136,11 @@ namespace Unity.MLAgentsExamples
                 bp.groundContact.agent = gameObject.GetComponent<Agent>();
             }
 
-            if (bp.joint)
+            // Add & setup the target contact script
+            bp.targetContact = t.GetComponent<TargetContact>();
+            if (!bp.targetContact)
             {
-                var jd = new JointDrive
-                {
-                    positionSpring = maxJointSpring,
-                    positionDamper = jointDampen,
-                    maximumForce = maxJointForceLimit
-                };
-                bp.joint.slerpDrive = jd;
+                bp.targetContact = t.gameObject.AddComponent<TargetContact>();
             }
 
             bp.thisJdController = this;

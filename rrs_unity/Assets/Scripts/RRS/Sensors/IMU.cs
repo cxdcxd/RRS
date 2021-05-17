@@ -86,8 +86,8 @@ public class IMU : MonoBehaviour
 
             rotation = transform.rotation;
 
-            RRSIMU imu_msg = new RRSIMU();
-            imu_msg.orientation = new SVector4();
+            RRSIMU imu_msg = new RRS.Tools.Protobuf.RRSIMU();
+            imu_msg.orientation = new RRS.Tools.Protobuf.SVector4();
             var convertr = Helper.Unity2Ros(rotation);
             imu_msg.orientation.x = convertr.x;
             imu_msg.orientation.y = convertr.y;
@@ -98,7 +98,7 @@ public class IMU : MonoBehaviour
             imu_msg.orientation_covariance[0] = 2.6f / 1000000000;
             imu_msg.orientation_covariance[4] = 2.6f / 1000000000;
 
-            imu_msg.linear_acceleration = new SVector3();
+            imu_msg.linear_acceleration = new RRS.Tools.Protobuf.SVector3();
             var converta = Helper.Unity2Ros(linAccel);
             imu_msg.linear_acceleration.x = converta.x;
             imu_msg.linear_acceleration.y = converta.y;
@@ -109,7 +109,7 @@ public class IMU : MonoBehaviour
             imu_msg.linear_acceleration_covariance[4] = 2.6f / 10000000;
             imu_msg.linear_acceleration_covariance[8] = 2.6f / 10000000;
 
-            imu_msg.angular_velocity = new SVector3();
+            imu_msg.angular_velocity = new RRS.Tools.Protobuf.SVector3();
             var convertv = Helper.Unity2Ros(angVel);
             imu_msg.angular_velocity.x = convertv.x;
             imu_msg.angular_velocity.y = convertv.y;

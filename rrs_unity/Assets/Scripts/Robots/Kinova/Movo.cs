@@ -513,7 +513,7 @@ public class Movo : MonoBehaviour
 
         speed.x = cmd.x * 15;
         speed.y = cmd.y * 15; 
-        speed.z = cmd.theta * 10;
+        speed.z = cmd.z * 10;
 
         //print(speed.x + " " + speed.y + " " + speed.z);
     }
@@ -538,8 +538,8 @@ public class Movo : MonoBehaviour
         Quaternion ros_q = Helper.Unity2Ros(t.localRotation);
         Vector3 ros_p = Helper.Unity2Ros(t.localPosition);
 
-        rtransform.position = new SVector3(ros_p.x, ros_p.y, ros_p.z);
-        rtransform.orientation = new SVector4(ros_q.x, ros_q.y, ros_q.z, ros_q.w);
+        rtransform.position = new RRS.Tools.Protobuf.SVector3(ros_p.x, ros_p.y, ros_p.z);
+        rtransform.orientation = new RRS.Tools.Protobuf.SVector4(ros_q.x, ros_q.y, ros_q.z, ros_q.w);
        
         return rtransform;
     }
@@ -567,8 +567,8 @@ public class Movo : MonoBehaviour
     {
         RRSOdom t = new RRSOdom();
 
-        t.position = new SVector3();
-        t.orientation = new SVector4();
+        t.position = new RRS.Tools.Protobuf.SVector3();
+        t.orientation = new RRS.Tools.Protobuf.SVector4();
 
         var convertp = Helper.Unity2Ros(transform.position);
         t.position.x = convertp.x;
@@ -581,13 +581,13 @@ public class Movo : MonoBehaviour
         t.orientation.z = convertr.z;
         t.orientation.w = convertr.w;
 
-        t.linear_speed = new SVector3();
+        t.linear_speed = new RRS.Tools.Protobuf.SVector3();
         //var convertlv = Helper.Unity2Ros(imu.linVel);
         //t.linear_speed.x = convertlv.x;
         //t.linear_speed.y = convertlv.y;
         //t.linear_speed.z = convertlv.z;
 
-        t.angular_speed = new SVector3();
+        t.angular_speed = new RRS.Tools.Protobuf.SVector3();
         //var convertav = Helper.Unity2Ros(imu.angVel);
         //t.angular_speed.x = convertav.x;
         //t.angular_speed.y = convertav.y; 
@@ -604,8 +604,8 @@ public class Movo : MonoBehaviour
     {
         RRSTransform t = new RRSTransform();
 
-        t.position = new SVector3();
-        t.orientation = new SVector4();
+        t.position = new RRS.Tools.Protobuf.SVector3();
+        t.orientation = new RRS.Tools.Protobuf.SVector4();
         Vector3 convertp = new Vector3();
       
         convertp = Helper.Unity2Ros(transform.position);
