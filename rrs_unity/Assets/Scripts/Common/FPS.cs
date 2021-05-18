@@ -7,6 +7,7 @@ namespace RRS
     {
         float deltaTime = 0.0f;
         string text = "";
+   
 
         void Update()
         {
@@ -18,6 +19,7 @@ namespace RRS
 
         void OnGUI()
         {
+            GUI.contentColor = Color.black;
             GUI.Label(new Rect(10, 10, 100, 200), text);
         }
 

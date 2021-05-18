@@ -19,7 +19,8 @@
 
   <!--  rviz visualization-->
   <arg name="command_args" value="-d $(find mpc)/config/real_robot_rviz_vis.rviz" />
-  
+  <node name="rviz_vis"  pkg="rviz" type="rviz" respawn="false"
+        args="$(arg command_args)"/>
 
   <rosparam file="$(find mpc)/config/nlmpc.yaml" command="load" /> 
   <node name="left_movo_arm_node" pkg="mpc" type="main_movo_sc" output="screen">

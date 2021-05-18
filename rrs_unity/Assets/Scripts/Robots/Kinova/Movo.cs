@@ -42,6 +42,9 @@ public class Movo : MonoBehaviour
 
     #region Net2
 
+    public ArticulationMove right_kinova;
+    public ArticulationMove left_kinova;
+
     //PUBS
     Net2.Net2HandlerPublisher publisher_lidar_front;
     Net2.Net2HandlerPublisher publisher_lidar_rear;
@@ -130,12 +133,52 @@ public class Movo : MonoBehaviour
 
     public bool is_moving = false;
 
-    float[] d_joints;
+    public float[] d_joints;
     float[] c_joints;
     int joint_numbers = 19;
-   
+
+    public float stifness = 200;
+    public float damping = 60;
+    public float linear_friction = 0.05f;
+    public float angular_friction = 0.05f;
+    public float friction = 0.05f;
+    public float target_velocity = 0.7f;
+
+    void initJointsConfig()
+    {
+
+        foreach (var item in right_kinova.joints)
+        {
+            item.angularDamping = angular_friction;
+            item.linearDamping = linear_friction;
+            item.jointFriction = friction;
+
+            ArticulationDrive drive = item.xDrive;
+            drive.damping = damping;
+            drive.stiffness = stifness;
+            drive.targetVelocity = target_velocity;
+            item.xDrive = drive;
+        }
+
+        foreach (var item in left_kinova.joints)
+        {
+            item.angularDamping = angular_friction;
+            item.linearDamping = linear_friction;
+            item.jointFriction = friction;
+
+            ArticulationDrive drive = item.xDrive;
+            drive.damping = damping;
+            drive.stiffness = stifness;
+            drive.targetVelocity = target_velocity;
+            item.xDrive = drive;
+        }
+
+    }
+
     void init()
     {
+        initJointsConfig();
+
         d_joints = new float[joint_numbers];
         c_joints = new float[joint_numbers];
 
@@ -256,10 +299,13 @@ public class Movo : MonoBehaviour
     void updateMotors()
     {
         locomotion();
+
         moveHead();
+
         moveRightHand();
-        rightGripper();
         moveLeftHand();
+
+        rightGripper();
         leftGripper();
     }
 
@@ -459,13 +505,14 @@ public class Movo : MonoBehaviour
         MemoryStream ms = new MemoryStream(buffer);
         RRSJointCommand cmd = Serializer.Deserialize<RRSJointCommand>(ms);
 
-        print("Get Goal");
         print(cmd.goal.Length);
 
         for ( int i = 0; i < cmd.goal.Length; i++)
         {
             d_joints[i] = cmd.goal[i] * Mathf.Rad2Deg * -1;
         }
+
+        //print("-------------------------");
     }
 
     private void Subscriber_rrs_command_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
