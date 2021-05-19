@@ -64,7 +64,10 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "unordered_set": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp"
     },
     "python.autoComplete.extraPaths": [
         "/home/lmt/RRS/rrs_ros/devel/lib/python2.7/dist-packages",

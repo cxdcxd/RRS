@@ -165,7 +165,7 @@ private:
   bool exitFlag;
 
   std::thread thread1;
-  static void velocitiesSend_thread_sim(ros::Publisher publisher, bool* exitFlag,
+  static void velocitiesSend_thread_sim(std::vector<double>* c_ptr,ros::Publisher publisher, bool* exitFlag,
                                     std::vector<double>* v_ptr, trajectory_msgs::JointTrajectory* msg,
                                     pthread_mutex_t* joint_velocities_mutex, pthread_mutex_t* position_goal_mutex,
                                     bool *new_goal_got,  std::vector<double>* position_goal_ptr);

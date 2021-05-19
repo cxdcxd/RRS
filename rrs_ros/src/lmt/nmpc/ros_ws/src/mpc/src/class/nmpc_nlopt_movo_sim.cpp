@@ -184,7 +184,7 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   new_goal_got = false;
   position_goal.resize(joint_num);
   // start the thread
-  thread1 = std::thread(velocitiesSend_thread_sim, velocity_pub, &exitFlag, &joint_velocities, &goal_msg, &joint_velocities_mutex, &position_goal_mutex,&new_goal_got, &position_goal);
+  thread1 = std::thread(velocitiesSend_thread_sim,&curr_joint_values, velocity_pub, &exitFlag, &joint_velocities, &goal_msg, &joint_velocities_mutex, &position_goal_mutex,&new_goal_got, &position_goal);
   //thread1 = std::thread(velocitiesSend_thread_real, velocity_pub, &exitFlag, &joint_velocities, &joint_velocities_mutex,&new_goal_got);
 
   // start cost val cal thread and initiliaze shared in-output container
@@ -931,14 +931,18 @@ void NmpcNlopt::optimize(std::vector<double>& u, double mincost)
   marker_publisher.publish(line_strip);
 }
 // velocitySend thread for arm in movo simulation
-void NmpcNlopt::velocitiesSend_thread_sim(ros::Publisher publisher, bool* exitFlag,
+void NmpcNlopt::velocitiesSend_thread_sim(std::vector<double>* c_ptr,ros::Publisher publisher, bool* exitFlag,
                                       std::vector<double>* v_ptr, trajectory_msgs::JointTrajectory* msg,
                                       pthread_mutex_t *joint_velocities_mutex, pthread_mutex_t* position_goal_mutex,
                                       bool* new_goal_got, std::vector<double>* position_goal_ptr)
 {
   double passsed_time_after_new_goal;
   std::vector<double> temp_v(7);
-  ros::Duration d(0.01);
+  std::vector<double> temp_c(7);
+  std::vector<double> temp_error(7);
+  float delta = 0.002;
+
+  ros::Duration d(delta);
   while(ros::ok() && !(*exitFlag))
   {
     if((*v_ptr)[0]!=-200)
@@ -951,7 +955,7 @@ void NmpcNlopt::velocitiesSend_thread_sim(ros::Publisher publisher, bool* exitFl
       }
       else
       {
-        passsed_time_after_new_goal +=0.01;
+        passsed_time_after_new_goal +=delta;
         if(passsed_time_after_new_goal > 0.2)
         {
 //          ROS_WARN("Joint velocities not updte for a long time, sending 0 velocities to robot.");
@@ -961,9 +965,15 @@ void NmpcNlopt::velocitiesSend_thread_sim(ros::Publisher publisher, bool* exitFl
         {
           pthread_mutex_lock(joint_velocities_mutex);
           temp_v = *v_ptr;
+          temp_c = *c_ptr;
           pthread_mutex_unlock(joint_velocities_mutex);
         }
       }
+
+      std::string line = "";
+      std::string line2 = "";
+      std::string line3 = "";
+      std::string line4 = "";
 
       msg->header.seq++;
       msg->points.clear();
@@ -972,16 +982,31 @@ void NmpcNlopt::velocitiesSend_thread_sim(ros::Publisher publisher, bool* exitFl
       msg_point.positions.resize(7);
       double movo2kinova_offset[7] = {0,3.1416,0,3.1416,0,3.1416,0};
       pthread_mutex_lock(position_goal_mutex);
+
       for(int i=0;i<7;i++)
       {
-        (*position_goal_ptr)[i] += (temp_v[i])*0.01;
+        (*position_goal_ptr)[i] += (temp_v[i])*delta;
         msg_point.positions[i] = angles::normalize_angle((*position_goal_ptr)[i]-movo2kinova_offset[i]);
+        temp_error[i] = msg_point.positions[i] - temp_c[i];
+        line += std::to_string(temp_v[i]) + " ";
+        line2 += std::to_string(msg_point.positions[i]) + " ";
+        line3 += std::to_string(temp_c[i]) + " ";
+        line4 += std::to_string(temp_error[i]) + " ";
       }
+
       pthread_mutex_unlock(position_goal_mutex);
 
       // msg_point.positions = *position_goal_ptr;
       msg->points.push_back(msg_point);
       publisher.publish(*msg);
+
+      ROS_INFO_STREAM("Velocity : " + line);
+      ROS_INFO_STREAM("Goal : " + line2);
+      ROS_INFO_STREAM("Current : " + line3);
+      ROS_INFO_STREAM("Error : " + line4);
+      
+      ROS_INFO("====");
+
     }
     d.sleep();
   }

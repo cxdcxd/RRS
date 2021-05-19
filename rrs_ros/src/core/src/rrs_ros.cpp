@@ -170,7 +170,7 @@ namespace lmt
     char buffer[bsize];
     cmd.SerializeToArray(buffer,bsize);
 
-    ROS_WARN("Send Done");
+    //ROS_WARN("Send Done");
     publisher_joint_command->send(buffer,bsize,1);
   }
 
@@ -808,7 +808,6 @@ void Net2TestROS::publishIMU(char* data, int size)
 
 void Net2TestROS::publishTF(char* data, int size)
 {
-  return;
   RRSTF tf_msg;
   tf_msg.ParseFromArray(data,size);
 

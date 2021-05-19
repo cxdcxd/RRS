@@ -151,7 +151,7 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   new_goal_got = false;
   position_goal.resize(joint_num);
   // start the thread
-  thread1 = std::thread(velocitiesSend_thread_sim, velocity_pub, &exitFlag, &joint_velocities, &goal_msg, &joint_velocities_mutex, &position_goal_mutex,&new_goal_got, &position_goal);
+  thread1 = std::thread(velocitiesSend_thread_sim, &curr_joint_values,velocity_pub, &exitFlag, &joint_velocities, &goal_msg, &joint_velocities_mutex, &position_goal_mutex,&new_goal_got, &position_goal);
   // start cost val cal thread and initiliaze shared in-output container
   num_threads = 1;
   num_loops = ph/num_threads;
@@ -706,7 +706,7 @@ void NmpcNlopt::optimize(std::vector<double>& u, double mincost)
 }
 
 // velocitySend thread for arm in movo simulation
-void NmpcNlopt::velocitiesSend_thread_sim(ros::Publisher publisher, bool* exitFlag,
+void NmpcNlopt::velocitiesSend_thread_sim(std::vector<double>* c_ptr,ros::Publisher publisher, bool* exitFlag,
                                       std::vector<double>* v_ptr, trajectory_msgs::JointTrajectory* msg,
                                       pthread_mutex_t *joint_velocities_mutex, pthread_mutex_t* position_goal_mutex,
                                       bool* new_goal_got, std::vector<double>* position_goal_ptr)
