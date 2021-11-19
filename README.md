@@ -30,8 +30,8 @@ cd rrs_ros
 
 5) Install Ml-agent package (for RL)
 ```
-wget https://github.com/Unity-Technologies/ml-agents/archive/release_12.zip
-unzip release_12.zip -d ml-agent
+wget https://github.com/Unity-Technologies/ml-agents/archive/refs/tags/release_17.zip
+unzip release_17.zip -d ml-agent
 open unity package manager and select the package.json from com.unity.ml-agents
 open unity package manager and select the package.json from com.unity.ml-agents.extensions
 ```
