@@ -26,7 +26,7 @@ cd rrs_ros
 
 3) Download [Unity](https://unity3d.com/get-unity/download/archive) 2020.2.1f1 or above
 
-4) Open Unity Hub and go to `Projects`, click `ADD` and then browse the folder `rrs_unity` from the downloaded repository and launch it. Make sure the `Unity Version` is set to `2020.2.1f1` or above
+4) Open Unity Hub and go to `Projects`, click `ADD` and then browse the folder `rrs_unity` from the downloaded repository and launch it. Make sure the `Unity Version` is set to `2020.3.22f1` or above
 
 5) Install Ml-agent package (for RL)
 ```
