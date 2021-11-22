@@ -56,6 +56,41 @@ cd build
 cmake ..
 make
 sudo make install
+cd ..
+cd ..
+
+git clone https://github.com/danfis/libccd.git
+cd libccd
+mkdir build
+cd build
+cmake -G "Unix Makefiles" -DENABLE_DOUBLE_PRECISION=ON ..
+make 
+sudo make install
+cd ..
+cd ..
+
+git clone https://github.com/flexible-collision-library/fcl.git
+cd fcl
+git checkout 1bddc981de578d971cc59eb54f5d248c9d803b25
+mkdir build
+cd build
+cmake ..
+make 
+sudo make install
+cd ..
+cd ..
+
+wget https://github.com/stevengj/nlopt/archive/v2.6.2.tar.gz
+tar -xvzf v2.6.2.tar.gz
+rm v2.6.2.tar.gz
+cd nlopt-2.6.2
+mkdir build
+cd build
+cmake ..
+make
+sudo make install 
+cd ..
+cd ..
 
 sudo cp /usr/local/lib/libppconsul.so.0.1 /usr/lib/libppconsul.so.0.1
 sudo cp /usr/local/lib/libppconsul.so /usr/lib/libppconsul.so

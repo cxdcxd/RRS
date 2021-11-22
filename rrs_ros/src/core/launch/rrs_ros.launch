@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
  <launch>
-	      <node pkg="rrs_ros" type="rrs_node" name="rrs_ros" output="screen"/>
+	 <node pkg="rrs_ros" type="rrs_node" name="rrs_ros" output="screen"/>
         <node pkg="rrs_ros" type="net2_node" name="net2_node" output="screen"/>
 </launch>
