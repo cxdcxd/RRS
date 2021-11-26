@@ -78,7 +78,31 @@ using System.Threading.Tasks;
         }
     }
 
-    [ProtoContract]
+[ProtoContract]
+public class RVector7
+{
+    [ProtoMember(1)]
+    public float x = 0;
+    [ProtoMember(2)]
+    public float y = 0;
+    [ProtoMember(3)]
+    public float z = 0;
+    [ProtoMember(4)]
+    public float qx = 0;
+    [ProtoMember(5)]
+    public float qy = 0;
+    [ProtoMember(6)]
+    public float qz = 0;
+    [ProtoMember(7)]
+    public float qw = 0;
+
+    public RVector7()
+    {
+
+    }
+}
+
+[ProtoContract]
     public class SVector3
     {
         [ProtoMember(1)]

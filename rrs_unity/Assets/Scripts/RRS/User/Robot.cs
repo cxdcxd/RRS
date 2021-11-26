@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class Robot : MonoBehaviour
+public class MovoRobot : MonoBehaviour
 {
     Net2.Net2HandlerPublisher publisher_lidar_1;
     Net2.Net2HandlerPublisher publisher_camera_color;

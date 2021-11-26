@@ -45,6 +45,10 @@ public class Movo : MonoBehaviour
     public ArticulationMove right_kinova;
     public ArticulationMove left_kinova;
 
+    public GameObject nmpc_right_marker;
+    public GameObject nmpc_left_marker;
+
+
     //PUBS
     Net2.Net2HandlerPublisher publisher_lidar_front;
     Net2.Net2HandlerPublisher publisher_lidar_rear;
@@ -58,6 +62,8 @@ public class Movo : MonoBehaviour
     Net2.Net2HandlerPublisher publisher_odometry;
     Net2.Net2HandlerPublisher publisher_tf;
     Net2.Net2HandlerPublisher publisher_groundtruth;
+    Net2.Net2HandlerPublisher publisher_nmpc_in_right;
+    Net2.Net2HandlerPublisher publisher_nmpc_in_left;
 
     //SUBS
     Net2.Net2HandlerSubscriber subscriber_cmd_vel;
@@ -96,10 +102,10 @@ public class Movo : MonoBehaviour
 
     public Lidar lidar_front;
     public Lidar lidar_rear;
-    public ColorCameraOpenGL color_camera;
-    public ColorCameraOpenGL depth_camera;
-    public ColorCameraOpenGL segment_camera;
-    public ColorCameraOpenGL normal_camera;
+    public ColorCamera color_camera;
+    ColorCamera depth_camera;
+    ColorCamera segment_camera;
+    ColorCamera normal_camera;
     public IMU imu;
 
     private RVector3[] current_path = null;
@@ -187,13 +193,15 @@ public class Movo : MonoBehaviour
         publisher_lidar_rear = Net2.Publisher("lidar_rear");
         publisher_camera_color = Net2.Publisher("camera_color");
         publisher_camera_info = Net2.Publisher("camera_info");
-        publisher_camera_depth = Net2.Publisher("camera_depth");
-        publisher_camera_segment = Net2.Publisher("camera_segment");
-        publisher_camera_normal = Net2.Publisher("camera_normal");
+        //publisher_camera_depth = Net2.Publisher("camera_depth");
+        //publisher_camera_segment = Net2.Publisher("camera_segment");
+        //publisher_camera_normal = Net2.Publisher("camera_normal");
         publisher_groundtruth = Net2.Publisher("groundtruth");
         publisher_imu = Net2.Publisher("imu");
         publisher_odometry = Net2.Publisher("odometry");
         publisher_tf = Net2.Publisher("tf");
+        publisher_nmpc_in_right = Net2.Publisher("nmpc_right_in");
+        publisher_nmpc_in_left = Net2.Publisher("nmpc_left_in");
 
         subscriber_cmd_vel = Net2.Subscriber("rrs_ros-cmd_vel");
         subscriber_cmd_vel.delegateNewData += Subscriber_cmd_vel_delegateNewData;
@@ -209,9 +217,9 @@ public class Movo : MonoBehaviour
 
         //Sensors
         color_camera.delegateCameraDataChanged += Color_camera_delegateCameraDataChanged;
-        depth_camera.delegateCameraDataChanged += Depth_camera_delegateCameraDataChanged;
-        segment_camera.delegateCameraDataChanged += Segment_camera_delegateCameraDataChanged;
-        normal_camera.delegateCameraDataChanged += Normal_camera_delegateCameraDataChanged;
+        //depth_camera.delegateCameraDataChanged += Depth_camera_delegateCameraDataChanged;
+        //segment_camera.delegateCameraDataChanged += Segment_camera_delegateCameraDataChanged;
+        //normal_camera.delegateCameraDataChanged += Normal_camera_delegateCameraDataChanged;
 
         imu.delegateIMUDataChanged += Imu_delegateIMUDataChanged;
         lidar_front.delegateLidarDataChanged += Lidar_front_delegateLidarDataChanged;
@@ -220,7 +228,7 @@ public class Movo : MonoBehaviour
 
     private void Normal_camera_delegateCameraDataChanged(byte[] buffer)
     {
-        publisher_camera_normal.Send(buffer);
+        //publisher_camera_normal.Send(buffer);
     }
 
     #region MotorControl
@@ -331,13 +339,13 @@ public class Movo : MonoBehaviour
     private void Segment_camera_delegateCameraDataChanged(byte[] buffer)
     {
         //print("Segment");
-        publisher_camera_segment.Send(buffer);
+        //publisher_camera_segment.Send(buffer);
     }
 
     private void Depth_camera_delegateCameraDataChanged(byte[] buffer)
     {
         //print("Depth");
-        publisher_camera_depth.Send(buffer);
+        //publisher_camera_depth.Send(buffer);
     }
 
     private void Color_camera_delegateCameraDataChanged(byte[] buffer)
@@ -505,7 +513,7 @@ public class Movo : MonoBehaviour
         MemoryStream ms = new MemoryStream(buffer);
         RRSJointCommand cmd = Serializer.Deserialize<RRSJointCommand>(ms);
 
-        print(cmd.goal.Length);
+        //print(cmd.goal.Length);
 
         for ( int i = 0; i < cmd.goal.Length; i++)
         {
@@ -545,12 +553,61 @@ public class Movo : MonoBehaviour
         }
     }
 
+    void sendNMPCMarkers()
+    {
+        //Right
+        RVector7 right_marker = new RVector7();
+
+        var c_pose = nmpc_right_marker.transform.localPosition;
+
+        right_marker.x = c_pose.x + 0.13f;
+        right_marker.y = -1 * c_pose.y + 1f;
+        right_marker.z = c_pose.z;
+
+        var c_rot = nmpc_right_marker.transform.localRotation;
+
+        right_marker.qx = c_rot.x;
+        right_marker.qy = c_rot.y;
+        right_marker.qz = c_rot.z;
+        right_marker.qw = c_rot.w;
+
+        MemoryStream ms = new MemoryStream();
+        Serializer.Serialize<RVector7>(ms, right_marker);
+        byte[] data_right = ms.ToArray();
+
+        //Left
+        RVector7 left_marker = new RVector7();
+
+        c_pose = nmpc_left_marker.transform.localPosition;
+
+        left_marker.x = c_pose.x + 0.13f;
+        left_marker.y = -1 * c_pose.y + 1f;
+        left_marker.z = c_pose.z;
+
+        c_rot = nmpc_left_marker.transform.localRotation;
+
+        left_marker.qx = c_rot.x;
+        left_marker.qy = c_rot.y;
+        left_marker.qz = c_rot.z;
+        left_marker.qw = c_rot.w;
+
+        ms = new MemoryStream();
+        Serializer.Serialize<RVector7>(ms, left_marker);
+        byte[] data_left = ms.ToArray();
+
+        publisher_nmpc_in_right.Send(data_right);
+        publisher_nmpc_in_left.Send(data_left);
+
+        print("published");
+    }
+
     private void sendState()
     {
         sendGroundtruth();
         sendJointState();
         sendOdometry();
         sendJointTF();
+        sendNMPCMarkers();
     }
 
     private void Subscriber_cmd_vel_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)

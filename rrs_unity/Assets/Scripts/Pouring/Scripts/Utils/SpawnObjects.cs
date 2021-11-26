@@ -68,7 +68,7 @@ public class SpawnObjects: MonoBehaviour {
         }
 
         robot = agent.AddComponent<Robot>();
-        robot.createRobot(roboPrefab, material, true);
+        robot.createRobot(roboPrefab, material, false);
         robot.getRobotHand().name = name;
         
         robot.getRobotHand().SetActive(true);

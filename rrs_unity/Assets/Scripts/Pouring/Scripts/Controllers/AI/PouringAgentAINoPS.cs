@@ -20,6 +20,8 @@ public class PouringAgentAINoPS : Agent {
     public PhysicMaterial solidObjectPhysicsMaterial; // Physics material to use with source and target containers.
     public PhysicMaterial robotPhysicsMaterial; // Physics material to use with robotic hand.
     public GameObject workspace; // Workspace for target hand.
+    public GameObject right_marker; // NMPC right marker
+    public GameObject left_marker; // NMPC left marker
 
     /// <summary>
     /// The objects below are created and used internally during the runtime.
@@ -49,7 +51,7 @@ public class PouringAgentAINoPS : Agent {
     private float error = 0.0f;
     float weightOfLiquid = 0.0f;
     private static List<float> fill_targets = new List<float>();
-    bool isTest = false;
+    bool isTest = true;
     int experiment_indexer = 0;
     private static float fixedSourceStartVolume = 250f;
 
@@ -140,6 +142,15 @@ public class PouringAgentAINoPS : Agent {
         // // 3. align robots with solid objects
         robotHandForSource.holdObject(source, workspace, true, true);
         robotHandForTarget.holdObject(target, workspace, true, true, true);
+
+        Vector3 fingerAPosition = robotHandForTarget.getRobotHand().transform.position - robotHandForTarget.getFingerA().transform.position;
+        Vector3 fingerBPosition = robotHandForTarget.getRobotHand().transform.position - robotHandForTarget.getFingerB().transform.position;
+
+        left_marker.transform.position = 0.5f * (fingerAPosition + fingerBPosition);
+        left_marker.transform.rotation = Quaternion.Euler(robotHandForTarget.getRobotHand().transform.rotation.eulerAngles.x - 90,
+                                                          robotHandForTarget.getRobotHand().transform.rotation.eulerAngles.y ,
+                                                          robotHandForTarget.getRobotHand().transform.rotation.eulerAngles.z 
+                                                          );
 
         // 4. Create liquid
         if (isTest)
@@ -313,6 +324,7 @@ public class PouringAgentAINoPS : Agent {
                     }
 
                     robotHandForSource.getRobotHand().transform.Rotate(axisOfRotation, deltaRotation, Space.Self);
+                    right_marker.transform.Rotate(axisOfRotation, deltaRotation, Space.Self);
                     sourceTilt += sourceTurningSpeed * Time.deltaTime;
                 } else {
                     Vector3 relativePlanarPosition = (new Vector3(target.getSolidObject().transform.position.x,
@@ -324,6 +336,7 @@ public class PouringAgentAINoPS : Agent {
                     float deltaDistance = robotMovingSpeed > 0.0f ? (robotMovingSpeed * Time.deltaTime) : 0.0f;
                     Vector3 newLocation = relativePlanarPosition * deltaDistance;
                     robotHandForSource.getRobotHand().transform.position += newLocation;
+                    right_marker.transform.position = robotHandForSource.getRobotHand().transform.position;
                 }
             }
 
@@ -346,6 +359,7 @@ public class PouringAgentAINoPS : Agent {
                 if (!retract) {
                         if (sourceTurningSpeed < 0) {
                             robotHandForSource.getRobotHand().transform.Rotate(axisOfRotation, sourceTurningSpeed * Time.deltaTime, Space.Self);
+                            right_marker.transform.Rotate(axisOfRotation, sourceTurningSpeed * Time.deltaTime, Space.Self);
                             sourceTilt += sourceTurningSpeed * Time.deltaTime;
                         }
                     float angle = Quaternion.Angle(robotHandForSource.getRobotHand().transform.rotation, initialRotation);
