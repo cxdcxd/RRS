@@ -36,7 +36,8 @@ public class Movo : MonoBehaviour
     Net2.Net2HandlerSubscriber subscriber_planner_viz;
     Net2.Net2HandlerSubscriber subscriber_navigation_state;
     Net2.Net2HandlerSubscriber subscriber_rrs_command;
-    Net2.Net2HandlerSubscriber subscriber_rrs_joint_command;
+    Net2.Net2HandlerSubscriber subscriber_rrs_joint_command_left;
+    Net2.Net2HandlerSubscriber subscriber_rrs_joint_command_right;
 
     #endregion
 
@@ -170,47 +171,24 @@ public class Movo : MonoBehaviour
 
     void init()
     {
-        
-
         d_joints = new float[joint_numbers];
         c_joints = new float[joint_numbers];
 
         publisher_joint_state = Net2.Publisher("joint_state");
-        publisher_lidar_front = Net2.Publisher("lidar_front");
-        publisher_lidar_rear = Net2.Publisher("lidar_rear");
         publisher_camera_color = Net2.Publisher("camera_color");
         publisher_camera_info = Net2.Publisher("camera_info");
-        //publisher_camera_depth = Net2.Publisher("camera_depth");
-        //publisher_camera_segment = Net2.Publisher("camera_segment");
-        //publisher_camera_normal = Net2.Publisher("camera_normal");
-        publisher_groundtruth = Net2.Publisher("groundtruth");
-        publisher_imu = Net2.Publisher("imu");
-        publisher_odometry = Net2.Publisher("odometry");
-        publisher_tf = Net2.Publisher("tf");
         publisher_nmpc_in_right = Net2.Publisher("nmpc_right_in");
         publisher_nmpc_in_left = Net2.Publisher("nmpc_left_in");
-
-        subscriber_cmd_vel = Net2.Subscriber("rrs_ros-cmd_vel");
-        subscriber_cmd_vel.delegateNewData += Subscriber_cmd_vel_delegateNewData;
-
-        subscriber_planner_viz = Net2.Subscriber("rrs_ros-planner_viz");
-        subscriber_planner_viz.delegateNewData += Subscriber_planner_viz_delegateNewData;
-
         subscriber_rrs_command = Net2.Subscriber("rrs_ros-rrs_command");
-        subscriber_rrs_command.delegateNewData += Subscriber_rrs_command_delegateNewData;
-
-        subscriber_rrs_joint_command = Net2.Subscriber("rrs_ros-joint_command");
-        subscriber_rrs_joint_command.delegateNewData += Subscriber_rrs_joint_command_delegateNewData;
+     
+        subscriber_rrs_joint_command_left = Net2.Subscriber("rrs_ros-joint_left");
+        subscriber_rrs_joint_command_left.delegateNewData += Subscriber_rrs_joint_command_left_delegateNewData;
+      
+        subscriber_rrs_joint_command_right = Net2.Subscriber("rrs_ros-joint_right");
+        subscriber_rrs_joint_command_right.delegateNewData += Subscriber_rrs_joint_command_right_delegateNewData;
 
         //Sensors
         color_camera.delegateCameraDataChanged += Color_camera_delegateCameraDataChanged;
-        //depth_camera.delegateCameraDataChanged += Depth_camera_delegateCameraDataChanged;
-        //segment_camera.delegateCameraDataChanged += Segment_camera_delegateCameraDataChanged;
-        //normal_camera.delegateCameraDataChanged += Normal_camera_delegateCameraDataChanged;
-
-        imu.delegateIMUDataChanged += Imu_delegateIMUDataChanged;
-        lidar_front.delegateLidarDataChanged += Lidar_front_delegateLidarDataChanged;
-        lidar_rear.delegateLidarDataChanged += Lidar_rear_delegateLidarDataChanged;
     }
 
     private void Normal_camera_delegateCameraDataChanged(byte[] buffer)
@@ -220,77 +198,7 @@ public class Movo : MonoBehaviour
 
     #region MotorControl
 
-    void locomotion()
-    {
-        if (speed.x != 0 || speed.y != 0 || speed.z != 0)
-        {
-            is_moving = true;
-        }
-        else
-        {
-            is_moving = false;
-        }
-
-
-        transform.Translate(speed.y / 1000, 0, speed.x / 1000, Space.Self);
-        transform.Rotate(0, -1 * speed.z / 10, 0, Space.Self);
-
-        if (is_moving)
-        {
-            root_right_body.TeleportRoot(root_right_transform.position, root_right_transform.rotation);
-            root_left_body.TeleportRoot(root_left_transform.position, root_left_transform.rotation);
-            root_head_body.TeleportRoot(root_head_transform.position, root_head_transform.rotation);
-        }
-
-    }
-
-    void moveHead()
-    {
-        if (d_joints.Length == 0) return;
-
-        RotateToHead(d_joints[17], 0);
-        RotateToHead(d_joints[18], 1);
-    }
-
-    void moveLeftHand()
-    {
-        if (d_joints.Length == 0) return;
-
-        for (int i = 0; i < 7; i++)
-        {
-            RotateToLeft(d_joints[i + 8], i);
-        }
-    }
-
-    void moveRightHand()
-    {
-        if (d_joints.Length == 0) return;
-
-        for ( int i = 0; i < 7; i++)
-        {
-            RotateToRight(d_joints[i], i);
-        }
-
-    }
-
-    void rightGripper()
-    {
-        if (d_joints.Length == 0) return;
-
-        float value = d_joints[7];
-
-        //RotateToRightFinger(value);
-    }
-
-    void leftGripper()
-    {
-        if (d_joints.Length == 0) return;
-
-        float value = d_joints[15];
-
-        //RotateToLefttFinger(value);
-    }
-
+   
     public bool enable_script_control = false;
 
     void updateMotors()
@@ -440,68 +348,6 @@ public class Movo : MonoBehaviour
     }
     #endregion
 
-    void RotateToRight(float primaryAxisRotation, int index)
-    {
-        var articulation = right_arm_joints[++index].GetComponent<ArticulationBody>();
-        var drive = articulation.xDrive;
-        drive.target = primaryAxisRotation;
-        articulation.xDrive = drive;
-    }
-
-    void RotateToRightFinger(float primaryAxisRotation)
-    {
-        var articulation1 = right_finger_joints[0].GetComponent<ArticulationBody>();
-        var articulation2 = right_finger_joints[1].GetComponent<ArticulationBody>();
-        var articulation3 = right_finger_joints[2].GetComponent<ArticulationBody>();
-
-        var drive = articulation1.xDrive;
-        drive.target = primaryAxisRotation;
-        articulation1.xDrive = drive;
-
-        drive = articulation2.xDrive;
-        drive.target = primaryAxisRotation;
-        articulation2.xDrive = drive;
-
-        drive = articulation3.xDrive;
-        drive.target = primaryAxisRotation;
-        articulation3.xDrive = drive;
-    }
-
-    void RotateToLefttFinger(float primaryAxisRotation)
-    {
-        var articulation1 = left_finger_joints[0].GetComponent<ArticulationBody>();
-        var articulation2 = left_finger_joints[1].GetComponent<ArticulationBody>();
-        var articulation3 = left_finger_joints[2].GetComponent<ArticulationBody>();
-
-        var drive = articulation1.xDrive;
-        drive.target = primaryAxisRotation;
-        articulation1.xDrive = drive;
-
-        drive = articulation2.xDrive;
-        drive.target = primaryAxisRotation;
-        articulation2.xDrive = drive;
-
-        drive = articulation3.xDrive;
-        drive.target = primaryAxisRotation;
-        articulation3.xDrive = drive;
-    }
-
-    void RotateToLeft(float primaryAxisRotation, int index)
-    {
-        var articulation = left_arm_joints[++index].GetComponent<ArticulationBody>();
-        var drive = articulation.xDrive;
-        drive.target = primaryAxisRotation;
-        articulation.xDrive = drive;
-    }
-
-    void RotateToHead(float primaryAxisRotation, int index)
-    {
-        var articulation = head_joints[index].GetComponent<ArticulationBody>();
-        var drive = articulation.xDrive;
-        drive.target = primaryAxisRotation;
-        articulation.xDrive = drive;
-    }
-
     public GameObject[] movo_head;
     public GameObject[] movo_right_arm;
     public GameObject[] movo_left_arm;
@@ -530,27 +376,27 @@ public class Movo : MonoBehaviour
     void simpleviz()
     {
 
-        right_arm_1 = d_joints[0] * -1;
-        right_arm_2 = d_joints[1] ;
-        right_arm_3 = d_joints[2] * -1;
-        right_arm_4 = d_joints[3] * -1;
-        right_arm_5 = d_joints[4] * -1;
-        right_arm_6 = d_joints[5] * -1;
-        right_arm_7 = d_joints[6] * -1;
+        right_arm_1 += d_joints[0] * Time.deltaTime;
+        right_arm_2 += d_joints[1] * Time.deltaTime * -1;
+        right_arm_3 += d_joints[2] * Time.deltaTime;
+        right_arm_4 += d_joints[3] * Time.deltaTime;
+        right_arm_5 += d_joints[4] * Time.deltaTime;
+        right_arm_6 += d_joints[5] * Time.deltaTime;
+        right_arm_7 += d_joints[6] * Time.deltaTime;
 
-        left_arm_1 = d_joints[8] * -1;
-        left_arm_2 = d_joints[9] ;
-        left_arm_3 = d_joints[10] * -1;
-        left_arm_4 = d_joints[11] * -1;
-        left_arm_5 = d_joints[12] * -1;
-        left_arm_6 = d_joints[13] * -1;
-        left_arm_7 = d_joints[14] * -1;
+        left_arm_1 += d_joints[8] * Time.deltaTime;
+        left_arm_2 += d_joints[9]  * Time.deltaTime * -1;
+        left_arm_3 += d_joints[10] * Time.deltaTime;
+        left_arm_4 += d_joints[11] * Time.deltaTime;
+        left_arm_5 += d_joints[12] * Time.deltaTime;
+        left_arm_6 += d_joints[13] * Time.deltaTime;
+        left_arm_7 += d_joints[14] * Time.deltaTime;
 
-        head_pan = d_joints[17] * -1;
-        head_tilt = d_joints[18] * -1;
+        //head_pan = d_joints[17] * -1;
+        //head_tilt = d_joints[18] * -1;
 
-        head_joints[0].transform.localRotation = Quaternion.Euler(0, head_pan, -180);
-        head_joints[1].transform.localRotation = Quaternion.Euler(90 + head_tilt,0 , 90);
+        //head_joints[0].transform.localRotation = Quaternion.Euler(0, head_pan, -180);
+        //head_joints[1].transform.localRotation = Quaternion.Euler(90 + head_tilt,0 , 90);
 
         right_arm_joints[1].transform.localRotation = Quaternion.Euler(-180,right_arm_1,0);
         right_arm_joints[2].transform.localRotation = Quaternion.Euler(right_arm_2, 0, -90 );
@@ -575,26 +421,34 @@ public class Movo : MonoBehaviour
 
     }
 
-    private void Subscriber_rrs_joint_command_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
+    private void Subscriber_rrs_joint_command_left_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
     {
         MemoryStream ms = new MemoryStream(buffer);
         RRSJointCommand cmd = Serializer.Deserialize<RRSJointCommand>(ms);
 
-        //print(cmd.goal.Length);
-
-        for ( int i = 0; i < cmd.goal.Length; i++)
+        for (int i = 8; i < 15; i++)
         {
-            d_joints[i] = cmd.goal[i] * Mathf.Rad2Deg * -1;
+            d_joints[i] = cmd.goal[i - 8];
         }
 
-        //print("-------------------------");
+        print("LEFT");
+    }
+    private void Subscriber_rrs_joint_command_right_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
+    {
+        MemoryStream ms = new MemoryStream(buffer);
+        RRSJointCommand cmd = Serializer.Deserialize<RRSJointCommand>(ms);
+
+
+        for (int i = 0; i < 7; i++)
+        {
+            d_joints[i] = cmd.goal[i];
+        }
+
+        print("RIGHT");
     }
 
-    private void Subscriber_rrs_command_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
-    {
-        //RRS Command
-        //print("Get RRS Command");
-    }
+
+   
 
     private void Subscriber_navigation_state_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
     {
@@ -672,7 +526,7 @@ public class Movo : MonoBehaviour
     {
         //sendGroundtruth();
         sendJointState();
-        sendJointTF();
+        //sendJointTF();
         sendNMPCMarkers();
     }
 
@@ -730,7 +584,7 @@ public class Movo : MonoBehaviour
         byte[] data = ms.ToArray();
 
         ////print("publish tf");
-        publisher_tf.Send(data);
+        //publisher_tf.Send(data);
     }
 
     void sendGroundtruth()
@@ -757,12 +611,8 @@ public class Movo : MonoBehaviour
         Serializer.Serialize<RRSTransform>(ms, t);
         byte[] data = ms.ToArray();
 
-        publisher_groundtruth.Send(data);
+        //publisher_groundtruth.Send(data);
     }
-
-   
-   
-   
 
     (float, float, float) CurrentPrimaryAxisRotationLinear()
     {
@@ -792,8 +642,8 @@ public class Movo : MonoBehaviour
 
         joint_state_msg.name[8] = Links.left_shoulder_pan_joint.ToString();
         joint_state_msg.name[9] = Links.left_shoulder_lift_joint.ToString();
-        joint_state_msg.name[10] = Links.left_elbow_joint.ToString();
-        joint_state_msg.name[11] = Links.left_arm_half_joint.ToString();
+        joint_state_msg.name[10] = Links.left_arm_half_joint.ToString();
+        joint_state_msg.name[11] = Links.left_elbow_joint.ToString();
         joint_state_msg.name[12] = Links.left_wrist_spherical_1_joint.ToString();
         joint_state_msg.name[13] = Links.left_wrist_spherical_2_joint.ToString();
         joint_state_msg.name[14] = Links.left_wrist_3_joint.ToString();
@@ -803,23 +653,30 @@ public class Movo : MonoBehaviour
         joint_state_msg.name[17] = Links.pan_joint.ToString();
         joint_state_msg.name[18] = Links.tilt_joint.ToString();
       
-        for ( int i = 0; i < 7; i++)
-        {
-            (joint_state_msg.position[i], joint_state_msg.velocity[i], joint_state_msg.effort[i]) = (d_joints[i] * Mathf.Deg2Rad * -1, 0, 0 );
-        }
+        
+        (joint_state_msg.position[0], joint_state_msg.velocity[0], joint_state_msg.effort[0]) = (right_arm_1 * Mathf.Deg2Rad , 0, 0 );
+        (joint_state_msg.position[1], joint_state_msg.velocity[1], joint_state_msg.effort[1]) = (right_arm_2 * Mathf.Deg2Rad * -1, 0, 0);
+        (joint_state_msg.position[2], joint_state_msg.velocity[2], joint_state_msg.effort[2]) = (right_arm_3 * Mathf.Deg2Rad, 0, 0);
+        (joint_state_msg.position[3], joint_state_msg.velocity[3], joint_state_msg.effort[3]) = (right_arm_4 * Mathf.Deg2Rad, 0, 0);
+        (joint_state_msg.position[4], joint_state_msg.velocity[4], joint_state_msg.effort[4]) = (right_arm_5 * Mathf.Deg2Rad, 0, 0);
+        (joint_state_msg.position[5], joint_state_msg.velocity[5], joint_state_msg.effort[5]) = (right_arm_6 * Mathf.Deg2Rad, 0, 0);
+        (joint_state_msg.position[6], joint_state_msg.velocity[6], joint_state_msg.effort[6]) = (right_arm_7 * Mathf.Deg2Rad, 0, 0);
 
-        (joint_state_msg.position[7], joint_state_msg.velocity[7], joint_state_msg.effort[7]) = (d_joints[7] * Mathf.Deg2Rad * -1, 0, 0);
+        (joint_state_msg.position[7], joint_state_msg.velocity[7], joint_state_msg.effort[7]) = (0, 0, 0);
 
-        for (int i = 8; i < 15; i++)
-        {
-            (joint_state_msg.position[i], joint_state_msg.velocity[i], joint_state_msg.effort[i]) = (d_joints[i] * Mathf.Deg2Rad * -1, 0, 0);
-        }
+        (joint_state_msg.position[8], joint_state_msg.velocity[8], joint_state_msg.effort[8]) = (left_arm_1 * Mathf.Deg2Rad, 0, 0);
+        (joint_state_msg.position[9], joint_state_msg.velocity[9], joint_state_msg.effort[9]) = (left_arm_2 * Mathf.Deg2Rad * -1, 0, 0);
+        (joint_state_msg.position[10], joint_state_msg.velocity[10], joint_state_msg.effort[10]) = (left_arm_3 * Mathf.Deg2Rad, 0, 0);
+        (joint_state_msg.position[11], joint_state_msg.velocity[11], joint_state_msg.effort[11]) = (left_arm_4 * Mathf.Deg2Rad, 0, 0);
+        (joint_state_msg.position[12], joint_state_msg.velocity[12], joint_state_msg.effort[12]) = (left_arm_5 * Mathf.Deg2Rad, 0, 0);
+        (joint_state_msg.position[13], joint_state_msg.velocity[13], joint_state_msg.effort[13]) = (left_arm_6 * Mathf.Deg2Rad, 0, 0);
+        (joint_state_msg.position[14], joint_state_msg.velocity[14], joint_state_msg.effort[14]) = (left_arm_7 * Mathf.Deg2Rad, 0, 0);
 
-        (joint_state_msg.position[15], joint_state_msg.velocity[15], joint_state_msg.effort[15]) = (d_joints[15] * Mathf.Deg2Rad * -1, 0, 0);
+        (joint_state_msg.position[15], joint_state_msg.velocity[15], joint_state_msg.effort[15]) = (0, 0, 0);
 
-        (joint_state_msg.position[16], joint_state_msg.velocity[16], joint_state_msg.effort[16]) = (d_joints[16] * Mathf.Deg2Rad * -1, 0, 0);
-        (joint_state_msg.position[17], joint_state_msg.velocity[17], joint_state_msg.effort[17]) = (d_joints[17] * Mathf.Deg2Rad * -1, 0, 0);
-        (joint_state_msg.position[18], joint_state_msg.velocity[18], joint_state_msg.effort[18]) = (d_joints[18] * Mathf.Deg2Rad * -1, 0, 0);
+        (joint_state_msg.position[16], joint_state_msg.velocity[16], joint_state_msg.effort[16]) = (0, 0, 0);
+        (joint_state_msg.position[17], joint_state_msg.velocity[17], joint_state_msg.effort[17]) = (0, 0, 0);
+        (joint_state_msg.position[18], joint_state_msg.velocity[18], joint_state_msg.effort[18]) = (0, 0, 0);
 
         //if (is_moving == false)
         //{
@@ -846,7 +703,7 @@ public class Movo : MonoBehaviour
     }
 
    
-    void FixedUpdate()
+    void Update()
     {
         timer_status += Time.deltaTime;
         timer_motor_update += Time.deltaTime;
