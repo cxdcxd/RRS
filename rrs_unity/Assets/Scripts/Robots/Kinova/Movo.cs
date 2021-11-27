@@ -66,12 +66,12 @@ public class Movo : MonoBehaviour
     }
 
     [Range(1, 100)]
-    public int fps_status = 20;
+    public int fps_status = 50;
 
     float next_status_time = 0;
 
     [Range(1, 100)]
-    public float fps_control_update = 20;
+    public float fps_control_update = 50;
 
     float next_control_time = 0;
 
@@ -295,21 +295,25 @@ public class Movo : MonoBehaviour
 
     void updateMotors()
     {
-        initJointsConfig();
+        simpleviz();
 
-        if (enable_script_control == false) return;
+        //initJointsConfig();
 
-       
+        //if (enable_script_control == false) return;
 
-        locomotion();
 
-        moveHead();
 
-        moveRightHand();
-        moveLeftHand();
+        //locomotion();
 
-        rightGripper();
-        leftGripper();
+        //moveHead();
+
+        //moveRightHand();
+        //moveLeftHand();
+
+        //rightGripper();
+        //leftGripper();
+
+
     }
 
     #endregion
@@ -498,6 +502,74 @@ public class Movo : MonoBehaviour
         articulation.xDrive = drive;
     }
 
+    public GameObject[] movo_head;
+    public GameObject[] movo_right_arm;
+    public GameObject[] movo_left_arm;
+
+    public float head_pan = 0;
+    public float head_tilt = 0;
+
+    public float right_arm_1 = 0;
+    public float right_arm_2 = 0;
+    public float right_arm_3 = 0;
+    public float right_arm_4 = 0;
+    public float right_arm_5 = 0;
+    public float right_arm_6 = 0;
+    public float right_arm_7 = 0;
+    public float right_gripper = 0;
+
+    public float left_arm_1 = 0;
+    public float left_arm_2 = 0;
+    public float left_arm_3 = 0;
+    public float left_arm_4 = 0;
+    public float left_arm_5 = 0;
+    public float left_arm_6 = 0;
+    public float left_arm_7 = 0;
+    public float left_gripper = 0;
+
+    void simpleviz()
+    {
+
+        right_arm_1 = d_joints[0] * -1;
+        right_arm_2 = d_joints[1] ;
+        right_arm_3 = d_joints[2] * -1;
+        right_arm_4 = d_joints[3] * -1;
+        right_arm_5 = d_joints[4] * -1;
+        right_arm_6 = d_joints[5] * -1;
+        right_arm_7 = d_joints[6] * -1;
+
+        left_arm_1 = d_joints[8] * -1;
+        left_arm_2 = d_joints[9] ;
+        left_arm_3 = d_joints[10] * -1;
+        left_arm_4 = d_joints[11] * -1;
+        left_arm_5 = d_joints[12] * -1;
+        left_arm_6 = d_joints[13] * -1;
+        left_arm_7 = d_joints[14] * -1;
+
+        head_pan = d_joints[17] * -1;
+        head_tilt = d_joints[18] * -1;
+
+        head_joints[0].transform.localRotation = Quaternion.Euler(0, head_pan, -180);
+        head_joints[1].transform.localRotation = Quaternion.Euler(90 + head_tilt,0 , 90);
+
+        right_arm_joints[1].transform.localRotation = Quaternion.Euler(-180,right_arm_1,0);
+        right_arm_joints[2].transform.localRotation = Quaternion.Euler(right_arm_2, 0, -90 );
+        right_arm_joints[3].transform.localRotation = Quaternion.Euler(right_arm_3, 0, 90 );
+        right_arm_joints[4].transform.localRotation = Quaternion.Euler(right_arm_4, 0, 90 );
+        right_arm_joints[5].transform.localRotation = Quaternion.Euler(right_arm_5, 180, 90 );
+        right_arm_joints[6].transform.localRotation = Quaternion.Euler(right_arm_6, 0, 90 );
+        right_arm_joints[7].transform.localRotation = Quaternion.Euler(right_arm_7, 180, 90);
+
+        left_arm_joints[1].transform.localRotation = Quaternion.Euler(-180, left_arm_1, 0);
+        left_arm_joints[2].transform.localRotation = Quaternion.Euler(left_arm_2, 0, -90);
+        left_arm_joints[3].transform.localRotation = Quaternion.Euler(left_arm_3, 0, 90);
+        left_arm_joints[4].transform.localRotation = Quaternion.Euler(left_arm_4, 0, 90);
+        left_arm_joints[5].transform.localRotation = Quaternion.Euler(left_arm_5, 180, 90);
+        left_arm_joints[6].transform.localRotation = Quaternion.Euler(left_arm_6, 0, 90);
+        left_arm_joints[7].transform.localRotation = Quaternion.Euler(left_arm_7, 180, 90);
+    }
+
+
     void RotateToLinear(float primaryAxisRotation)
     {
 
@@ -559,7 +631,7 @@ public class Movo : MonoBehaviour
         right_marker.y = c_pose.y;
         right_marker.z = c_pose.z;
 
-        var c_rot = nmpc_right_marker.transform.localRotation;
+        var c_rot = Helper.Unity2Ros(nmpc_right_marker.transform.localRotation);
 
         right_marker.qx = c_rot.x;
         right_marker.qy = c_rot.y;
@@ -579,7 +651,7 @@ public class Movo : MonoBehaviour
         left_marker.y = c_pose.y;
         left_marker.z = c_pose.z;
 
-        c_rot = nmpc_left_marker.transform.localRotation;
+        c_rot = Helper.Unity2Ros(nmpc_left_marker.transform.localRotation);
 
         left_marker.qx = c_rot.x;
         left_marker.qy = c_rot.y;
@@ -598,9 +670,8 @@ public class Movo : MonoBehaviour
 
     private void sendState()
     {
-        sendGroundtruth();
+        //sendGroundtruth();
         sendJointState();
-        sendOdometry();
         sendJointTF();
         sendNMPCMarkers();
     }
@@ -662,43 +733,6 @@ public class Movo : MonoBehaviour
         publisher_tf.Send(data);
     }
 
-    void sendOdometry()
-    {
-        RRSOdom t = new RRSOdom();
-
-        t.position = new RRS.Tools.Protobuf.SVector3();
-        t.orientation = new RRS.Tools.Protobuf.SVector4();
-
-        var convertp = Helper.Unity2Ros(transform.position);
-        t.position.x = convertp.x;
-        t.position.y = convertp.y;
-        t.position.z = convertp.z;
-
-        var convertr = Helper.Unity2Ros(transform.rotation);
-        t.orientation.x = convertr.x;
-        t.orientation.y = convertr.y;
-        t.orientation.z = convertr.z;
-        t.orientation.w = convertr.w;
-
-        t.linear_speed = new RRS.Tools.Protobuf.SVector3();
-        //var convertlv = Helper.Unity2Ros(imu.linVel);
-        //t.linear_speed.x = convertlv.x;
-        //t.linear_speed.y = convertlv.y;
-        //t.linear_speed.z = convertlv.z;
-
-        t.angular_speed = new RRS.Tools.Protobuf.SVector3();
-        //var convertav = Helper.Unity2Ros(imu.angVel);
-        //t.angular_speed.x = convertav.x;
-        //t.angular_speed.y = convertav.y; 
-        //t.angular_speed.z = convertav.z; 
-
-        MemoryStream ms = new MemoryStream();
-        Serializer.Serialize<RRSOdom>(ms, t);
-        byte[] data = ms.ToArray();
-
-        publisher_odometry.Send(data);
-    }
-
     void sendGroundtruth()
     {
         RRSTransform t = new RRSTransform();
@@ -726,53 +760,9 @@ public class Movo : MonoBehaviour
         publisher_groundtruth.Send(data);
     }
 
-    (float, float, float) CurrentPrimaryAxisRotationRight(int index)
-    {
-        float currentRotation = 0, currentEffort = 0, currentVel = 0;
-        if (index >= 0 && index <= 7)
-        {
-            var articulation = right_arm_joints[++index].GetComponent<ArticulationBody>();
-            if (articulation.jointPosition.dofCount == 1)
-            {
-                float currentRotationRads = articulation.jointPosition[0] * -1;
-                currentRotation = currentRotationRads;
-                currentVel = articulation.jointVelocity[0];
-                currentEffort = articulation.jointForce[0]; //TODO@ Always Zero
-            }
-        }
-        return (currentRotation, currentVel, currentEffort);
-    }
-
-    (float, float, float) CurrentPrimaryAxisRotationLeft(int index)
-    {
-        float currentRotation = 0, currentEffort = 0, currentVel = 0;
-        if (index >= 0 && index <= 7)
-        {
-            var articulation = left_arm_joints[++index].GetComponent<ArticulationBody>();
-            if (articulation.jointPosition.dofCount == 1)
-            {
-                float currentRotationRads = articulation.jointPosition[0] * -1;
-                currentRotation = currentRotationRads;
-                currentVel = articulation.jointVelocity[0];
-                currentEffort = articulation.jointForce[0]; //TODO@ Always Zero
-            }
-        }
-        return (currentRotation, currentVel, currentEffort);
-    }
-
-    (float, float, float) CurrentPrimaryAxisRotationHead(int index)
-    {
-        float currentRotation = 0, currentEffort = 0, currentVel = 0;
-        var articulation = head_joints[index].GetComponent<ArticulationBody>();
-        if (articulation.jointPosition.dofCount == 1)
-        {
-            float currentRotationRads = articulation.jointPosition[0] * -1;
-            currentRotation = currentRotationRads;
-            currentVel = articulation.jointVelocity[0];
-            currentEffort = articulation.jointForce[0]; //TODO@ Always Zero
-        }
-        return (currentRotation, currentVel, currentEffort);
-    }
+   
+   
+   
 
     (float, float, float) CurrentPrimaryAxisRotationLinear()
     {
@@ -780,91 +770,7 @@ public class Movo : MonoBehaviour
         return (currentRotation, currentVel, currentEffort);
     }
 
-    (float, float, float) CurrentPrimaryAxisRotationRightFinger()
-    {
-        //float currentRotation1 = 0, currentEffort1 = 0, currentVel1 = 0;
-        //float currentRotation2 = 0, currentEffort2 = 0, currentVel2 = 0;
-        //float currentRotation3 = 0, currentEffort3 = 0, currentVel3 = 0;
-        //float currentRotation = 0, currentEffort = 0, currentVel = 0;
-
-        //var articulation1 = right_finger_joints[0].GetComponent<ArticulationBody>();
-        //var articulation2 = right_finger_joints[1].GetComponent<ArticulationBody>();
-        //var articulation3 = right_finger_joints[2].GetComponent<ArticulationBody>();
-
-        //if (articulation1.jointPosition.dofCount == 1)
-        //{
-        //    float currentRotationRads = articulation1.jointPosition[0] * -1;
-        //    currentRotation1 = currentRotationRads;
-        //    currentVel1 = articulation1.jointVelocity[0];
-        //    currentEffort1 = articulation1.jointForce[0]; //TODO@ Always Zero
-        //}
-
-        //if (articulation2.jointPosition.dofCount == 1)
-        //{
-        //    float currentRotationRads = articulation2.jointPosition[0] * -1;
-        //    currentRotation2 = currentRotationRads;
-        //    currentVel2 = articulation2.jointVelocity[0];
-        //    currentEffort2 = articulation2.jointForce[0]; //TODO@ Always Zero
-        //}
-
-        //if (articulation3.jointPosition.dofCount == 1)
-        //{
-        //    float currentRotationRads = articulation3.jointPosition[0] * -1;
-        //    currentRotation3 = currentRotationRads;
-        //    currentVel3 = articulation3.jointVelocity[0];
-        //    currentEffort3 = articulation3.jointForce[0]; //TODO@ Always Zero
-        //}
-
-        //currentRotation = (currentRotation1 + currentRotation2 + currentRotation3 ) / 3;
-        //currentVel = (currentVel1 + currentVel2 + currentVel3) / 3;
-        //currentEffort = (currentEffort1 + currentEffort2 + currentEffort3) / 3;
-
-        return (0, 0, 0);
-    }
-
-    (float, float, float) CurrentPrimaryAxisRotationLeftFinger()
-    {
-        //float currentRotation1 = 0, currentEffort1 = 0, currentVel1 = 0;
-        //float currentRotation2 = 0, currentEffort2 = 0, currentVel2 = 0;
-        //float currentRotation3 = 0, currentEffort3 = 0, currentVel3 = 0;
-        //float currentRotation = 0, currentEffort = 0, currentVel = 0;
-
-        //var articulation1 = left_finger_joints[0].GetComponent<ArticulationBody>();
-        //var articulation2 = left_finger_joints[1].GetComponent<ArticulationBody>();
-        //var articulation3 = left_finger_joints[2].GetComponent<ArticulationBody>();
-
-        //if (articulation1.jointPosition.dofCount == 1)
-        //{
-        //    float currentRotationRads = articulation1.jointPosition[0] * -1;
-        //    currentRotation1 = currentRotationRads;
-        //    currentVel1 = articulation1.jointVelocity[0];
-        //    currentEffort1 = articulation1.jointForce[0]; //TODO@ Always Zero
-        //}
-
-        //if (articulation2.jointPosition.dofCount == 1)
-        //{
-        //    float currentRotationRads = articulation2.jointPosition[0] * -1;
-        //    currentRotation2 = currentRotationRads;
-        //    currentVel2 = articulation2.jointVelocity[0];
-        //    currentEffort2 = articulation2.jointForce[0]; //TODO@ Always Zero
-        //}
-
-        //if (articulation3.jointPosition.dofCount == 1)
-        //{
-        //    float currentRotationRads = articulation3.jointPosition[0] * -1;
-        //    currentRotation3 = currentRotationRads;
-        //    currentVel3 = articulation3.jointVelocity[0];
-        //    currentEffort3 = articulation3.jointForce[0]; //TODO@ Always Zero
-        //}
-
-        //currentRotation = (currentRotation1 + currentRotation2 + currentRotation3) / 3;
-        //currentVel = (currentVel1 + currentVel2 + currentVel3) / 3;
-        //currentEffort = (currentEffort1 + currentEffort2 + currentEffort3) / 3;
-
-        //return (currentRotation, currentVel, currentEffort);
-
-        return (0, 0, 0);
-    }
+   
 
     void sendJointState()
     {
@@ -899,20 +805,21 @@ public class Movo : MonoBehaviour
       
         for ( int i = 0; i < 7; i++)
         {
-            (joint_state_msg.position[i], joint_state_msg.velocity[i], joint_state_msg.effort[i]) = CurrentPrimaryAxisRotationRight(i);
+            (joint_state_msg.position[i], joint_state_msg.velocity[i], joint_state_msg.effort[i]) = (d_joints[i] * Mathf.Deg2Rad * -1, 0, 0 );
         }
 
-        (joint_state_msg.position[7], joint_state_msg.velocity[7], joint_state_msg.effort[7]) = CurrentPrimaryAxisRotationRightFinger();
+        (joint_state_msg.position[7], joint_state_msg.velocity[7], joint_state_msg.effort[7]) = (d_joints[7] * Mathf.Deg2Rad * -1, 0, 0);
 
         for (int i = 8; i < 15; i++)
         {
-            (joint_state_msg.position[i], joint_state_msg.velocity[i], joint_state_msg.effort[i]) = CurrentPrimaryAxisRotationLeft(i - 8);
+            (joint_state_msg.position[i], joint_state_msg.velocity[i], joint_state_msg.effort[i]) = (d_joints[i] * Mathf.Deg2Rad * -1, 0, 0);
         }
 
-        (joint_state_msg.position[15], joint_state_msg.velocity[15], joint_state_msg.effort[15]) = CurrentPrimaryAxisRotationLeftFinger();
-        (joint_state_msg.position[16], joint_state_msg.velocity[16], joint_state_msg.effort[16]) = CurrentPrimaryAxisRotationLinear();
-        (joint_state_msg.position[17], joint_state_msg.velocity[17], joint_state_msg.effort[17]) = CurrentPrimaryAxisRotationHead(0);
-        (joint_state_msg.position[18], joint_state_msg.velocity[18], joint_state_msg.effort[18]) = CurrentPrimaryAxisRotationHead(1);
+        (joint_state_msg.position[15], joint_state_msg.velocity[15], joint_state_msg.effort[15]) = (d_joints[15] * Mathf.Deg2Rad * -1, 0, 0);
+
+        (joint_state_msg.position[16], joint_state_msg.velocity[16], joint_state_msg.effort[16]) = (d_joints[16] * Mathf.Deg2Rad * -1, 0, 0);
+        (joint_state_msg.position[17], joint_state_msg.velocity[17], joint_state_msg.effort[17]) = (d_joints[17] * Mathf.Deg2Rad * -1, 0, 0);
+        (joint_state_msg.position[18], joint_state_msg.velocity[18], joint_state_msg.effort[18]) = (d_joints[18] * Mathf.Deg2Rad * -1, 0, 0);
 
         //if (is_moving == false)
         //{
@@ -938,117 +845,8 @@ public class Movo : MonoBehaviour
         publisher_joint_state.Send(data);
     }
 
-    Vector3[] generatePoints(Vector3[] keyPoints, int segments = 100)
-    {
-        Vector3[] Points = new Vector3[(keyPoints.Length - 1) * segments + keyPoints.Length];
-        for (int i = 1; i < keyPoints.Length; i++)
-        {
-            Points[(i - 1) * segments + i - 1] = new Vector3(keyPoints[i - 1].x, 0.2f, keyPoints[i - 1].z);
-            for (int j = 1; j <= segments; j++)
-            {
-                float x = keyPoints[i - 1].x;
-                float y = 0.2f;
-                float z = keyPoints[i - 1].z; //keyPoints [i - 1].z;
-                float dx = (keyPoints[i].x - keyPoints[i - 1].x) / segments;
-                float dz = (keyPoints[i].z - keyPoints[i - 1].z) / segments;
-                Points[(i - 1) * segments + j + i - 1] = new Vector3(x + dx * j, 0.2f, z + dz * j);
-            }
-        }
-        Points[(keyPoints.Length - 1) * segments + keyPoints.Length - 1] = new Vector3(keyPoints[keyPoints.Length - 1].x, 0.2f, keyPoints[keyPoints.Length - 1].z);
-        return Points;
-    }
-
-    public void setTargetLocation(RVector3 location)
-    {
-        if (location != null && location.x != 0 && location.y != 0)
-        {
-            if (_target == null)
-            {
-                _target = (GameObject)Instantiate(target, new Vector3(location.x, 0.1f, location.y), Quaternion.identity);
-                Renderer x = _target.GetComponent<Renderer>();
-                x.material.color = Color.red;
-
-                TextMesh txt = _target.transform.Find("number").gameObject.GetComponent<TextMesh>();
-                txt.text = "F #" + 0;
-            }
-            else
-            {
-                _target.transform.position = new Vector3(location.x, 0.1f, location.y);
-            }
-
-            _target.gameObject.SetActive(true);
-        }
-        else
-        {
-            if (_target != null)
-            {
-                Destroy(_target);
-            }
-        }
-    }
-
-    public void setTempTargetLocation(RVector3 location)
-    {
-        if (location != null && location.x != 0 && location.y != 0)
-        {
-            if (_temp_target == null)
-            {
-                _temp_target = (GameObject)Instantiate(target, new Vector3(location.x, 0.1f, location.y), Quaternion.identity);
-                Renderer x = _temp_target.GetComponent<Renderer>();
-                x.material.color = Color.red;
-
-                TextMesh txt = _temp_target.transform.Find("number").gameObject.GetComponent<TextMesh>();
-                txt.text = "T #0";
-            }
-            else
-            {
-                _temp_target.transform.position = new Vector3(location.x, 0.1f, location.y);
-            }
-
-            _temp_target.gameObject.SetActive(true);
-        }
-        else
-        {
-            if (_temp_target != null)
-            {
-                Destroy(_target);
-            }
-        }
-    }
-
-    public void setPath(RVector3[] path)
-    {
-        path_updated = false;
-
-        LineRenderer lr = GetComponent<LineRenderer>();
-        lr.enabled = true;
-
-        if (path != null)
-        {
-            lr.material.color = Color.red;
-            lr.startWidth = 0.05f;
-            lr.endWidth = 0.05f;
-
-            //print("Path render " + path.Length);
-
-            Vector3[] _path = new Vector3[path.Length];
-            for (int i = 0; i < path.Length; i++)
-                _path[i] = new Vector3(-1 * path[i].y , 0.01f, path[i].x );
-
-            Vector3[] _path2 = generatePoints(_path);
-
-            //print(_path2.Length);
-
-            lr.positionCount = _path2.Length;
-            lr.SetPositions(_path2);
-        }
-        else
-        {
-            lr.positionCount = 0;
-        }
-    }
-
-    void Update()
+   
+    void FixedUpdate()
     {
         timer_status += Time.deltaTime;
         timer_motor_update += Time.deltaTime;
@@ -1066,17 +864,10 @@ public class Movo : MonoBehaviour
         {
             next_status_time = Time.time + (1 / fps_status);
             sendState();
-        }
-
-        if (inited && Time.time >= next_control_time)
-        {
-            next_control_time = Time.time + (1 / fps_control_update);
             updateMotors();
         }
 
-        if (path_updated && current_path != null)
-             setPath(current_path);
-
+       
         if (Manager.inited && !inited)
         {
             init();
