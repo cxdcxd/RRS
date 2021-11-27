@@ -4,9 +4,10 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /TF1/Status1
         - /TF1/Tree1
       Splitter Ratio: 0.42462843656539917
-    Tree Height: 461
+    Tree Height: 345
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -25,7 +26,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: Image
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -50,74 +51,6 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 30
       Reference Frame: <Fixed Frame>
-      Value: true
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 0
-        Min Value: 0
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/LaserScan
-      Color: 138; 226; 52
-      Color Transformer: FlatColor
-      Decay Time: 0
-      Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: LaserScan
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.05000000074505806
-      Style: Flat Squares
-      Topic: /movo/scan_multi
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: true
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: RGB8
-      Decay Time: 0
-      Enabled: false
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.009999999776482582
-      Style: Flat Squares
-      Topic: /movo/camera/points
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: false
-    - Alpha: 1
-      Class: rviz/Polygon
-      Color: 25; 255; 0
-      Enabled: true
-      Name: Polygon
-      Topic: /laser_footprint
-      Unreliable: false
       Value: true
     - Class: rviz/TF
       Enabled: true
@@ -308,63 +241,6 @@ Visualization Manager:
       Transport Hint: raw
       Unreliable: false
       Value: true
-    - Alpha: 1
-      Class: rviz/Effort
-      Enabled: true
-      History Length: 1
-      Joints:
-        left_arm_half_joint:
-          Value: true
-        left_elbow_joint:
-          Value: true
-        left_gripper_finger1_joint:
-          Value: true
-        left_gripper_finger2_joint:
-          Value: true
-        left_gripper_finger3_joint:
-          Value: true
-        left_shoulder_lift_joint:
-          Value: true
-        left_shoulder_pan_joint:
-          Value: true
-        left_wrist_3_joint:
-          Value: true
-        left_wrist_spherical_1_joint:
-          Value: true
-        left_wrist_spherical_2_joint:
-          Value: true
-        pan_joint:
-          Value: true
-        right_arm_half_joint:
-          Value: true
-        right_elbow_joint:
-          Value: true
-        right_gripper_finger1_joint:
-          Value: true
-        right_gripper_finger2_joint:
-          Value: true
-        right_gripper_finger3_joint:
-          Value: true
-        right_shoulder_lift_joint:
-          Value: true
-        right_shoulder_pan_joint:
-          Value: true
-        right_wrist_3_joint:
-          Value: true
-        right_wrist_spherical_1_joint:
-          Value: true
-        right_wrist_spherical_2_joint:
-          Value: true
-        tilt_joint:
-          Value: true
-      Name: Effort
-      Robot Description: robot_description
-      Scale: 0.5
-      TF Prefix: ""
-      Topic: /joint_states
-      Unreliable: false
-      Value: true
-      Width: 0.019999999552965164
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /visualization_marker
@@ -417,35 +293,35 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.2553951740264893
+      Distance: 2.1928343772888184
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.054395891726017
-        Y: 0.7670342326164246
-        Z: -0.16458605229854584
+        X: 0.40420734882354736
+        Y: 0.26825642585754395
+        Z: 0.3377281129360199
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.44979727268218994
+      Pitch: 0.4547971487045288
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.655008792877197
+      Yaw: 5.169996738433838
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1025
+  Height: 845
   Hide Left Dock: false
   Hide Right Dock: false
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001d8000003a7fc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d00000258000000c900fffffffb0000000a0049006d006100670065010000029b000001490000001600fffffffb0000000c00430061006d0065007200610000000334000000ce0000000000000000fb0000000a0049006d00610067006501000002a60000013e0000000000000000fb0000000a0049006d006100670065010000025e000001860000000000000000000000010000010f000002ddfc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000043000002dd000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004a00000003efc0100000002fb0000000800540069006d00650000000000000004a0000002eb00fffffffb0000000800540069006d006501000000000000045000000000000000000000055f000003a700000004000000040000000800000008fc00000002000000020000000000000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001d8000002f3fc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000001e4000000c900fffffffb0000000a0049006d0061006700650100000227000001090000001600fffffffb0000000c00430061006d0065007200610000000334000000ce0000000000000000fb0000000a0049006d00610067006501000002a60000013e0000000000000000fb0000000a0049006d006100670065010000025e000001860000000000000000000000010000010f000002ddfc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000043000002dd000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004a00000003efc0100000002fb0000000800540069006d00650000000000000004a0000004f300fffffffb0000000800540069006d006501000000000000045000000000000000000000037f000002f300000004000000040000000800000008fc00000002000000020000000000000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -454,6 +330,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1853
+  Width: 1373
   X: 67
   Y: 27

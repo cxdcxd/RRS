@@ -96,24 +96,22 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   ROS_WARN("Unity Sim Param Done");
   ROS_WARN_STREAM("Path " << "/movo/"+arm_name_space+"_arm_controller/state");
 
-  joint_state_sub = nh.subscribe("/movo/"+arm_name_space+"_arm_controller/state", 10, &NmpcNlopt::jointStateSubCB_sim,this);
-  //joint_state_sub = nh.subscribe("/movo/"+arm_name_space+"_arm_controller/state", 10, &NmpcNlopt::jointStateSubCB_real,this); 
+  joint_state_sub = nh.subscribe("/movo/"+arm_name_space+"_arm_controller/state", 10, &NmpcNlopt::jointStateSubCB_real,this); 
   movo2kinova_offset = {0,3.1416,0,3.1416,0,3.1416,0};
 
   state_sub_started = false;
   goal_sub_started = false;
-  goal_sub = nh.subscribe("/"+arm_name_space+"_ee_control_marker/feedback",10,&NmpcNlopt::goalSubCB,this);
-  // goal_sub = nh.subscribe(arm_name_space+"/nmpc_controller/in/goal",10,&NmpcNlopt::goalSubCBFromOut,this);
+ 
+  goal_sub = nh.subscribe(arm_name_space+"/nmpc_controller/in/goal",1,&NmpcNlopt::goalSubCBFromOut,this);
 
-  velocity_pub = nh.advertise<trajectory_msgs::JointTrajectory>("/movo/"+arm_name_space+"_arm_controller/command",1);
-   //velocity_pub = nh.advertise<movo_msgs::JacoAngularVelocityCmd7DOF>("/movo/"+arm_name_space+"_arm/angular_vel_cmd",1);
+  velocity_pub = nh.advertise<movo_msgs::JacoAngularVelocityCmd7DOF>("/movo/"+arm_name_space+"_arm/angular_vel_cmd",1);
 
   string this_arm_base, other_arm_base;
   if(arm_name_space=="left") 
   {
     goal_msg.joint_names={"left_shoulder_pan_joint", "left_shoulder_lift_joint", "left_arm_half_joint", "left_elbow_joint",
                 "left_wrist_spherical_1_joint", "left_wrist_spherical_2_joint", "left_wrist_3_joint"};
-    other_cylinders_sub = nh.subscribe("right/nmpc_controller/out/cylinder_poses",10,&NmpcNlopt::otherCylindersSubCB,this);
+    other_cylinders_sub = nh.subscribe("right/nmpc_controller/out/cylinder_poses",1,&NmpcNlopt::otherCylindersSubCB,this);
     this_arm_base = "left_mpc_base_link";
     other_arm_base= "right_mpc_base_link";
     othter_arm_name_space = "right";
@@ -122,7 +120,7 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   {
     goal_msg.joint_names={"right_shoulder_pan_joint", "right_shoulder_lift_joint", "right_arm_half_joint", "right_elbow_joint",
                 "right_wrist_spherical_1_joint", "right_wrist_spherical_2_joint", "right_wrist_3_joint"};
-    other_cylinders_sub = nh.subscribe("left/nmpc_controller/out/cylinder_poses",10,&NmpcNlopt::otherCylindersSubCB,this);
+    other_cylinders_sub = nh.subscribe("left/nmpc_controller/out/cylinder_poses",1,&NmpcNlopt::otherCylindersSubCB,this);
     this_arm_base = "right_mpc_base_link";
     other_arm_base= "left_mpc_base_link";
     othter_arm_name_space = "left";
@@ -133,11 +131,6 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
 
   eef_pose_pub = nh.advertise<geometry_msgs::Pose>(arm_name_space+"/nmpc_controller/out/eef_pose",1);
 
-
-  // server for toggle tracking mode
-  // track_toggle_server = nh.advertiseService("/j2s7s300/track_toggle",&NmpcNlopt::track_toggle_cb,this);
-  // track_mode = false;
-
   Ts = 0.2;
   interval = ros::Duration(Ts);
 
@@ -146,7 +139,6 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
 
   // initialize optmizer
   optimizer = nlopt::opt(nlopt::LD_SLSQP, ch*7);
-
 
   // add upper and lower bounds;
   lb.resize(ch*7);
@@ -177,15 +169,15 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   joint_velocities.resize(7);
   joint_velocities[0] = -200;
 
-//  std::fill(joint_velocities.begin(),joint_velocities.end(),0);
+  //  std::fill(joint_velocities.begin(),joint_velocities.end(),0);
 
   // set exitFlag to false first
   exitFlag=false;
   new_goal_got = false;
   position_goal.resize(joint_num);
   // start the thread
-  thread1 = std::thread(velocitiesSend_thread_sim,&curr_joint_values, velocity_pub, &exitFlag, &joint_velocities, &goal_msg, &joint_velocities_mutex, &position_goal_mutex,&new_goal_got, &position_goal);
-  //thread1 = std::thread(velocitiesSend_thread_real, velocity_pub, &exitFlag, &joint_velocities, &joint_velocities_mutex,&new_goal_got);
+  //thread1 = std::thread(velocitiesSend_thread_sim,&curr_joint_values, velocity_pub, &exitFlag, &joint_velocities, &goal_msg, &joint_velocities_mutex, &position_goal_mutex,&new_goal_got, &position_goal);
+  thread1 = std::thread(velocitiesSend_thread_real, velocity_pub, &exitFlag, &joint_velocities, &joint_velocities_mutex,&new_goal_got);
 
   // start cost val cal thread and initiliaze shared in-output container
   num_cost_loops = ph/num_cost_threads;
@@ -213,7 +205,6 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
  	cost_threads_ptr[i] = std::thread(costCalThread, i, this, u_ptr);
  	ros::Duration(0.1).sleep();
   }
-
 
   // constraint calculation threads preparetion
   activated = false;
@@ -246,11 +237,9 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   transformStamped_goal.header.frame_id = this_arm_base;
   transformStamped_goal.child_frame_id = arm_name_space+"goal_from_outside";
 
-
   // initialize tf listener
   tfListener =  std::make_shared<tf2_ros::TransformListener>(tfBuffer);
   // update tf between arm base frame and global frame first
-
 
   ROS_INFO("Wait 3 seconds for tf coming in");
   ros::Duration(3).sleep();
@@ -316,20 +305,10 @@ NmpcNlopt::~NmpcNlopt()
   delete []finished_ptr;
   delete []cost_finished_ptr;
 }
-void NmpcNlopt::jointStateSubCB_sim(const control_msgs::JointTrajectoryControllerState::ConstPtr& msg)
-{
-	//ROS_INFO("Get SIM message");
 
-	if(!state_sub_started)
-		state_sub_started = true;
-	for(int i=0;i<joint_num;i++)
-  {
-		curr_joint_values[i] = angles::normalize_angle(msg->actual.positions[i]+movo2kinova_offset[i]);
-  }
-}
 void NmpcNlopt::jointStateSubCB_real(const sensor_msgs::JointState::ConstPtr& msg)
 {
-  ROS_INFO("Get message");
+  //ROS_INFO("Get message");
 
   if(!state_sub_started)
     state_sub_started = true;
@@ -338,10 +317,7 @@ void NmpcNlopt::jointStateSubCB_real(const sensor_msgs::JointState::ConstPtr& ms
   {
     curr_joint_values[i] = angles::normalize_angle(positions[i]+movo2kinova_offset[i]);
   }
-
-  
 }
-
 
 void NmpcNlopt::goalSubCB(const visualization_msgs::InteractiveMarkerFeedbackConstPtr &msg)
 {

@@ -95,6 +95,17 @@ message SVector4
    optional float w = 4 [default = 0];
 }
 
+message RVector7
+{
+   optional float x = 1 [default = 0];
+   optional float y = 2 [default = 0];
+   optional float z = 3 [default = 0];
+   optional float qx = 4 [default = 0];
+   optional float qy = 5 [default = 0];
+   optional float qz = 6 [default = 0];
+   optional float qw = 7 [default = 0];
+}
+
 message RRSParam 
 {
    repeated string list = 1;
