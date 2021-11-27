@@ -7,39 +7,6 @@ using UnityEngine;
 
 public class Movo : MonoBehaviour
 {
-    public enum Links
-    {
-        left_arm_half_joint, 
-        left_elbow_joint, 
-        left_gripper_finger1_joint, 
-        left_shoulder_lift_joint,
-        left_shoulder_pan_joint, 
-        left_wrist_3_joint,
-        left_wrist_spherical_1_joint,
-        left_wrist_spherical_2_joint,
-        linear_joint, 
-        pan_joint, 
-        right_arm_half_joint, 
-        right_elbow_joint, 
-        right_gripper_finger1_joint,
-        right_shoulder_lift_joint, 
-        right_shoulder_pan_joint, 
-        right_wrist_3_joint, 
-        right_wrist_spherical_1_joint,
-        right_wrist_spherical_2_joint, 
-        tilt_joint,
-        base_link,
-        odom
-    }
-
-    public enum Grippers
-    { 
-      KG3,
-      R2F85,
-      Hande
-    }
-
-
     #region Net2
 
     public ArticulationMove right_kinova;
@@ -47,7 +14,6 @@ public class Movo : MonoBehaviour
 
     public GameObject nmpc_right_marker;
     public GameObject nmpc_left_marker;
-
 
     //PUBS
     Net2.Net2HandlerPublisher publisher_lidar_front;
@@ -74,6 +40,31 @@ public class Movo : MonoBehaviour
 
     #endregion
 
+    public enum Links
+    {
+        left_arm_half_joint, 
+        left_elbow_joint, 
+        left_gripper_finger1_joint, 
+        left_shoulder_lift_joint,
+        left_shoulder_pan_joint, 
+        left_wrist_3_joint,
+        left_wrist_spherical_1_joint,
+        left_wrist_spherical_2_joint,
+        linear_joint, 
+        pan_joint, 
+        right_arm_half_joint, 
+        right_elbow_joint, 
+        right_gripper_finger1_joint,
+        right_shoulder_lift_joint, 
+        right_shoulder_pan_joint, 
+        right_wrist_3_joint, 
+        right_wrist_spherical_1_joint,
+        right_wrist_spherical_2_joint, 
+        tilt_joint,
+        base_link,
+        odom
+    }
+
     [Range(1, 100)]
     public int fps_status = 20;
 
@@ -87,9 +78,6 @@ public class Movo : MonoBehaviour
     [Range(1, 100)]
     public float fps_nav_path_update = 3;
 
-    float next_nav_path_time = 0;
-
-    public Grippers grippers = Grippers.KG3;
     public GameObject target;
     public Camera sensor_kinect;
     public GameObject tag_test;
@@ -152,7 +140,6 @@ public class Movo : MonoBehaviour
 
     void initJointsConfig()
     {
-
         foreach (var item in right_kinova.joints)
         {
             item.angularDamping = angular_friction;
@@ -183,7 +170,7 @@ public class Movo : MonoBehaviour
 
     void init()
     {
-        initJointsConfig();
+        
 
         d_joints = new float[joint_numbers];
         c_joints = new float[joint_numbers];
@@ -292,7 +279,7 @@ public class Movo : MonoBehaviour
 
         float value = d_joints[7];
 
-        RotateToRightFinger(value);
+        //RotateToRightFinger(value);
     }
 
     void leftGripper()
@@ -301,11 +288,19 @@ public class Movo : MonoBehaviour
 
         float value = d_joints[15];
 
-        RotateToLefttFinger(value);
+        //RotateToLefttFinger(value);
     }
+
+    public bool enable_script_control = false;
 
     void updateMotors()
     {
+        initJointsConfig();
+
+        if (enable_script_control == false) return;
+
+       
+
         locomotion();
 
         moveHead();
@@ -558,10 +553,10 @@ public class Movo : MonoBehaviour
         //Right
         RVector7 right_marker = new RVector7();
 
-        var c_pose = nmpc_right_marker.transform.localPosition;
+        var c_pose = Helper.Unity2Ros(nmpc_right_marker.transform.localPosition);
 
-        right_marker.x = c_pose.x + 0.13f;
-        right_marker.y = -1 * c_pose.y + 1f;
+        right_marker.x = c_pose.x;
+        right_marker.y = c_pose.y;
         right_marker.z = c_pose.z;
 
         var c_rot = nmpc_right_marker.transform.localRotation;
@@ -578,10 +573,10 @@ public class Movo : MonoBehaviour
         //Left
         RVector7 left_marker = new RVector7();
 
-        c_pose = nmpc_left_marker.transform.localPosition;
+        c_pose = Helper.Unity2Ros(nmpc_left_marker.transform.localPosition);
 
-        left_marker.x = c_pose.x + 0.13f;
-        left_marker.y = -1 * c_pose.y + 1f;
+        left_marker.x = c_pose.x;
+        left_marker.y = c_pose.y;
         left_marker.z = c_pose.z;
 
         c_rot = nmpc_left_marker.transform.localRotation;
@@ -598,7 +593,7 @@ public class Movo : MonoBehaviour
         publisher_nmpc_in_right.Send(data_right);
         publisher_nmpc_in_left.Send(data_left);
 
-        print("published");
+        //print("published");
     }
 
     private void sendState()
@@ -787,86 +782,88 @@ public class Movo : MonoBehaviour
 
     (float, float, float) CurrentPrimaryAxisRotationRightFinger()
     {
-        float currentRotation1 = 0, currentEffort1 = 0, currentVel1 = 0;
-        float currentRotation2 = 0, currentEffort2 = 0, currentVel2 = 0;
-        float currentRotation3 = 0, currentEffort3 = 0, currentVel3 = 0;
-        float currentRotation = 0, currentEffort = 0, currentVel = 0;
+        //float currentRotation1 = 0, currentEffort1 = 0, currentVel1 = 0;
+        //float currentRotation2 = 0, currentEffort2 = 0, currentVel2 = 0;
+        //float currentRotation3 = 0, currentEffort3 = 0, currentVel3 = 0;
+        //float currentRotation = 0, currentEffort = 0, currentVel = 0;
 
-        var articulation1 = right_finger_joints[0].GetComponent<ArticulationBody>();
-        var articulation2 = right_finger_joints[1].GetComponent<ArticulationBody>();
-        var articulation3 = right_finger_joints[2].GetComponent<ArticulationBody>();
+        //var articulation1 = right_finger_joints[0].GetComponent<ArticulationBody>();
+        //var articulation2 = right_finger_joints[1].GetComponent<ArticulationBody>();
+        //var articulation3 = right_finger_joints[2].GetComponent<ArticulationBody>();
 
-        if (articulation1.jointPosition.dofCount == 1)
-        {
-            float currentRotationRads = articulation1.jointPosition[0] * -1;
-            currentRotation1 = currentRotationRads;
-            currentVel1 = articulation1.jointVelocity[0];
-            currentEffort1 = articulation1.jointForce[0]; //TODO@ Always Zero
-        }
+        //if (articulation1.jointPosition.dofCount == 1)
+        //{
+        //    float currentRotationRads = articulation1.jointPosition[0] * -1;
+        //    currentRotation1 = currentRotationRads;
+        //    currentVel1 = articulation1.jointVelocity[0];
+        //    currentEffort1 = articulation1.jointForce[0]; //TODO@ Always Zero
+        //}
 
-        if (articulation2.jointPosition.dofCount == 1)
-        {
-            float currentRotationRads = articulation2.jointPosition[0] * -1;
-            currentRotation2 = currentRotationRads;
-            currentVel2 = articulation2.jointVelocity[0];
-            currentEffort2 = articulation2.jointForce[0]; //TODO@ Always Zero
-        }
+        //if (articulation2.jointPosition.dofCount == 1)
+        //{
+        //    float currentRotationRads = articulation2.jointPosition[0] * -1;
+        //    currentRotation2 = currentRotationRads;
+        //    currentVel2 = articulation2.jointVelocity[0];
+        //    currentEffort2 = articulation2.jointForce[0]; //TODO@ Always Zero
+        //}
 
-        if (articulation3.jointPosition.dofCount == 1)
-        {
-            float currentRotationRads = articulation3.jointPosition[0] * -1;
-            currentRotation3 = currentRotationRads;
-            currentVel3 = articulation3.jointVelocity[0];
-            currentEffort3 = articulation3.jointForce[0]; //TODO@ Always Zero
-        }
+        //if (articulation3.jointPosition.dofCount == 1)
+        //{
+        //    float currentRotationRads = articulation3.jointPosition[0] * -1;
+        //    currentRotation3 = currentRotationRads;
+        //    currentVel3 = articulation3.jointVelocity[0];
+        //    currentEffort3 = articulation3.jointForce[0]; //TODO@ Always Zero
+        //}
 
-        currentRotation = (currentRotation1 + currentRotation2 + currentRotation3 ) / 3;
-        currentVel = (currentVel1 + currentVel2 + currentVel3) / 3;
-        currentEffort = (currentEffort1 + currentEffort2 + currentEffort3) / 3;
+        //currentRotation = (currentRotation1 + currentRotation2 + currentRotation3 ) / 3;
+        //currentVel = (currentVel1 + currentVel2 + currentVel3) / 3;
+        //currentEffort = (currentEffort1 + currentEffort2 + currentEffort3) / 3;
 
-        return (currentRotation, currentVel, currentEffort);
+        return (0, 0, 0);
     }
 
     (float, float, float) CurrentPrimaryAxisRotationLeftFinger()
     {
-        float currentRotation1 = 0, currentEffort1 = 0, currentVel1 = 0;
-        float currentRotation2 = 0, currentEffort2 = 0, currentVel2 = 0;
-        float currentRotation3 = 0, currentEffort3 = 0, currentVel3 = 0;
-        float currentRotation = 0, currentEffort = 0, currentVel = 0;
+        //float currentRotation1 = 0, currentEffort1 = 0, currentVel1 = 0;
+        //float currentRotation2 = 0, currentEffort2 = 0, currentVel2 = 0;
+        //float currentRotation3 = 0, currentEffort3 = 0, currentVel3 = 0;
+        //float currentRotation = 0, currentEffort = 0, currentVel = 0;
 
-        var articulation1 = left_finger_joints[0].GetComponent<ArticulationBody>();
-        var articulation2 = left_finger_joints[1].GetComponent<ArticulationBody>();
-        var articulation3 = left_finger_joints[2].GetComponent<ArticulationBody>();
+        //var articulation1 = left_finger_joints[0].GetComponent<ArticulationBody>();
+        //var articulation2 = left_finger_joints[1].GetComponent<ArticulationBody>();
+        //var articulation3 = left_finger_joints[2].GetComponent<ArticulationBody>();
 
-        if (articulation1.jointPosition.dofCount == 1)
-        {
-            float currentRotationRads = articulation1.jointPosition[0] * -1;
-            currentRotation1 = currentRotationRads;
-            currentVel1 = articulation1.jointVelocity[0];
-            currentEffort1 = articulation1.jointForce[0]; //TODO@ Always Zero
-        }
+        //if (articulation1.jointPosition.dofCount == 1)
+        //{
+        //    float currentRotationRads = articulation1.jointPosition[0] * -1;
+        //    currentRotation1 = currentRotationRads;
+        //    currentVel1 = articulation1.jointVelocity[0];
+        //    currentEffort1 = articulation1.jointForce[0]; //TODO@ Always Zero
+        //}
 
-        if (articulation2.jointPosition.dofCount == 1)
-        {
-            float currentRotationRads = articulation2.jointPosition[0] * -1;
-            currentRotation2 = currentRotationRads;
-            currentVel2 = articulation2.jointVelocity[0];
-            currentEffort2 = articulation2.jointForce[0]; //TODO@ Always Zero
-        }
+        //if (articulation2.jointPosition.dofCount == 1)
+        //{
+        //    float currentRotationRads = articulation2.jointPosition[0] * -1;
+        //    currentRotation2 = currentRotationRads;
+        //    currentVel2 = articulation2.jointVelocity[0];
+        //    currentEffort2 = articulation2.jointForce[0]; //TODO@ Always Zero
+        //}
 
-        if (articulation3.jointPosition.dofCount == 1)
-        {
-            float currentRotationRads = articulation3.jointPosition[0] * -1;
-            currentRotation3 = currentRotationRads;
-            currentVel3 = articulation3.jointVelocity[0];
-            currentEffort3 = articulation3.jointForce[0]; //TODO@ Always Zero
-        }
+        //if (articulation3.jointPosition.dofCount == 1)
+        //{
+        //    float currentRotationRads = articulation3.jointPosition[0] * -1;
+        //    currentRotation3 = currentRotationRads;
+        //    currentVel3 = articulation3.jointVelocity[0];
+        //    currentEffort3 = articulation3.jointForce[0]; //TODO@ Always Zero
+        //}
 
-        currentRotation = (currentRotation1 + currentRotation2 + currentRotation3) / 3;
-        currentVel = (currentVel1 + currentVel2 + currentVel3) / 3;
-        currentEffort = (currentEffort1 + currentEffort2 + currentEffort3) / 3;
+        //currentRotation = (currentRotation1 + currentRotation2 + currentRotation3) / 3;
+        //currentVel = (currentVel1 + currentVel2 + currentVel3) / 3;
+        //currentEffort = (currentEffort1 + currentEffort2 + currentEffort3) / 3;
 
-        return (currentRotation, currentVel, currentEffort);
+        //return (currentRotation, currentVel, currentEffort);
+
+        return (0, 0, 0);
     }
 
     void sendJointState()
