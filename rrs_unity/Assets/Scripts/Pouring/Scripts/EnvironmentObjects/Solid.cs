@@ -17,7 +17,7 @@ public class Solid : MonoBehaviour {
     private string solidName; // Name of this solid object.
     private FlexContainer flexContainer; // Flex container for the solid.
     private FlexSolidAsset flexSolidAsset; // Flex solid asset for this object.
-    private const float UNITY_TO_WORLD_CONVERSION_FACTOR = (1.0f / 15.0f);
+    private const float UNITY_TO_WORLD_CONVERSION_FACTOR = (1.0f / 18.0f);
     public FlexSolidAsset getFlexSolidAsset()
     {
         return this.flexSolidAsset;

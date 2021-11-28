@@ -246,8 +246,9 @@ public class Liquid : MonoBehaviour {
     /// <param name="targetActor">Gameobject of the target object</param>
     /// <param name="particleDictionary">Dictionary as argument in which result is updated.</param>
     /// <returns></returns>
-    public Dictionary<string, float> getLiquidState(GameObject sourceActor, GameObject targetActor, 
-                                                        Dictionary<string, float> particleDictionary)
+    public Dictionary<string, float> getLiquidState(GameObject sourceActor, GameObject targetActor,
+                                                    GameObject workspace, 
+                                                    Dictionary<string, float> particleDictionary)
     {
         ParticleSystem ps = this.getLiquidPC().GetComponent<ParticleSystem>();
         
@@ -256,12 +257,14 @@ public class Liquid : MonoBehaviour {
         int AmtParticlesInSource = 0;
         int AmtParticlesInTarget = 0;
         int AmtParticlesBetweenSourceAndTarget = 0;
+        int AmtParticlesSpilledOnWorkspace = 0;
         int AmtParticlesSpilled = 0;
         float transientVelocity = 0.0f;
 
         ParticlePositionState pps = this.getLiquid().GetComponent<ParticlePositionState>();
         pps.setSource(sourceActor);
         pps.setTarget(targetActor);
+        pps.setWorkspace(workspace);
 
         if (numParticlesAlive > 0)
         {
@@ -280,9 +283,10 @@ public class Liquid : MonoBehaviour {
                     if(this.getM_particles()[i].velocity.magnitude > 1.0f) {
                         transientVelocity += this.getM_particles()[i].velocity.magnitude;
                         AmtParticlesBetweenSourceAndTarget++;
-                    } else {
-                        AmtParticlesSpilled++;
-                    }
+                    } 
+                }
+                else if (pps.restingOnWorkspace(this.getM_particles()[i].position)) {
+                    AmtParticlesSpilledOnWorkspace++;
                 }
                 else
                 {
@@ -298,20 +302,33 @@ public class Liquid : MonoBehaviour {
         if (AmtParticlesInSource > 0) {
             Vector3 force = AmtParticlesInSource * new Vector3(0, -this.getWeightOfParticle() * Physics.gravity.magnitude, 0);
             sourceActor.GetComponent<MeshCollider>().attachedRigidbody.AddForce(force, ForceMode.Force);
+            particleDictionary["weightParticleInSource"] = AmtParticlesInSource * this.getWeightOfParticle();
         }
 
         if (AmtParticlesInTarget > 0) {
             Vector3 force = AmtParticlesInTarget * new Vector3(0, -this.getWeightOfParticle() * Physics.gravity.magnitude, 0);
             targetActor.GetComponent<MeshCollider>().attachedRigidbody.AddForce(force, ForceMode.Force);
+            particleDictionary["weightParticleInTarget"] = AmtParticlesInTarget * this.getWeightOfParticle();
         }
+
+        if (AmtParticlesBetweenSourceAndTarget > 0) {
+            particleDictionary["weightParticlesPouring"] = AmtParticlesInTarget * this.getWeightOfParticle();
+            particleDictionary["transientVelocity"] = 0f;
+            if (AmtParticlesBetweenSourceAndTarget > 0)
+                particleDictionary["transientVelocity"] = transientVelocity / AmtParticlesBetweenSourceAndTarget;
+        }
+
+        if (AmtParticlesSpilledOnWorkspace > 0) {
+            Vector3 force = AmtParticlesSpilledOnWorkspace * new Vector3(0, -this.getWeightOfParticle() * Physics.gravity.magnitude, 0);
+            workspace.GetComponent<Rigidbody>().AddForce(force, ForceMode.Force);
+            particleDictionary["weightOnWorkspace"] = AmtParticlesSpilledOnWorkspace * this.getWeightOfParticle();
+        }
+
+        if (AmtParticlesSpilled > 0) {
+            particleDictionary["weightParticlesSpilled"] = AmtParticlesSpilled * this.getWeightOfParticle();
+        }
+
         // Update results and return.
-        particleDictionary["numParticlesInSource"] = AmtParticlesInSource;
-        particleDictionary["numParticlesInTarget"] = AmtParticlesInTarget;
-        particleDictionary["numParticlesPouring"] = AmtParticlesBetweenSourceAndTarget;
-        particleDictionary["numParticlesSpilled"] = AmtParticlesSpilled;
-        particleDictionary["transientVelocity"] = 0f;
-        if (AmtParticlesBetweenSourceAndTarget > 0)
-            particleDictionary["transientVelocity"] = transientVelocity / AmtParticlesBetweenSourceAndTarget;
         return particleDictionary;
     }
 

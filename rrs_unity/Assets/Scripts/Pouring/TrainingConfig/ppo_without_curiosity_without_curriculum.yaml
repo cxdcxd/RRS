@@ -34,36 +34,30 @@ environment_parameters:
     sampler_parameters:
       min_value: 0.75
       max_value: 1.75
-  
+
   fluid_rest_distance:
     sampler_type: uniform
     sampler_parameters:
-      min_value: 0.030
-      max_value: 0.045
-
+      min_value: 0.10
+      max_value: 0.15
+      
   tolerance:
     sampler_type: uniform
     sampler_parameters:
       min_value: 0.020
       max_value: 0.020
 
-  dissipation:
-    sampler_type: uniform
-    sampler_parameters:
-      min_value: 0.0
-      max_value: 6.0
-  
   adhesion:
     sampler_type: uniform
     sampler_parameters: 
       min_value: 0.0
-      max_value: 0.02
+      max_value: 0.025
 
   cohesion:
     sampler_type: uniform
     sampler_parameters: 
       min_value: 0.0
-      max_value: 0.1
+      max_value: 0.2
 
   surfaceTension:
     sampler_type: uniform
@@ -75,10 +69,4 @@ environment_parameters:
     sampler_type: uniform
     sampler_parameters: 
       min_value: 0.0
-      max_value: 60.0
-
-  buoyancy:
-    sampler_type: uniform
-    sampler_parameters: 
-      min_value: 1.0
-      max_value: 5.0
+      max_value: 200.0

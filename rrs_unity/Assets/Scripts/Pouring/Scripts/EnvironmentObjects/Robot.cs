@@ -154,19 +154,18 @@ public class Robot : MonoBehaviour {
 
     public void holdObject(Solid solid, GameObject workspace, bool useJoint=false, bool useMeasurer=false, bool isTarget=false) {
         Bounds solidBounds = solid.getSolidObject().GetComponent<Renderer>().bounds;
-        float x = UnityEngine.Random.Range(-6.0f * solidBounds.extents.x, 6.0f * solidBounds.extents.x);
-        float y = 8.0f * solidBounds.extents.y;
+        float x = 6.0f * solidBounds.extents.x;
+        float y = 4.0f * solidBounds.extents.y;
         float z = 0.0f;
-        
+
         if (!isTarget)
         {
             this.getRobotHand().transform.position = new Vector3(x, y, z);
-            Vector3 fingerAPosition = this.getRobotHand().transform.position + this.getFingerA().transform.position;
-            Vector3 fingerBPosition = this.getRobotHand().transform.position + this.getFingerB().transform.position;
+            this.getRobotHand().transform.rotation = Quaternion.Euler(0, 0, 90);
+            Vector3 fingerAPosition = this.getRobotHand().transform.TransformPoint(this.getFingerA().transform.localPosition);
+            Vector3 fingerBPosition = this.getRobotHand().transform.TransformPoint(this.getFingerB().transform.localPosition);
             Vector3 newC = 0.5f * (fingerAPosition + fingerBPosition);
             Vector3 offset = new Vector3(-solidBounds.extents.x, 0.0f, 0.0f); 
-            // if (solid.getSolidObject().name.Contains("mug"))
-            //     offset = new Vector3(-solidBounds.extents.x, 0.0f, -solidBounds.extents.z);
             Vector3 newSourcePosition = newC + offset;
             solid.getSolidObject().transform.position = newSourcePosition;
         } else {
@@ -174,7 +173,7 @@ public class Robot : MonoBehaviour {
             this.getRobotHand().transform.rotation = Quaternion.Euler(90, 90, 0);
             this.getRobotHand().transform.position = workspace.transform.position + new Vector3(-2 * workspaceBounds.extents.x, 0, 0);
             workspace.SetActive(true);
-            solid.getSolidObject().transform.position = workspace.transform.position + new Vector3(0.0f, 2 * workspaceBounds.extents.y, 0.0f);
+            solid.getSolidObject().transform.position = workspace.transform.localPosition;
             solid.getSolidObject().GetComponent<Rigidbody>().freezeRotation = true;
         }
 

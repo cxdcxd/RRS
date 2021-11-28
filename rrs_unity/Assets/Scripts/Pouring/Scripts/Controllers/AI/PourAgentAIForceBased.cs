@@ -359,7 +359,7 @@ public class PourAgentAIForceBased : Agent
             }
             else
             {
-                particleDictionary = liquid.getLiquidState(source.getSolidObject(), target.getSolidObject(), particleDictionary);
+                particleDictionary = liquid.getLiquidState(source.getSolidObject(), target.getSolidObject(), null, particleDictionary);
 
                 /// If using speed control by agent, axis-angle representation for rotations would be beneficial. Can use Rodrigue's rotation formula.
 

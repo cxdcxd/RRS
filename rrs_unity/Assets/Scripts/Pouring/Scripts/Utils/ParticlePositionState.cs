@@ -6,6 +6,18 @@ public class ParticlePositionState : MonoBehaviour
 {
     private GameObject source; // Original solid gameobject where particles were initially contained.
     private GameObject target; // Original sold gameobject where particles will finally land.
+    private GameObject workspace; // Workspace object where target container is resting
+
+    public GameObject getWorkspace()
+    {
+        return this.workspace;
+    }
+
+    public void setWorkspace(GameObject workspace)
+    {
+        this.workspace = workspace;
+    }
+
     public GameObject getSource()
     {
         return this.source;
@@ -74,5 +86,19 @@ public class ParticlePositionState : MonoBehaviour
         }
 
         return containedBetweenXAxis && containedBetweenZAxis;
+    }
+
+    public bool restingOnWorkspace(Vector3 particlePosition) {
+        Renderer workspaceRenderer = this.getWorkspace().GetComponent<Renderer>();
+
+        Bounds workspaceBounds = workspaceRenderer.bounds;
+        bool containedBetweenXAxis = false;
+        bool containedBetweenZAxis = false;
+        bool containedOnTopOfYXAxis = false;
+
+        containedBetweenXAxis = particlePosition.x < workspaceBounds.max.x && particlePosition.x > workspaceBounds.min.x;
+        containedBetweenZAxis = particlePosition.z < workspaceBounds.max.z && particlePosition.z > workspaceBounds.min.z;
+        containedOnTopOfYXAxis = (particlePosition.y - workspaceBounds.max.z) < 0.01f;
+        return containedBetweenXAxis && containedBetweenZAxis && containedOnTopOfYXAxis;
     }
 }

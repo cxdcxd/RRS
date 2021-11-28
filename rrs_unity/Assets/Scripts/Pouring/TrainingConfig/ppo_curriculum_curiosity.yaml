@@ -41,8 +41,8 @@ environment_parameters:
   fluid_rest_distance:
     sampler_type: uniform
     sampler_parameters:
-      min_value: 0.030
-      max_value: 0.045
+      min_value: 0.10
+      max_value: 0.15
 
   tolerance:
     sampler_type: uniform
@@ -50,38 +50,6 @@ environment_parameters:
       min_value: 0.02
       max_value: 0.02
 
-  dissipation:
-    curriculum:
-      - name: DissipationFirstLesson
-        completion_criteria:
-          measure: progress
-          behavior: NoPSModel
-          signal_smoothing: true
-          min_lesson_threshold: 100
-          threshold: 0.25
-        value:
-          sampler_type: uniform
-          sampler_parameters: 
-            min_value: 0.0
-            max_value: 1.0
-      - name: DissipationSecondLesson
-        completion_criteria:
-          measure: progress
-          behavior: NoPSModel
-          signal_smoothing: true
-          min_lesson_threshold: 100
-          threshold: 0.50
-        value:
-          sampler_type: uniform
-          sampler_parameters: 
-            min_value: 1.0
-            max_value: 3.0
-      - name: DissipationThirdLesson
-        value: 
-          sampler_type: uniform
-          sampler_parameters:
-            min_value: 3.0
-            max_value: 6.0
   
   adhesion:
     curriculum:
@@ -96,7 +64,7 @@ environment_parameters:
           sampler_type: uniform
           sampler_parameters: 
             min_value: 0.0
-            max_value: 0.01
+            max_value: 0.005
       - name: AdhesionSecondLesson
         completion_criteria:
           measure: progress
@@ -107,14 +75,14 @@ environment_parameters:
         value: 
           sampler_type: uniform
           sampler_parameters: 
-            min_value: 0.01
-            max_value: 0.02
+            min_value: 0.005
+            max_value: 0.010
       - name: AdhesionThirdLesson
         value:
           sampler_type: uniform
           sampler_parameters: 
-            min_value: 0.0
-            max_value: 0.02
+            min_value: 0.010
+            max_value: 0.025
 
   cohesion:
     curriculum:
@@ -129,7 +97,7 @@ environment_parameters:
           sampler_type: uniform
           sampler_parameters: 
             min_value: 0.0
-            max_value: 0.05
+            max_value: 0.005
       - name: CohesionSecondLesson
         completion_criteria:
           measure: progress
@@ -140,14 +108,14 @@ environment_parameters:
         value: 
           sampler_type: uniform
           sampler_parameters: 
-            min_value: 0.05
-            max_value: 0.1
+            min_value: 0.005
+            max_value: 0.01
       - name: CohesionThirdLesson
         value:
           sampler_type: uniform
           sampler_parameters: 
-            min_value: 0.0
-            max_value: 0.1
+            min_value: 0.01
+            max_value: 0.2
 
   surfaceTension:
     curriculum:
@@ -162,7 +130,7 @@ environment_parameters:
           sampler_type: uniform
           sampler_parameters: 
             min_value: 0.0
-            max_value: 0.01
+            max_value: 0.005
       - name: SurfaceTensionSecondLesson
         completion_criteria:
           measure: progress
@@ -174,12 +142,12 @@ environment_parameters:
           sampler_type: uniform
           sampler_parameters: 
             min_value: 0.005
-            max_value: 0.02
+            max_value: 0.01
       - name: SurfaceTensionThirdLesson
         value:
           sampler_type: uniform
           sampler_parameters: 
-            min_value: 0.0
+            min_value: 0.01
             max_value: 0.02
   
   viscosity:
@@ -195,7 +163,7 @@ environment_parameters:
           sampler_type: uniform
           sampler_parameters: 
             min_value: 0.0
-            max_value: 30.0
+            max_value: 50.0
       - name: ViscositySecondLesson
         completion_criteria:
           measure: progress
@@ -206,44 +174,12 @@ environment_parameters:
         value: 
           sampler_type: uniform
           sampler_parameters: 
-            min_value: 30.0
-            max_value: 60.0
+            min_value: 50.0
+            max_value: 100.0
       - name: ViscosityThirdLesson
         value: 
           sampler_type: uniform
           sampler_parameters: 
-            min_value: 0.0
-            max_value: 60.0
+            min_value: 100.0
+            max_value: 200.0
      
-  buoyancy:
-    curriculum:
-      - name: BuoyancyFirstLesson
-        completion_criteria:
-          measure: progress
-          behavior: NoPSModel
-          signal_smoothing: true
-          min_lesson_threshold: 100
-          threshold: 0.25
-        value: 
-          sampler_type: uniform
-          sampler_parameters: 
-            min_value: 1.0
-            max_value: 2.5
-      - name: BuoyancySecondLesson
-        completion_criteria:
-          measure: progress
-          behavior: NoPSModel
-          signal_smoothing: true
-          min_lesson_threshold: 100
-          threshold: 0.50
-        value: 
-          sampler_type: uniform
-          sampler_parameters: 
-            min_value: 2.5
-            max_value: 5.0
-      - name: BuoyancyThirdLesson
-        value:
-          sampler_type: uniform
-          sampler_parameters: 
-            min_value: 1.0
-            max_value: 5.0
