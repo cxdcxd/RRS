@@ -431,7 +431,7 @@ public class Movo : MonoBehaviour
             d_joints[i] = cmd.goal[i - 8];
         }
 
-        print("LEFT");
+        //print("LEFT");
     }
     private void Subscriber_rrs_joint_command_right_delegateNewData(long sequence, byte[] buffer, uint priority, Net2.Net2HandlerBase sender)
     {
@@ -444,7 +444,7 @@ public class Movo : MonoBehaviour
             d_joints[i] = cmd.goal[i];
         }
 
-        print("RIGHT");
+        //print("RIGHT");
     }
 
 

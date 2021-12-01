@@ -157,6 +157,10 @@ public class Robot : MonoBehaviour {
         float x = 6.0f * solidBounds.extents.x;
         float y = 4.0f * solidBounds.extents.y;
         float z = 0.0f;
+        this.getRobotHand().GetComponent<MeshRenderer>().enabled = false;
+        this.getBolts().GetComponent<MeshRenderer>().enabled = false;
+        this.getFingerA().GetComponent<MeshRenderer>().enabled = false;
+        this.getFingerB().GetComponent<MeshRenderer>().enabled = false;
 
         if (!isTarget)
         {

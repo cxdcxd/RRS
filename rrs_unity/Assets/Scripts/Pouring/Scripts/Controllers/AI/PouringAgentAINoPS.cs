@@ -20,6 +20,8 @@ public class PouringAgentAINoPS : Agent {
     public PhysicMaterial solidObjectPhysicsMaterial; // Physics material to use with source and target containers.
     public PhysicMaterial robotPhysicsMaterial; // Physics material to use with robotic hand.
     public GameObject workspace; // Workspace for target hand.
+    public GameObject right_marker; // NMPC right marker
+    public GameObject left_marker; // NMPC left marker
 
     /// <summary>
     /// The objects below are created and used internally during the runtime.
@@ -143,6 +145,13 @@ public class PouringAgentAINoPS : Agent {
         robotHandForSource.holdObject(source, workspace, true, true);
         robotHandForTarget.holdObject(target, workspace, true, true, true);
 
+        left_marker.transform.position = 0.5f * (robotHandForTarget.getRobotHand().transform.TransformPoint(robotHandForTarget.getFingerA().transform.localPosition) +
+                                           robotHandForTarget.getRobotHand().transform.TransformPoint(robotHandForTarget.getFingerB().transform.localPosition));
+        //left_marker.transform.position += new Vector3(-1.0f, 0, 0);
+        left_marker.transform.rotation = robotHandForTarget.getRobotHand().transform.rotation;
+        left_marker.transform.Rotate(new Vector3(0, 90, 0), Space.Self);
+        right_marker.transform.rotation = robotHandForSource.getRobotHand().transform.rotation;
+        right_marker.transform.Rotate(new Vector3(0, 90, 0), Space.Self);
         // 4. Create liquid
         if (isTest)
         {
@@ -302,6 +311,9 @@ public class PouringAgentAINoPS : Agent {
 
             Vector3 effectCenter = 0.5f * (robotHandForSource.getRobotHand().transform.TransformPoint(robotHandForSource.getFingerA().transform.localPosition) +
                                            robotHandForSource.getRobotHand().transform.TransformPoint(robotHandForSource.getFingerB().transform.localPosition));
+
+            right_marker.transform.position = effectCenter; //+ new Vector3(1.0f, 0, 0);
+            
             float distance = Vector3.Distance(source.getSolidObject().transform.position, robotHandForSource.getRobotHand().transform.position);
             bool withinTargetRim = (source.getSolidObject().transform.position.x > targetBounds.min.x &&
                                     source.getSolidObject().transform.position.x < targetBounds.max.x &&
@@ -340,6 +352,7 @@ public class PouringAgentAINoPS : Agent {
                     }
 
                     robotHandForSource.getRobotHand().transform.RotateAround(effectCenter, Vector3.forward, deltaRotation);
+                    right_marker.transform.RotateAround(effectCenter, Vector3.forward, deltaRotation);
                     sourceTilt += deltaRotation;
                 }
             }
@@ -365,6 +378,7 @@ public class PouringAgentAINoPS : Agent {
                         if (sourceTurningSpeed < 0)
                         {
                             robotHandForSource.getRobotHand().transform.RotateAround(effectCenter, Vector3.forward, sourceTurningSpeed * Time.deltaTime);
+                            right_marker.transform.RotateAround(effectCenter, Vector3.forward, sourceTurningSpeed * Time.deltaTime);
                             sourceTilt += sourceTurningSpeed * Time.deltaTime;
                         }
                     } else {
