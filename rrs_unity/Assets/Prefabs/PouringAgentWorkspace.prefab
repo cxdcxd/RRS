@@ -199,6 +199,8 @@ MonoBehaviour:
   solidObjectPhysicsMaterial: {fileID: 13400000, guid: dff8b7a0a57e62744a7ba381ed6e2fa0, type: 2}
   robotPhysicsMaterial: {fileID: 13400000, guid: 0c4ce76aabcc5324cb849680c358b2c0, type: 2}
   workspace: {fileID: 1224750475573906153}
+  right_marker: {fileID: 0}
+  left_marker: {fileID: 0}
 --- !u!114 &8638667851001384776
 MonoBehaviour:
   m_ObjectHideFlags: 0
