@@ -186,7 +186,7 @@ public class PouringAgentAINoPS : Agent {
         }
 
         originalWeight = 0.0f;
-        robotHandForTarget.getRobotHand().GetComponent<ForceInformation>().targetWeight = target_to_fill;
+        robotHandForTarget.getRobotHand().GetComponent<AddForceInformationMono>().targetWeight = target_to_fill;
 
         // 5. Reset liquid state information
         ResetLiquidStateInformation();
@@ -276,7 +276,7 @@ public class PouringAgentAINoPS : Agent {
             sourceTurningSpeed = 50.0f * Mathf.Clamp(actionBuffers.ContinuousActions[++actionIndex], -1f, 1f); // rotate source by this angle about axis of rotation defined by relative position between source and target.
             robotMovingSpeed = 2.0f * Mathf.Clamp(actionBuffers.ContinuousActions[++actionIndex], -1f, 1f); // Move robotic hand by this speed.
 
-            weightOfLiquid = robotHandForTarget.getRobotHand().GetComponent<ForceInformation>().getMeasuredWeight();
+            weightOfLiquid = robotHandForTarget.getRobotHand().GetComponent<AddForceInformationMono>().getPouredMeasuredWeight();
 
             if (weightOfLiquid > 0.01f)
                 differenceFillLevel = Mathf.Abs(target_to_fill - weightOfLiquid);
@@ -285,7 +285,7 @@ public class PouringAgentAINoPS : Agent {
             float similarity = Vector3.Dot(source.getSolidObject().transform.up, target.getSolidObject().transform.up);
 
             
-            liquidInSource = robotHandForSource.getRobotHand().GetComponent<ForceInformation>().getMeasuredWeight();
+            liquidInSource = robotHandForSource.getRobotHand().GetComponent<AddForceInformationMono>().getPourerMeasuredWeight();
             if (liquidInSource > 0.01f && originalWeight == 0.0f) {
                 originalWeight = liquidInSource;
                 if (originalWeight < target_to_fill) {

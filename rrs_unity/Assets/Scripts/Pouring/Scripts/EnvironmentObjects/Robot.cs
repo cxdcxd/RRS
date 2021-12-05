@@ -192,7 +192,7 @@ public class Robot : MonoBehaviour {
             this.getRobotHand().GetComponent<Rigidbody>().useGravity = false;
             fs.enableCollision = true;
             if (useMeasurer) {
-                ForceInformation fInfo = this.getRobotHand().AddComponent<ForceInformation>();
+                AddForceInformationMono fInfo = this.getRobotHand().AddComponent<AddForceInformationMono>();
                 fInfo.target = solid.getSolidObject();
                 if (isTarget) {
                     fInfo.workspace = workspace;
@@ -202,7 +202,7 @@ public class Robot : MonoBehaviour {
         this.setHeldObject(solid);
     }
     public void remove() {
-        Destroy(this.getRobotHand().GetComponent<ForceInformation>());
+        Destroy(this.getRobotHand().GetComponent<AddForceInformationMono>());
         Destroy(this);
     }
 }

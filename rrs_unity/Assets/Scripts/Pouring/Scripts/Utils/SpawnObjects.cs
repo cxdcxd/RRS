@@ -35,7 +35,7 @@ public class SpawnObjects: MonoBehaviour {
         solidObject.setPosition(position);
         solidObject.setRotation(randomGO.transform.rotation);
         solidObject.setLocalScale(randomGO.transform.localScale);
-        solidObject.createSolid(setRigidBody: true, isKinematic: false, addCollider: true);
+        solidObject.createSolid(setRigidBody: false, isKinematic: false, addCollider: true);
         solidObject.getSolidObject().GetComponent<MeshCollider>().material = solidObjectPhysicsMaterial;
         return solidObject;
     }
@@ -56,6 +56,30 @@ public class SpawnObjects: MonoBehaviour {
         liquid.setLiquidHandler(liquidHandler);
         liquid.setEnvironmentName(agent.name);
         liquid.createLiquid(liquidVolume, density);
+
+        return liquid;
+    }
+
+    /// <summary>
+    /// Create liquid object as a child of source object. This is a child of PouringAgent.
+    /// </summary>
+    public static Liquid createLiquid(Liquid liquid, Solid pourer, GameObject agent,
+                                      FlexContainer flexParticleContainer, 
+                                      FlexArrayAsset liquidAsset,
+                                      float liquidVolume,
+                                      float density)
+    {
+        if (liquid != null)
+        {
+            liquid.remove();
+            Destroy(liquid.getLiquid());
+            Destroy(liquid);
+        }
+        liquid = agent.AddComponent<Liquid>();
+        liquid.setFlexParticleContainer(flexParticleContainer);
+        liquid.setLiquidAsset(liquidAsset);
+        liquid.setEnvironmentName(agent.name);
+        liquid.createLiquid(liquidVolume, density, liquid_pourer:pourer);
 
         return liquid;
     }

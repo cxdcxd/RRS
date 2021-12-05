@@ -209,7 +209,7 @@ public class Liquid : MonoBehaviour {
 
     /// <summary>
     /// API to be used by client to create a liquid in scene with some desired set initial settings.
-    public void createLiquid(float volume, float density = 1.0f) {
+    public void createLiquid(float volume, float density = 1.0f, Solid liquid_pourer=null) {
         // Create new gameobject for liquid
         this.setLiquidObject();
         
@@ -218,12 +218,16 @@ public class Liquid : MonoBehaviour {
         this.getLiquid().name = this.getEnvironmentName();
 
         // Adjust transformations and primitive shape for the spawned liquid.
-        Renderer containerRenderer = this.getLiquidHandler().getHeldObject().getSolidObject().GetComponent<Renderer>();
+        if (liquid_pourer == null)
+        {
+            liquid_pourer = this.getLiquidHandler().getHeldObject();
+        }
+        Renderer containerRenderer = liquid_pourer.getSolidObject().GetComponent<Renderer>();
         Bounds bounds = containerRenderer.bounds;
-        float spawnHeight = 2.25f * bounds.extents.y;
-        Vector3 liquidSpawnLocation = this.getLiquidHandler().getHeldObject().getSolidObject().transform.position + new Vector3(0f, spawnHeight, 0f);
+        float spawnHeight = 2.0f * bounds.extents.y;
+        Vector3 liquidSpawnLocation = liquid_pourer.getSolidObject().transform.position + new Vector3(0f, spawnHeight, 0f);
         this.getLiquid().transform.position = liquidSpawnLocation;
-        this.getLiquid().transform.rotation = this.getLiquidHandler().getHeldObject().transform.rotation;
+        this.getLiquid().transform.rotation = liquid_pourer.transform.rotation;
 
         // Create flex array asset for this liquid.
         createLiquidActor();
@@ -320,7 +324,7 @@ public class Liquid : MonoBehaviour {
 
         if (AmtParticlesSpilledOnWorkspace > 0) {
             Vector3 force = AmtParticlesSpilledOnWorkspace * new Vector3(0, -this.getWeightOfParticle() * Physics.gravity.magnitude, 0);
-            workspace.GetComponent<Rigidbody>().AddForce(force, ForceMode.Force);
+            workspace.GetComponent<BoxCollider>().attachedRigidbody.AddForce(force, ForceMode.Force);
             particleDictionary["weightOnWorkspace"] = AmtParticlesSpilledOnWorkspace * this.getWeightOfParticle();
         }
 

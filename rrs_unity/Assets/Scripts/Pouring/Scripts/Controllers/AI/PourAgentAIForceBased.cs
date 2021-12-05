@@ -142,7 +142,7 @@ public class PourAgentAIForceBased : Agent
             target.setChildOf(SensorHand);
             target.getSolidObject().GetComponent<MeshCollider>().material = targetMaterial;
             weightOfTarget = target.getSolidObject().GetComponent<Rigidbody>().mass;
-            SensorHand.GetComponent<ForceInformation>().target = target.getSolidObject();
+            SensorHand.GetComponent<AddForceInformationMono>().target = target.getSolidObject();
         }
     }
 
@@ -175,7 +175,7 @@ public class PourAgentAIForceBased : Agent
             liquid.createLiquid(500f);
             ResetLiqParticleState();
             liquid.getLiquid().AddComponent<RigidBodyParticleSystemCollision>();
-            SensorHand.GetComponent<ForceInformation>().targetWeight = target_to_fill;
+            SensorHand.GetComponent<AddForceInformationMono>().targetWeight = target_to_fill;
             originalWeight = liquidAsset.maxParticles * liquidParticleWeight;
         }
     }
@@ -367,7 +367,7 @@ public class PourAgentAIForceBased : Agent
                 Vector3 relativePositionOfTarget = (target.getSolidObject().transform.position - source.getSolidObject().transform.position).normalized;
                 axisOfRotation = Vector3.Cross(Vector3.up, relativePositionOfTarget);
                 
-                weightOfLiquid = SensorHand.GetComponent<ForceInformation>().getMeasuredWeight();
+                weightOfLiquid = SensorHand.GetComponent<AddForceInformationMono>().getPouredMeasuredWeight();
 
                 differenceFillLevel = Mathf.Abs(target_to_fill - weightOfLiquid);
 
