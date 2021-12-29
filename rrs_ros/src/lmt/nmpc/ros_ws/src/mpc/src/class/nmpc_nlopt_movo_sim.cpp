@@ -102,6 +102,8 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   state_sub_started = false;
   goal_sub_started = false;
  
+  obstacleTable_shape = std::make_shared<shapes::Box>(0.375,0.375,1);
+
   goal_sub = nh.subscribe(arm_name_space+"/nmpc_controller/in/goal",1,&NmpcNlopt::goalSubCBFromOut,this);
 
   velocity_pub = nh.advertise<movo_msgs::JacoAngularVelocityCmd7DOF>("/movo/"+arm_name_space+"_arm/angular_vel_cmd",1);
@@ -358,6 +360,18 @@ void NmpcNlopt::goalSubCBFromOut(const geometry_msgs::PoseConstPtr &msg)
 
   if(!goal_sub_started)
     goal_sub_started = true;
+}
+
+void NmpcNlopt::obstacleTable()
+{
+  Eigen::Translation3d translation(0,0,0);
+	Eigen::Quaterniond quater(1,0,0,0);
+	Eigen::Affine3d obj_pose = translation*quater.toRotationMatrix();
+
+	if(!co_ptrs.count("obstacleTable"))
+    addObstacle("obstacleTable", obstacleTable_shape, obj_pose);
+	else if((obj_pose.matrix()-co_ptrs["obstacleTable"]->getTransform().matrix()).norm() > 1e-4)
+    updateObstacle("obstacleTable",obj_pose);
 }
 
 void NmpcNlopt::otherCylindersSubCB(const perception_msgs::CylindersConstPtr& msg)
@@ -1054,6 +1068,12 @@ void NmpcNlopt::initialize()
 	obj_pose = translation*quater;
 	obj_pose = base2this_arm_base*obj_pose;
 	addObstacle("ground",obj_shape4,obj_pose,plot_obstacle);
+
+  shapes::ShapeConstPtr obj_shape5(new shapes::Box(0.4,0.1,0.75));
+	translation.x()=0.6;translation.y()=0;translation.z()=0.45;
+	obj_pose = translation*quater;
+	obj_pose = base2this_arm_base*obj_pose;
+	addObstacle("Table",obj_shape5,obj_pose,plot_obstacle);
 }
 
 

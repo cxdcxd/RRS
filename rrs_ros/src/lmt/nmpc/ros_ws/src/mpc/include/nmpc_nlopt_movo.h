@@ -102,11 +102,13 @@ private:
   // flag that indicates whether controller starts to collect current joint states
   bool state_sub_started;
   bool goal_sub_started;
+   shapes::ShapeConstPtr obstacleTable_shape;
 
   // subsriber for goal from interactive marker in rviz
   void goalSubCB(const visualization_msgs::InteractiveMarkerFeedbackConstPtr& msg);
   void goalSubCBFromOut(const geometry_msgs::PoseConstPtr& msg);
   void otherCylindersSubCB(const perception_msgs::CylindersConstPtr& msg);
+  void obstacleTable();
   // flag that indicates if cylinders from anothter arm are added as obstacles
   bool cylinders_added, cylinders_sent;
   ros::Subscriber goal_sub, other_cylinders_sub;
