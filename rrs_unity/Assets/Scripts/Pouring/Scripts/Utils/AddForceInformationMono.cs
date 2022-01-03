@@ -60,17 +60,24 @@ public class AddForceInformationMono : MonoBehaviour
         this.weightMeasurement();
     }
 
-    private void OnGUI() {
+    private void OnGUI() 
+    {
+
+        GUI.skin.label.fontSize = 25;
         GUI.contentColor = Color.black;
+
         if (target != null)
         {
             if (fixedJoint.gameObject.name.Contains("mounting (1)")) {
-                GUI.Label(new Rect(10, 10, 1000, 20), "Liquid in source: " + this.getPourerMeasuredWeight());
+                GUI.Label(new Rect(950, 50 + 400, 2000, 100), "Liquid in source: " + (this.getPourerMeasuredWeight() * 1000).ToString("N5") + " g");
             }
             if (fixedJoint.gameObject.name.Contains("mounting"))
             {
-                GUI.Label(new Rect(10, 40, 1000, 20), "Target: " + targetWeight);
-                GUI.Label(new Rect(10, 80, 1000, 20), "Filled weight: " + this.getPouredMeasuredWeight());
+                if (targetWeight != 0)
+                    GUI.Label(new Rect(950, 10 + 400, 2000, 100), "Target: " + (targetWeight * 1000) + " g");
+                
+                if (this.getPouredMeasuredWeight() != 0)
+                GUI.Label(new Rect(950, 90 + 400, 2000, 100), "Liquid in target: " + (this.getPouredMeasuredWeight() * 1000).ToString("N5") + " g");
             }
         }
     }

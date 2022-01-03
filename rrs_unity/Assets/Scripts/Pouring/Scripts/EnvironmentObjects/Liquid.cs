@@ -224,7 +224,7 @@ public class Liquid : MonoBehaviour {
         }
         Renderer containerRenderer = liquid_pourer.getSolidObject().GetComponent<Renderer>();
         Bounds bounds = containerRenderer.bounds;
-        float spawnHeight = 2.0f * bounds.extents.y;
+        float spawnHeight = bounds.extents.y;
         Vector3 liquidSpawnLocation = liquid_pourer.getSolidObject().transform.position + new Vector3(0f, spawnHeight, 0f);
         this.getLiquid().transform.position = liquidSpawnLocation;
         this.getLiquid().transform.rotation = liquid_pourer.transform.rotation;

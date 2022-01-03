@@ -9,7 +9,7 @@ public class SpawnObjects: MonoBehaviour {
     /// Creates source solid object and assigns kinematic properties to it.
     /// </summary>
     /// <param name="name">Name of the source object</param>
-    public static Solid createLiquidContainer(Solid solidObject, GameObject agent, GameObject references, string name, 
+    public static Solid createLiquidContainer(Solid solidObject, GameObject agent, GameObject references, GameObject referred, string name, 
                                               PhysicMaterial solidObjectPhysicsMaterial, bool randomizePositions=false)
     {
         if (solidObject != null) {
@@ -18,16 +18,22 @@ public class SpawnObjects: MonoBehaviour {
             Destroy(solidObject);
         }
 
-        Transform[] children = references.GetComponentsInChildren<Transform>();
-
-        int randomChildIndex = Random.Range(0, references.transform.childCount);
-
-        GameObject randomGO = references.transform.GetChild(randomChildIndex).gameObject;
+        GameObject randomGO = null;
+        if (referred == null)
+        {
+            Transform[] children = references.GetComponentsInChildren<Transform>();
+            int randomChildIndex = Random.Range(0, references.transform.childCount);
+            randomGO = references.transform.GetChild(randomChildIndex).gameObject;
+        } else
+        {
+            randomGO = referred;
+        }
 
         solidObject = agent.AddComponent<Solid>();
         solidObject.setName(randomGO.gameObject.name);
-
+        
         Vector3 position = agent.transform.position;
+        
         if (randomizePositions)
             position = SpawnObjects.randomiseSourceLocations()  + agent.transform.position;
 

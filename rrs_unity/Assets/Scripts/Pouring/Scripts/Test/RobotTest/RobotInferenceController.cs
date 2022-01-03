@@ -11,7 +11,7 @@ public class RobotInferenceController : Agent
 {
     private int configureAgnet = -1;
     public NNModel model;
-
+    
     public GameObject workspace;
     public GameObject sources;
     public GameObject targets;
@@ -49,7 +49,9 @@ public class RobotInferenceController : Agent
     private int numCompletedEpisodes = 0;
     private float timer = 0.0f;
     private bool isActionDone = false;
-    
+
+    private GameObject clickedPourer;
+
     /// <summary>
     /// Creates Solid Game Object. Based on string provided, chooses source or target.
     /// </summary>
@@ -58,11 +60,11 @@ public class RobotInferenceController : Agent
     {
         if (name == "SourceObject_" + gameObject.name)
         {
-            source = SpawnObjects.createLiquidContainer(source, this.gameObject, sources, name, solidObjectPhysicsMaterial, randomizePositions: false);
+            source = SpawnObjects.createLiquidContainer(source, this.gameObject, sources, this.clickedPourer, name, solidObjectPhysicsMaterial, randomizePositions: false);
         }
         else if (name == "TargetObject_" + gameObject.name)
         {
-            target = SpawnObjects.createLiquidContainer(target, this.gameObject, targets, name, solidObjectPhysicsMaterial, randomizePositions: false);
+            target = SpawnObjects.createLiquidContainer(target, this.gameObject, targets, null, name, solidObjectPhysicsMaterial, randomizePositions: false);
         }
         else print(name + " not configured for flex solid actor..");
     }
@@ -144,8 +146,8 @@ public class RobotInferenceController : Agent
     {   
         // Get actions from agent's action buffer. Overall 4 actions. Move in x, y, z and rotate speed while pouring.
         int actionIndex = -1;
-
-        sourceTurningSpeed = 50.0f * Mathf.Clamp(actionBuffers.ContinuousActions[++actionIndex], -1f, 1f); // rotate source by this angle about axis of rotation defined by relative position between source and target.
+        float turningSpeedMultiplier = 50.0f;
+        sourceTurningSpeed = turningSpeedMultiplier * Mathf.Clamp(actionBuffers.ContinuousActions[++actionIndex], -1f, 1f); // rotate source by this angle about axis of rotation defined by relative position between source and target.
         robotMovingSpeed = 2.0f * Mathf.Clamp(actionBuffers.ContinuousActions[++actionIndex], -1f, 1f); // Move robotic hand by this speed.
 
         weightOfLiquid = sensor_left_arm.GetComponent<AddForceInformationMono>().getPouredMeasuredWeight();
@@ -195,17 +197,25 @@ public class RobotInferenceController : Agent
         {
 
             // If positive angular velocity action and not pouring, pour.
+            Vector3 directionOfMovement = (target.getSolidObject().transform.position - source.getSolidObject().transform.position).normalized;
             if (!withinTargetRim)
             {
-                Vector3 directionOfMovement = (new Vector3(target.getSolidObject().transform.position.x,
-                                                            right_marker.transform.position.y,
-                                                            target.getSolidObject().transform.position.z) -
-                                                new Vector3(right_marker.transform.position.x,
-                                                            right_marker.transform.position.y,
-                                                            right_marker.transform.position.z)).normalized;
-
-                float deltaDistance = robotMovingSpeed > 0.0f ? (robotMovingSpeed * Time.deltaTime) : 0.0f;
-                Vector3 newSourceLocation = deltaDistance * directionOfMovement;
+                Vector3 newSourceLocation = Vector3.zero;
+                if (source.getSolidObject().transform.position.y - target.getSolidObject().transform.position.y >= 2.5f)
+                {
+                    float deltaDistance = robotMovingSpeed > 0.0f ? (robotMovingSpeed * Time.deltaTime) : 0.0f;
+                    newSourceLocation = deltaDistance * directionOfMovement;
+                } else
+                {
+                    directionOfMovement = (new Vector3(target.getSolidObject().transform.position.x,
+                                                          source.getSolidObject().transform.position.y,
+                                                          target.getSolidObject().transform.position.z) -
+                                           new Vector3(source.getSolidObject().transform.position.x,
+                                                       source.getSolidObject().transform.position.y,
+                                                       source.getSolidObject().transform.position.z)).normalized;
+                    float deltaDistance = robotMovingSpeed > 0.0f ? (robotMovingSpeed * Time.deltaTime) : 0.0f;
+                    newSourceLocation = deltaDistance * directionOfMovement;
+                }
                 right_marker.transform.position += newSourceLocation;
             }
             else
@@ -217,36 +227,28 @@ public class RobotInferenceController : Agent
                     deltaRotation = sourceTurningSpeed > 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
                 }
 
-                if (absDischarge >= 0.0001f)
-                {
-                    deltaRotation = sourceTurningSpeed < 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
+                if (absDischarge > 0.0002f)
+                {   
+                     deltaRotation = sourceTurningSpeed < 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
                 }
+
                 right_marker.transform.RotateAround(effectCenter, Vector3.forward, deltaRotation);
                 sourceTilt += deltaRotation;
             }
         }
 
-        if (weightOfLiquid > 0.01f && differenceFillLevel < 0.020f)
-        {
-            isActionDone = true;
-        }
-
-        if (weightOfLiquid > 0.01f && liquidInSource < 0.001f)
-        {
-            isActionDone = true;
-        }
-
-        if (weightOfLiquid >= target_to_fill)
-        {
-            isActionDone = true;
-        }
+        isActionDone = (weightOfLiquid <= originalWeight) && ((weightOfLiquid > 0.01f && differenceFillLevel < 0.020f) || (weightOfLiquid > 0.01f && liquidInSource < 0.001f) ||
+                (weightOfLiquid >= target_to_fill));
 
         if (isActionDone)
         {
             if (!retract)
             {
                 retractTimer += Time.deltaTime;
-                if (retractTimer < 5.0f)
+
+                float cutoffTime = liquid.getFlexParticleContainer().viscosity < 10.0f ? 5.0f : (target_to_fill < 0.1 ? 10.0f : 15.0f);
+                
+                if (retractTimer < cutoffTime)
                 {
                     if (sourceTurningSpeed < 0)
                     {
@@ -344,29 +346,57 @@ public class RobotInferenceController : Agent
 
             // Set force sensors to the robot grippers
             initializeForceSensorState();
-
-            // Spawn target container
-            createSolidObjects(targetName);
-
+          
             // Spawn tray
             Bounds workspaceBounds = workspace.GetComponent<Renderer>().bounds;
             workspace.transform.position = left_marker.transform.position + new Vector3(workspaceBounds.extents.x, 0, 0);
+            if (workspace.activeSelf)
+            {
+                workspace.SetActive(false);
+            }
             workspace.SetActive(true);
-            target.setChildOf(workspace);
-            target.getSolidObject().transform.position= workspace.transform.position + new Vector3(3.0f, 8.0f * workspaceBounds.extents.y, 0.0f);
             workspace.transform.parent = coupled_gripper_left.transform;
+
+            // Spawn target container
+            createSolidObjects(targetName);
+            target.getSolidObject().transform.position = workspace.transform.position + new Vector3(0.0f, 6.0f * workspaceBounds.extents.y, 0.0f);
+            target.setChildOf(workspace);
 
             // Spawn liquid
             print("RUNNING INFERENCE EXPERIMENTS ON TRAINED AGENT!!!");
-
             float density = 1.0f;
-
-            liquid = SpawnObjects.createLiquid(liquid, source, this.gameObject, liquid_flex_container, liquid_asset, fixedSourceStartVolume, density);
-            print("Liquid is: " + liquid.getFlexParticleContainer().name);
             Color color = new Color(1f, 1f, 0.894117647f);
-            color.a = 0.75f;
+            switch (liquid_flex_container.name)
+            {
+                case "Water":
+                    color = new Color(0.0549019608f, 0.529411765f, 0.8f);
+                    density = 1.0f;
+                    break;
+                case "Ink":
+                    color = new Color(0.0274509804f, 0.0509803922f, 0.0509803922f);
+                    density = 1.0081f;
+                    break;
+                case "Oil":
+                    color = new Color(1f, 0.996078431f, 0.250980392f);
+                    density = 0.917f;
+                    break;
+                case "Honey":
+                    color = new Color(0.996078431f, 0.776470588f, 0.0823529412f);
+                    density = 1.42f;
+                    break;
+                case "Glycerin":
+                    color = new Color(0.847058824f, 0.862745098f, 0.839215686f);
+                    density = 1.26f;
+                    break;
+                case "Ketchup":
+                    color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
+                    density = 1.092f;
+                    break;
+            }
+            color.a = 0.85f;
+            liquid = SpawnObjects.createLiquid(liquid, source, this.gameObject, liquid_flex_container, liquid_asset, fixedSourceStartVolume, density);
             liquid.getFlexParticleContainer().fluidMaterial.color = color;
-
+            print("Liquid is: " + liquid.getFlexParticleContainer().name);
             ResetLiquidStateInformation();
         }
     }
@@ -432,8 +462,11 @@ public class RobotInferenceController : Agent
         }
         else if (configureAgnet == 1)
         {
-            SetModel("PouringBrain", model);
             ResetScene();
+            //if (liquid.getFlexParticleContainer().viscosity < 10.0f) 
+            SetModel("NoPSModel", model);
+            //else
+            //    SetModel("PouringBrain", highViscosityModel);
         }
     }
 
@@ -442,6 +475,17 @@ public class RobotInferenceController : Agent
         float t = float.Parse(target);
         this.target_to_fill = t / 1000f;
     }
+
+    public void setPouringContainer(GameObject pouringContainer)
+    {
+        this.clickedPourer = pouringContainer;
+    }
+
+    public void setSelectedLiquid(FlexContainer container)
+    {
+        this.liquid_flex_container = container;
+    }
+
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var continuousActionsOut = actionsOut.ContinuousActions;

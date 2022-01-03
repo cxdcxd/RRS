@@ -67,11 +67,11 @@ public class PouringAgentAINoPS : Agent {
     {
         if (name == "SourceObject_" + gameObject.name)
         {
-            source = SpawnObjects.createLiquidContainer(source, this.gameObject, sources, name, solidObjectPhysicsMaterial, randomizePositions: false);
+            source = SpawnObjects.createLiquidContainer(source, this.gameObject, sources, null, name, solidObjectPhysicsMaterial, randomizePositions: false);
         }
         else if (name == "TargetObject_" + gameObject.name)
         {
-            target = SpawnObjects.createLiquidContainer(target, this.gameObject, targets, name, solidObjectPhysicsMaterial, randomizePositions: false);
+            target = SpawnObjects.createLiquidContainer(target, this.gameObject, targets, null, name, solidObjectPhysicsMaterial, randomizePositions: false);
         }
         else print(name + " not configured for flex solid actor..");
     }
