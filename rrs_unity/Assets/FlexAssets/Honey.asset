@@ -41,26 +41,26 @@ MonoBehaviour:
   m_iterationCount: 5
   m_gravity: {x: 0, y: -9.81, z: 0}
   m_radius: 0.2
-  m_solidRest: 0.05
-  m_fluidRest: 0.16
-  m_staticFriction: 1
-  m_dynamicFriction: 1
-  m_particleFriction: 1
+  m_solidRest: 0.04
+  m_fluidRest: 0.1
+  m_staticFriction: 0.3
+  m_dynamicFriction: 0.2
+  m_particleFriction: 0.1
   m_restitution: 0
-  m_adhesion: 0.003
+  m_adhesion: 0.025
   m_sleepThreshold: 0
   m_maxSpeed: 3.4028235e+38
   m_maxAcceleration: 3.4028235e+38
   m_shockPropagation: 0
-  m_dissipation: 4
-  m_damping: 2
+  m_dissipation: 0
+  m_damping: 0
   m_wind: {x: 0, y: 0, z: 0}
   m_drag: 0
   m_lift: 0
   m_fluid: 1
-  m_cohesion: 0.05
-  m_surfaceTension: 0
-  m_viscosity: 1
+  m_cohesion: 0.001
+  m_surfaceTension: 0.0001
+  m_viscosity: 65
   m_vorticityConfinement: 0
   m_anisotropyScale: 2
   m_anisotropyMin: 0.1
@@ -68,7 +68,7 @@ MonoBehaviour:
   m_smoothing: 0
   m_solidPressure: 0
   m_freeSurfaceDrag: 0
-  m_buoyancy: 3
+  m_buoyancy: 1
   m_diffuseThreshold: 0
   m_diffuseBuoyancy: 0
   m_diffuseDrag: 0
