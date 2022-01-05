@@ -8,7 +8,6 @@ namespace RRS
         float deltaTime = 0.0f;
         string text = "";
    
-
         void Update()
         {
             deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
@@ -19,8 +18,9 @@ namespace RRS
 
         void OnGUI()
         {
+            GUI.skin.label.fontSize = 15;
             GUI.contentColor = Color.black;
-            GUI.Label(new Rect(10, 10, 100, 200), text);
+            GUI.Label(new Rect(20, 10, 2000, 1000), text);
         }
 
     }

@@ -357,8 +357,15 @@ public class ColorCamera : MonoBehaviour
 
         while (CaptureQueue.Count > 0)
         {
-            var capture = CaptureQueue.Dequeue();
-            capture.GpuData.Dispose();
+            try
+            {
+                var capture = CaptureQueue.Dequeue();
+                capture.GpuData.Dispose();
+            }
+            catch
+            {
+
+            }
         }
 
         // Wait all tasks finished to gurantee all native arrays are in AvailableGpuDataArrays.

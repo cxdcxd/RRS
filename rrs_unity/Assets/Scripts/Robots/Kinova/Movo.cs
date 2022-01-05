@@ -203,11 +203,12 @@ public class Movo : MonoBehaviour
 
     void updateMotors()
     {
+      
         simpleviz();
 
         //initJointsConfig();
 
-        //if (enable_script_control == false) return;
+       
 
 
 
@@ -375,22 +376,24 @@ public class Movo : MonoBehaviour
 
     void simpleviz()
     {
+        if (enable_script_control)
+        {
+            right_arm_1 += d_joints[0] * Time.deltaTime;
+            right_arm_2 += d_joints[1] * Time.deltaTime * -1;
+            right_arm_3 += d_joints[2] * Time.deltaTime;
+            right_arm_4 += d_joints[3] * Time.deltaTime;
+            right_arm_5 += d_joints[4] * Time.deltaTime;
+            right_arm_6 += d_joints[5] * Time.deltaTime;
+            right_arm_7 += d_joints[6] * Time.deltaTime;
 
-        right_arm_1 += d_joints[0] * Time.deltaTime;
-        right_arm_2 += d_joints[1] * Time.deltaTime * -1;
-        right_arm_3 += d_joints[2] * Time.deltaTime;
-        right_arm_4 += d_joints[3] * Time.deltaTime;
-        right_arm_5 += d_joints[4] * Time.deltaTime;
-        right_arm_6 += d_joints[5] * Time.deltaTime;
-        right_arm_7 += d_joints[6] * Time.deltaTime;
-
-        left_arm_1 += d_joints[8] * Time.deltaTime;
-        left_arm_2 += d_joints[9]  * Time.deltaTime * -1;
-        left_arm_3 += d_joints[10] * Time.deltaTime;
-        left_arm_4 += d_joints[11] * Time.deltaTime;
-        left_arm_5 += d_joints[12] * Time.deltaTime;
-        left_arm_6 += d_joints[13] * Time.deltaTime;
-        left_arm_7 += d_joints[14] * Time.deltaTime;
+            left_arm_1 += d_joints[8] * Time.deltaTime;
+            left_arm_2 += d_joints[9] * Time.deltaTime * -1;
+            left_arm_3 += d_joints[10] * Time.deltaTime;
+            left_arm_4 += d_joints[11] * Time.deltaTime;
+            left_arm_5 += d_joints[12] * Time.deltaTime;
+            left_arm_6 += d_joints[13] * Time.deltaTime;
+            left_arm_7 += d_joints[14] * Time.deltaTime;
+        }
 
         //head_pan = d_joints[17] * -1;
         //head_tilt = d_joints[18] * -1;
@@ -652,8 +655,10 @@ public class Movo : MonoBehaviour
         joint_state_msg.name[16] = Links.linear_joint.ToString();
         joint_state_msg.name[17] = Links.pan_joint.ToString();
         joint_state_msg.name[18] = Links.tilt_joint.ToString();
-      
-        
+
+        //print(right_arm_1 * Mathf.Deg2Rad);
+        //print(right_arm_2 * Mathf.Deg2Rad * -1);
+
         (joint_state_msg.position[0], joint_state_msg.velocity[0], joint_state_msg.effort[0]) = (right_arm_1 * Mathf.Deg2Rad , 0, 0 );
         (joint_state_msg.position[1], joint_state_msg.velocity[1], joint_state_msg.effort[1]) = (right_arm_2 * Mathf.Deg2Rad * -1, 0, 0);
         (joint_state_msg.position[2], joint_state_msg.velocity[2], joint_state_msg.effort[2]) = (right_arm_3 * Mathf.Deg2Rad, 0, 0);
