@@ -24,7 +24,7 @@ public class Statics
     public LogManager log_manager;
     public DataManagerXML xml_manager;
     public static Config current_config;
-    public static Environments current_environment = Environments.Real;
+    public static Environments current_environment = Environments.Sim;
     public static Movo movo_ref;
     public static float right_container_distance = 0.16f;
     public static float left_container_distance = 0.24f;
@@ -62,8 +62,6 @@ public class Statics
 
     private void Initialize()
     {
-        Debug.Log("Init 1");
-
         string p1 = Application.dataPath;
         string folder_path = p1.Replace("/Assets", "/Config/");
 
@@ -77,8 +75,6 @@ public class Statics
 
         ProcessResult result = xml_manager.loadXML<Config>(folder_path + "config.xml");
         current_config = (Config)result.Result;
-
-        Debug.Log("Init 2");
 
         if (current_environment == Environments.Sim)
         {
@@ -101,7 +97,7 @@ public class Statics
         }
         else
         {
-            Debug.Log("Init 3");
+          
 
             network_manager_left_arm = new Network<HapticCommand, HapticRender>("10.66.171.167", "10.66.171.182", "4160", "4161", "", NetworkType.PUBSUB, "LeftArm");
             network_manager_left_arm.eventDataUpdated += Network_manager_left_arm_eventDataUpdated;
@@ -110,7 +106,7 @@ public class Statics
             network_manager_movo_status = new Network<RRSNull, MovoStatus>("10.66.171.167", "10.66.171.182", "4170", "4171", "", NetworkType.PUBSUB, "MovoStatus");
             network_manager_movo_status.eventDataUpdated += Network_manager_movo_status_eventDataUpdated;
 
-            Debug.Log("Init 4");
+            
 
         }
        

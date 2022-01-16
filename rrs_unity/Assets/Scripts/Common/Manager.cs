@@ -10,20 +10,13 @@ public class Manager : MonoBehaviour
  
     void Start()
     {
-        print("Start 1");
-
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 50;
 
-        
-
         AsyncIO.ForceDotNet.Force();
-        print("Start 2");
 
         Statics.Init();
         inited = true;
-
-        print("Start 3");
 
         if ( Statics.current_environment == Statics.Environments.Sim)
         print("RRS Ready " + Statics.current_config.consul_network_address);
