@@ -611,14 +611,14 @@ RectTransform:
   m_GameObject: {fileID: 375204340}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.400877, y: 0.400877, z: 0.400877}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_Children: []
   m_Father: {fileID: 122815670}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 608.51733, y: 345}
+  m_AnchoredPosition: {x: 861.8, y: 481.5}
   m_SizeDelta: {x: 221.2375, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &375204342
@@ -641,7 +641,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: dd7b6c13e56503a4ab4cb6121bb8fc9f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 434ae671d146f9d43902140ef12b4630, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1188,7 +1188,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -612.8661, y: -324.2}
+  m_AnchoredPosition: {x: -892.3, y: -480.3}
   m_SizeDelta: {x: 112.315, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &722703345
@@ -1319,13 +1319,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 882087376}
-  m_LocalRotation: {x: -0.5, y: -0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: -0.116, y: 0.6, z: 0.05}
+  m_LocalRotation: {x: -0.5038638, y: -0.5038638, z: 0.4961061, w: 0.4961061}
+  m_LocalPosition: {x: -0.089, y: 0.6, z: 0.001}
   m_LocalScale: {x: 0.03980258, y: 0.03980258, z: 0.039802577}
   m_Children: []
   m_Father: {fileID: 2017730472}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: -90.889, z: 90}
 --- !u!23 &882087378
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1663,7 +1663,8 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 8000
-  model: {fileID: 5022602860645237092, guid: 09822aef5c8584f45be7581ba723b949, type: 3}
+  model: {fileID: 5022602860645237092, guid: 5133ab1a31d589444b490f14687547c7, type: 3}
+  movo_ref: {fileID: 9014223842663809284}
   workspace: {fileID: 1224750476669689966}
   sources: {fileID: 2597606513790377743}
   targets: {fileID: 1701724982893980454}
@@ -1677,7 +1678,7 @@ MonoBehaviour:
   coupled_gripper_right: {fileID: 2099670303}
   sensor_left_arm: {fileID: 469162150}
   coupled_gripper_left: {fileID: 1458894719}
-  liquid_flex_container: {fileID: 11400000, guid: 6e7430a9121c0d0428c6028cd50c8b6a, type: 2}
+  liquid_flex_container: {fileID: 11400000, guid: 893fcc1ea9f0f7e4ea6519efca9f6391, type: 2}
   liquid_asset: {fileID: 11400000, guid: 8288073472bf17243a2543d3714f9f0c, type: 2}
 --- !u!1 &1221124389
 GameObject:
@@ -2545,13 +2546,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2055728087}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0.70704186, y: -0.009582847, z: -0.05207646, w: 0.7051866}
   m_LocalPosition: {x: -0.303, y: 0.6, z: 0.083}
   m_LocalScale: {x: 0.039802577, y: 0.039802577, z: 0.039802577}
   m_Children: []
   m_Father: {fileID: 1055667933}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 85, y: -90, z: -93.447}
 --- !u!23 &2055728089
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3568,6 +3569,7 @@ GameObject:
   - component: {fileID: 710655969702820627}
   - component: {fileID: 710655969702820628}
   - component: {fileID: 710655969702820631}
+  - component: {fileID: 710655969702820632}
   m_Layer: 0
   m_Name: SingleCam
   m_TagString: MainCamera
@@ -3623,8 +3625,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 710655969702820626}
-  m_LocalRotation: {x: 0.000732168, y: -0.9012496, z: 0.00036981498, w: 0.43329966}
-  m_LocalPosition: {x: 15.3, y: 4.5, z: 19.9}
+  m_LocalRotation: {x: 0.044365156, y: 0.9547671, z: -0.22768831, w: 0.18603674}
+  m_LocalPosition: {x: -12.731548, y: 19.560863, z: 23.758217}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3687,10 +3689,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 6342204864346197904}
   targetFocus: {fileID: 6342204865136196211}
-  distance: 10
+  distance: 40
   ZoomWheelSpeed: 8
   minDistance: 10
-  maxDistance: 50
+  maxDistance: 100
   xSpeed: 300
   ySpeed: 300
   xObjSpeed: 0
@@ -3698,6 +3700,23 @@ MonoBehaviour:
   yMinLimit: 0
   yMaxLimit: 85
   disableSteering: 0
+--- !u!114 &710655969702820632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710655969702820626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 902b767a45c917245b420593501210c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  drawInBuild: 0
+  displayGraphs: 1
+  displayLogs: 0
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.7}
+  graphs: []
 --- !u!1 &710655969921970594
 GameObject:
   m_ObjectHideFlags: 0
@@ -16529,6 +16548,20 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   linear_joint: {fileID: 6342204865136196210}
+  right_arm_force:
+    cmd: 
+    gripper_force: 0
+    version: 1
+    time_span: 0
+    current_magnitude: 0
+    raw_magnitude: 0
+  left_arm_force:
+    cmd: 
+    gripper_force: 0
+    version: 1
+    time_span: 0
+    current_magnitude: 0
+    raw_magnitude: 0
   lidar_front: {fileID: 586458138}
   lidar_rear: {fileID: 881528961}
   color_camera: {fileID: 18055786}

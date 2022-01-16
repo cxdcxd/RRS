@@ -136,26 +136,32 @@ public class HapticCommand
     [ProtoMember(3)]
     public RVector3 rotation = null;
     [ProtoMember(4)]
-    public RVector3 velocity_linear = null;
+    public float[] rotation_matrix;
     [ProtoMember(5)]
-    public RVector3 velocity_angular = null;
+    public RVector3 velocity_linear = null;
     [ProtoMember(6)]
-    public float gripper_gap = 0;
+    public RVector3 velocity_angular = null;
     [ProtoMember(7)]
-    public float gripper_angle = 0;
+    public float gripper_gap = 0;
     [ProtoMember(8)]
-    public float velocity_linear_gripper = 0;
+    public float gripper_angle = 0;
     [ProtoMember(9)]
-    public float velocity_angular_gripper = 0;
+    public float velocity_linear_gripper = 0;
     [ProtoMember(10)]
-    public int version = 1;
+    public float velocity_angular_gripper = 0;
     [ProtoMember(11)]
+    public int version = 1;
+    [ProtoMember(12)]
     public ulong time_span = 0;
+    [ProtoMember(13)]
+    public SVector4 rotation_q = null;
 
     public HapticCommand()
     {
     }
 }
+
+
 
 [ProtoContract]
 public class SVector4

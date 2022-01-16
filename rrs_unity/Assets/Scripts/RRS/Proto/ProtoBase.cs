@@ -6,6 +6,27 @@ using System.Text;
 
 namespace RRS.Tools.Protobuf
 {
+    [ProtoContract]
+    public class RobolandConnection
+    {
+        [ProtoMember(1)]
+        public string ip = "";
+        [ProtoMember(2)]
+        public string status = "";
+        [ProtoMember(3)]
+        public ulong time = 0;
+
+        public RobolandConnection(string ip, string status = "")
+        {
+            this.ip = ip;
+            this.status = status;
+        }
+
+        public RobolandConnection()
+        {
+
+        }
+    }
 
     [ProtoContract]
     public class RRSHeader

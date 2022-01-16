@@ -10,31 +10,32 @@ public class AddForceInformationMono : MonoBehaviour
     public GameObject target;
     public GameObject workspace;
     public GameObject coupled_gripper;
+    public Movo movo_ref;
 
-    private float pourerMeasuredWeight;
-    private float pouredMeasuredWeight;
+    private double pourerMeasuredWeight;
+    private double pouredMeasuredWeight;
 
     public float getPourerMeasuredWeight()
     {
-        return this.pourerMeasuredWeight;
+        return (float)this.pourerMeasuredWeight;
     }
 
-    public void setPourerMeasuredWeight(float measuredWeight)
+    public void setPourerMeasuredWeight(double measuredWeight)
     {
         this.pourerMeasuredWeight = measuredWeight;
     }
 
     public float getPouredMeasuredWeight()
     {
-        return this.pouredMeasuredWeight;
+        return (float)this.pouredMeasuredWeight;
     }
 
-    public void setPouredMeasuredWeight(float measuredWeight)
+    public void setPouredMeasuredWeight(double measuredWeight)
     {
         this.pouredMeasuredWeight = measuredWeight;
     }
 
-    private void weightMeasurement() {
+    private void weightMeasurementSim() {
         float weight = 0.0f;
         fixedJoint = gameObject.GetComponent<FixedJoint>();
         float forceMagnitude = fixedJoint.currentForce.magnitude;
@@ -49,6 +50,26 @@ public class AddForceInformationMono : MonoBehaviour
             this.setPouredMeasuredWeight(weight);
     }
 
+    private void weightMeasurementReal()
+    {
+        double weight = 0.0;
+        double forceMagnitude = 0;
+        bool pourer = fixedJoint.gameObject.name.Contains("mounting (1)") ? true : false;
+
+        if (pourer)
+        {
+            forceMagnitude = movo_ref.right_arm_force.forceMagnitude();
+            weight = forceMagnitude / Physics.gravity.magnitude;
+            this.setPourerMeasuredWeight(weight);
+        }
+        else
+        {
+            forceMagnitude = movo_ref.left_arm_force.forceMagnitude();
+            weight = forceMagnitude / Physics.gravity.magnitude;
+            this.setPouredMeasuredWeight(weight);
+        }  
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -57,28 +78,35 @@ public class AddForceInformationMono : MonoBehaviour
 
     void FixedUpdate()
     {
-        this.weightMeasurement();
+        if ( Statics.current_environment == Statics.Environments.Sim)
+            this.weightMeasurementSim();
+        else
+            this.weightMeasurementReal();
     }
 
-    private void OnGUI() 
+    private void OnGUI()
     {
-
         GUI.skin.label.fontSize = 25;
         GUI.contentColor = Color.black;
 
-        if (target != null)
+        if (Statics.current_environment == Statics.Environments.Sim)
         {
-            if (fixedJoint.gameObject.name.Contains("mounting (1)")) {
-                GUI.Label(new Rect(950, 50 + 400, 2000, 100), "Liquid in source: " + (this.getPourerMeasuredWeight() * 1000).ToString("N5") + " g");
-            }
-            if (fixedJoint.gameObject.name.Contains("mounting"))
+            if (target != null)
             {
-                if (targetWeight != 0)
-                    GUI.Label(new Rect(950, 10 + 400, 2000, 100), "Target: " + (targetWeight * 1000) + " g");
-                
-                if (this.getPouredMeasuredWeight() != 0)
-                GUI.Label(new Rect(950, 90 + 400, 2000, 100), "Liquid in target: " + (this.getPouredMeasuredWeight() * 1000).ToString("N5") + " g");
+                if (fixedJoint.gameObject.name.Contains("mounting (1)"))
+                {
+                    GUI.Label(new Rect(950, 50 + 400, 2000, 100), "Liquid in source: " + (this.getPourerMeasuredWeight() * 1000).ToString("N5") + " g");
+                }
+                if (fixedJoint.gameObject.name.Contains("mounting"))
+                {
+                    if (targetWeight != 0)
+                        GUI.Label(new Rect(950, 10 + 400, 2000, 100), "Target: " + (targetWeight * 1000) + " g");
+
+                    if (this.getPouredMeasuredWeight() != 0)
+                        GUI.Label(new Rect(950, 90 + 400, 2000, 100), "Liquid in target: " + (this.getPouredMeasuredWeight() * 1000).ToString("N5") + " g");
+                }
             }
         }
+        
     }
 }

@@ -11,7 +11,8 @@ public class RobotInferenceController : Agent
 {
     private int configureAgnet = -1;
     public NNModel model;
-    
+
+    public Movo movo_ref;
     public GameObject workspace;
     public GameObject sources;
     public GameObject targets;
@@ -44,7 +45,7 @@ public class RobotInferenceController : Agent
     float weightOfLiquid = 0.0f;
     bool isTest = true;
     int experiment_indexer = 0;
-    private static float fixedSourceStartVolume = 250f;
+    private static float fixedSourceStartVolume = 226f;
     private int numEpisodes = 0;
     private int numCompletedEpisodes = 0;
     private float timer = 0.0f;
@@ -120,8 +121,8 @@ public class RobotInferenceController : Agent
         if (!isReset)
         {
             timer += Time.deltaTime;
-
-            liquidState = liquid.getLiquidState(source.getSolidObject(), target.getSolidObject(), workspace, liquidState);
+            if(Statics.current_environment == Statics.Environments.Sim)
+                liquidState = liquid.getLiquidState(source.getSolidObject(), target.getSolidObject(), workspace, liquidState);
             if (timer > 5.0f)
             {
                 performPouringAction(actions);
@@ -222,6 +223,9 @@ public class RobotInferenceController : Agent
             {
                 float deltaRotation = 0.0f;
                 float absDischarge = Mathf.Abs(discharge);
+                
+                print(absDischarge);
+
                 if (absDischarge < 0.0001f)
                 {
                     deltaRotation = sourceTurningSpeed > 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
@@ -349,13 +353,13 @@ public class RobotInferenceController : Agent
           
             // Spawn tray
             Bounds workspaceBounds = workspace.GetComponent<Renderer>().bounds;
-            workspace.transform.position = left_marker.transform.position + new Vector3(workspaceBounds.extents.x, 0, 0);
+            workspace.transform.parent = initial_left_marker.transform;
+            workspace.transform.localPosition = new Vector3(-0.16f, 3.37f, 0.05f);
             if (workspace.activeSelf)
             {
                 workspace.SetActive(false);
             }
             workspace.SetActive(true);
-            workspace.transform.parent = coupled_gripper_left.transform;
 
             // Spawn target container
             createSolidObjects(targetName);
@@ -418,8 +422,11 @@ public class RobotInferenceController : Agent
         AddForceInformationMono fInfoLeft = sensor_left_arm.GetComponent<AddForceInformationMono>();
         
         if (fInfoLeft == null)
+        {
             fInfoLeft = sensor_left_arm.AddComponent<AddForceInformationMono>();
-        
+            
+        }
+        fInfoLeft.movo_ref = this.movo_ref;
         fInfoLeft.coupled_gripper = coupled_gripper_left;
         fInfoLeft.target = workspace;
         fInfoLeft.targetWeight = target_to_fill;
@@ -427,10 +434,13 @@ public class RobotInferenceController : Agent
         // Right side sensors
         FixedJoint fj_right_sensor = sensor_right_arm.GetComponent<FixedJoint>();
         AddForceInformationMono fInfoRight = sensor_right_arm.GetComponent<AddForceInformationMono>();
-        
-        if (fInfoRight == null)
-            fInfoRight = sensor_right_arm.AddComponent<AddForceInformationMono>();
 
+        if (fInfoRight == null)
+        {
+            fInfoRight = sensor_right_arm.AddComponent<AddForceInformationMono>();
+        }
+
+        fInfoRight.movo_ref = this.movo_ref;
         fInfoRight.coupled_gripper = coupled_gripper_right;
         fInfoRight.target = source.getSolidObject();
     }

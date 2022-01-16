@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.IO;
 using ProtoBuf;
 using RRS.Tools.Network;
@@ -40,6 +42,11 @@ public class Movo : MonoBehaviour
     Net2.Net2HandlerSubscriber subscriber_rrs_joint_command_right;
 
     #endregion
+
+    void Start()
+    {
+        Statics.movo_ref = this;
+    }
 
     public enum Links
     {
@@ -88,6 +95,9 @@ public class Movo : MonoBehaviour
     public GameObject[] left_finger_joints;
     public GameObject[] right_finger_joints;
     public GameObject linear_joint;
+
+    public HapticRender right_arm_force;
+    public HapticRender left_arm_force;
 
     public Lidar lidar_front;
     public Lidar lidar_rear;
@@ -139,8 +149,11 @@ public class Movo : MonoBehaviour
     public float friction = 0.05f;
     public float target_velocity = 0.7f;
 
+   
+
     void initJointsConfig()
     {
+
         foreach (var item in right_kinova.joints)
         {
             item.angularDamping = angular_friction;
@@ -171,24 +184,73 @@ public class Movo : MonoBehaviour
 
     void init()
     {
+        
         d_joints = new float[joint_numbers];
         c_joints = new float[joint_numbers];
 
-        publisher_joint_state = Net2.Publisher("joint_state");
-        publisher_camera_color = Net2.Publisher("camera_color");
-        publisher_camera_info = Net2.Publisher("camera_info");
-        publisher_nmpc_in_right = Net2.Publisher("nmpc_right_in");
-        publisher_nmpc_in_left = Net2.Publisher("nmpc_left_in");
-        subscriber_rrs_command = Net2.Subscriber("rrs_ros-rrs_command");
-     
-        subscriber_rrs_joint_command_left = Net2.Subscriber("rrs_ros-joint_left");
-        subscriber_rrs_joint_command_left.delegateNewData += Subscriber_rrs_joint_command_left_delegateNewData;
-      
-        subscriber_rrs_joint_command_right = Net2.Subscriber("rrs_ros-joint_right");
-        subscriber_rrs_joint_command_right.delegateNewData += Subscriber_rrs_joint_command_right_delegateNewData;
+        if (Statics.current_environment == Statics.Environments.Sim)
+        {
+            publisher_joint_state = Net2.Publisher("joint_state");
+            publisher_camera_color = Net2.Publisher("camera_color");
+            publisher_camera_info = Net2.Publisher("camera_info");
+            publisher_nmpc_in_right = Net2.Publisher("nmpc_right_in");
+            publisher_nmpc_in_left = Net2.Publisher("nmpc_left_in");
+            subscriber_rrs_command = Net2.Subscriber("rrs_ros-rrs_command");
 
-        //Sensors
-        color_camera.delegateCameraDataChanged += Color_camera_delegateCameraDataChanged;
+            subscriber_rrs_joint_command_left = Net2.Subscriber("rrs_ros-joint_left");
+            subscriber_rrs_joint_command_left.delegateNewData += Subscriber_rrs_joint_command_left_delegateNewData;
+
+            subscriber_rrs_joint_command_right = Net2.Subscriber("rrs_ros-joint_right");
+            subscriber_rrs_joint_command_right.delegateNewData += Subscriber_rrs_joint_command_right_delegateNewData;
+
+            //Sensors
+            color_camera.delegateCameraDataChanged += Color_camera_delegateCameraDataChanged;
+        }
+        else
+        {
+            right_arm_force = new HapticRender(Statics.right_container_distance);
+            left_arm_force = new HapticRender(Statics.left_container_distance);
+        }
+    }
+
+    public void Network_manager_movo_status_eventDataUpdated(MovoStatus status)
+    {
+        //print("Get status");
+
+        for (int i = 0; i < 7; i++)
+        {
+            d_joints[i] = status.right_arm.joints[i].position * Mathf.Rad2Deg;
+            //print(d_joints[i]);
+        }
+
+        for (int i = 8; i < 15; i++)
+        {
+            d_joints[i] = status.left_arm.joints[i - 8].position * Mathf.Rad2Deg;
+            //print(d_joints[i]);
+
+        }
+
+        //print("===");
+    }
+
+    public void Network_manager_right_arm_eventDataUpdated(HapticRender render)
+    {
+        //Right Force
+        //print("Get right");
+        if (right_arm_force != null)
+        right_arm_force.addMessurment(render);
+
+       
+    }
+
+    public void Network_manager_left_arm_eventDataUpdated(HapticRender render)
+    {
+        //Left Force
+        //print("Get left");
+        if (left_arm_force != null)
+        left_arm_force.addMessurment(render);
+
+
     }
 
     private void Normal_camera_delegateCameraDataChanged(byte[] buffer)
@@ -376,23 +438,44 @@ public class Movo : MonoBehaviour
 
     void simpleviz()
     {
-        if (enable_script_control)
+        if (Statics.current_environment == Statics.Environments.Sim)
         {
-            right_arm_1 += d_joints[0] * Time.deltaTime;
-            right_arm_2 += d_joints[1] * Time.deltaTime * -1;
-            right_arm_3 += d_joints[2] * Time.deltaTime;
-            right_arm_4 += d_joints[3] * Time.deltaTime;
-            right_arm_5 += d_joints[4] * Time.deltaTime;
-            right_arm_6 += d_joints[5] * Time.deltaTime;
-            right_arm_7 += d_joints[6] * Time.deltaTime;
+            if (enable_script_control)
+            {
+                right_arm_1 += d_joints[0] * Time.deltaTime;
+                right_arm_2 += d_joints[1] * Time.deltaTime * -1;
+                right_arm_3 += d_joints[2] * Time.deltaTime;
+                right_arm_4 += d_joints[3] * Time.deltaTime;
+                right_arm_5 += d_joints[4] * Time.deltaTime;
+                right_arm_6 += d_joints[5] * Time.deltaTime;
+                right_arm_7 += d_joints[6] * Time.deltaTime;
 
-            left_arm_1 += d_joints[8] * Time.deltaTime;
-            left_arm_2 += d_joints[9] * Time.deltaTime * -1;
-            left_arm_3 += d_joints[10] * Time.deltaTime;
-            left_arm_4 += d_joints[11] * Time.deltaTime;
-            left_arm_5 += d_joints[12] * Time.deltaTime;
-            left_arm_6 += d_joints[13] * Time.deltaTime;
-            left_arm_7 += d_joints[14] * Time.deltaTime;
+                left_arm_1 += d_joints[8] * Time.deltaTime;
+                left_arm_2 += d_joints[9] * Time.deltaTime * -1;
+                left_arm_3 += d_joints[10] * Time.deltaTime;
+                left_arm_4 += d_joints[11] * Time.deltaTime;
+                left_arm_5 += d_joints[12] * Time.deltaTime;
+                left_arm_6 += d_joints[13] * Time.deltaTime;
+                left_arm_7 += d_joints[14] * Time.deltaTime;
+            }
+        }
+        else
+        {
+            right_arm_1 = d_joints[0];
+            right_arm_2 = d_joints[1] * -1;
+            right_arm_3 = d_joints[2];
+            right_arm_4 = d_joints[3];
+            right_arm_5 = d_joints[4];
+            right_arm_6 = d_joints[5];
+            right_arm_7 = d_joints[6];
+
+            left_arm_1 = d_joints[8];
+            left_arm_2 = d_joints[9] * -1;
+            left_arm_3 = d_joints[10];
+            left_arm_4 = d_joints[11];
+            left_arm_5 = d_joints[12];
+            left_arm_6 = d_joints[13];
+            left_arm_7 = d_joints[14];
         }
 
         //head_pan = d_joints[17] * -1;
@@ -519,8 +602,46 @@ public class Movo : MonoBehaviour
         Serializer.Serialize<RVector7>(ms, left_marker);
         byte[] data_left = ms.ToArray();
 
-        publisher_nmpc_in_right.Send(data_right);
-        publisher_nmpc_in_left.Send(data_left);
+        if (Statics.current_environment == Statics.Environments.Sim)
+        {
+            publisher_nmpc_in_right.Send(data_right);
+            publisher_nmpc_in_left.Send(data_left);
+        }
+        else
+        {
+            HapticCommand right_command = new HapticCommand();
+            right_command.position = new RVector3();
+            right_command.rotation_q = new SVector4();
+
+            right_command.position.x = right_marker.x;
+            right_command.position.y = right_marker.y;
+            right_command.position.z = right_marker.z;
+
+            right_command.rotation_q.x = right_marker.qx;
+            right_command.rotation_q.y = right_marker.qy;
+            right_command.rotation_q.z = right_marker.qz;
+            right_command.rotation_q.w = right_marker.qw;
+
+            //print("Send real message to right arm");
+            Statics.network_manager_right_arm.sendMessage(right_command);
+
+            HapticCommand left_command = new HapticCommand();
+            left_command.position = new RVector3();
+            left_command.rotation_q = new SVector4();
+
+            left_command.position.x = left_marker.x;
+            left_command.position.y = left_marker.y;
+            left_command.position.z = left_marker.z;
+
+
+            left_command.rotation_q.x = left_marker.qx;
+            left_command.rotation_q.y = left_marker.qy;
+            left_command.rotation_q.z = left_marker.qz;
+            left_command.rotation_q.w = left_marker.qw;
+
+            //print("Send real message to left arm");
+            Statics.network_manager_left_arm.sendMessage(left_command);
+        }
 
         //print("published");
     }
@@ -528,6 +649,7 @@ public class Movo : MonoBehaviour
     private void sendState()
     {
         //sendGroundtruth();
+        if (Statics.current_environment == Statics.Environments.Sim)
         sendJointState();
         //sendJointTF();
         sendNMPCMarkers();
@@ -734,6 +856,45 @@ public class Movo : MonoBehaviour
         {
             init();
             inited = true;
+        }
+    }
+
+    private float originalWidth = 1000;
+    private float originalHeight = 800;
+
+    [DebugGUIGraph(min: -1, max: 1, r: 1, g: 0, b: 0, group:0, autoScale: true)]
+    float lm = 0;
+    [DebugGUIGraph(min: -1, max: 1, r: 0, g: 1, b: 0, group: 0, autoScale: true)]
+    float raw_lm = 0;
+
+    [DebugGUIGraph(min: -1, max: 1, r: 1, g: 0, b: 0, group: 1, autoScale: true)]
+    float rm = 0;
+    [DebugGUIGraph(min: -1, max: 1, r: 0, g: 1, b: 0, group: 1, autoScale: true)]
+    float raw_rm = 0;
+
+    private void OnGUI()
+    {
+        GUI.skin.label.fontSize = 22;
+        GUI.contentColor = Color.black;
+
+        Vector3 scale = new Vector3();
+
+        scale.x = Screen.width / originalWidth;
+        scale.y = Screen.height / originalHeight;
+        scale.z = 1.0f;
+
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, scale);
+
+        if (left_arm_force != null && right_arm_force != null)
+        {
+            lm = left_arm_force.forceMagnitude() * 1000;
+            rm = right_arm_force.forceMagnitude() * 1000;
+
+            raw_lm = left_arm_force.raw_magnitude * 1000;
+            raw_rm = right_arm_force.raw_magnitude * 1000;
+
+            GUI.Label(new Rect(10, 50, 2000, 100), "Right Hand Weight: " + rm.ToString("N2"));
+            GUI.Label(new Rect(10, 75, 2000, 100), "Left Hand Weight: " + lm.ToString("N2"));
         }
     }
 }
