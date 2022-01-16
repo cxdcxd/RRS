@@ -11,7 +11,7 @@ public class Manager : MonoBehaviour
     void Start()
     {
         QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 50;
+        Application.targetFrameRate = 100;
 
         AsyncIO.ForceDotNet.Force();
 

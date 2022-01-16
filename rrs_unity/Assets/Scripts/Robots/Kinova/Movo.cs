@@ -96,8 +96,8 @@ public class Movo : MonoBehaviour
     public GameObject[] right_finger_joints;
     public GameObject linear_joint;
 
-    public HapticRender right_arm_force;
-    public HapticRender left_arm_force;
+    public HapticRender right_arm_force = new HapticRender();
+    public HapticRender left_arm_force = new HapticRender();
 
     public Lidar lidar_front;
     public Lidar lidar_rear;
@@ -862,16 +862,12 @@ public class Movo : MonoBehaviour
     private float originalWidth = 1000;
     private float originalHeight = 800;
 
-    [DebugGUIGraph(min: -1, max: 1, r: 1, g: 0, b: 0, group:0, autoScale: true)]
+    [DebugGUIGraph(min: -1, max: 1, r: 0, g: 1, b: 0, group:0, autoScale: true)]
     float lm = 0;
-    [DebugGUIGraph(min: -1, max: 1, r: 0, g: 1, b: 0, group: 0, autoScale: true)]
-    float raw_lm = 0;
-
-    [DebugGUIGraph(min: -1, max: 1, r: 1, g: 0, b: 0, group: 1, autoScale: true)]
-    float rm = 0;
+  
     [DebugGUIGraph(min: -1, max: 1, r: 0, g: 1, b: 0, group: 1, autoScale: true)]
-    float raw_rm = 0;
-
+    float rm = 0;
+   
     private void OnGUI()
     {
         GUI.skin.label.fontSize = 22;
@@ -888,11 +884,8 @@ public class Movo : MonoBehaviour
 
         if (left_arm_force != null && right_arm_force != null)
         {
-            lm = left_arm_force.forceMagnitude() * 1000;
-            rm = right_arm_force.forceMagnitude() * 1000;
-
-            raw_lm = left_arm_force.raw_magnitude * 1000;
-            raw_rm = right_arm_force.raw_magnitude * 1000;
+             lm = left_arm_force.forceMagnitude() * 1000;
+             rm = right_arm_force.forceMagnitude() * 1000;
 
             //print("Left Check :" + left_arm_force.check);
             //print("Right Check :" + right_arm_force.check);

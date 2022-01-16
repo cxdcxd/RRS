@@ -501,6 +501,11 @@ namespace RRS.Tools.Protobuf
             return (float)current_magnitude; 
         }
 
+        public void setForceMagnitude(float x)
+        {
+            current_magnitude = x;
+        }
+
        
     }
 

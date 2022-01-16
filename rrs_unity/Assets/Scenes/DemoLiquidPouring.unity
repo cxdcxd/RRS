@@ -1662,7 +1662,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 8000
-  model: {fileID: 5022602860645237092, guid: 37e1043507f62c442a88209cf43d32f5, type: 3}
+  model: {fileID: 5022602860645237092, guid: cd9c340e1431f25489f42123f63c5b76, type: 3}
   movo_ref: {fileID: 9014223842663809284}
   workspace: {fileID: 1224750476669689966}
   sources: {fileID: 2597606513790377743}
@@ -16130,7 +16130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 1
+  DecisionPeriod: 5
   TakeActionsBetweenDecisions: 1
 --- !u!1 &8660268952318652444
 GameObject:

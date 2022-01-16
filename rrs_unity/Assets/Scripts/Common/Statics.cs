@@ -43,6 +43,7 @@ public class Statics
         public string consul_network_mask = "255.255.255.0";
         public string ntp_server_host_name = "8500";
         public bool use_relative_origin = false;
+        public bool is_real = false;
     }
 
     private static Statics Instance
@@ -75,6 +76,10 @@ public class Statics
 
         ProcessResult result = xml_manager.loadXML<Config>(folder_path + "config.xml");
         current_config = (Config)result.Result;
+
+        if (current_config.is_real) current_environment = Environments.Real;
+
+        Debug.Log("Current mode " + current_environment.ToString());
 
         if (current_environment == Environments.Sim)
         {

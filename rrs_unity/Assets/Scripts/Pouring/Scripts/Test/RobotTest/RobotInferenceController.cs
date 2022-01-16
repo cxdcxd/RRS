@@ -352,8 +352,19 @@ public class RobotInferenceController : Agent
           
             // Spawn tray
             Bounds workspaceBounds = workspace.GetComponent<Renderer>().bounds;
-            workspace.transform.parent = initial_left_marker.transform;
-            workspace.transform.localPosition = new Vector3(-0.16f, 3.37f, 0.05f);
+
+            if (Statics.current_environment == Statics.Environments.Real)
+            {
+                workspace.transform.parent = initial_left_marker.transform;
+                workspace.transform.localPosition = new Vector3(-0.16f, 3.37f, 0.05f);
+            }
+            else
+            {
+                workspace.transform.parent = coupled_gripper_left.transform;
+                workspace.transform.localPosition = new Vector3(0, 0, -0.875f);
+                workspace.transform.localRotation = Quaternion.Euler(-180, 90, 0);
+            }
+
             if (workspace.activeSelf)
             {
                 workspace.SetActive(false);
@@ -362,8 +373,10 @@ public class RobotInferenceController : Agent
 
             // Spawn target container
             createSolidObjects(targetName);
-            target.getSolidObject().transform.position = workspace.transform.position + new Vector3(0.0f, 6.0f * workspaceBounds.extents.y, 0.0f);
             target.setChildOf(workspace);
+            target.getSolidObject().transform.localPosition = new Vector3(0.0f, 5, 0.0f);
+            target.getSolidObject().transform.localRotation = Quaternion.identity;
+            target.getSolidObject().transform.localScale = new Vector3(3, 150, 3);
 
             // Spawn liquid
             print("RUNNING INFERENCE EXPERIMENTS ON TRAINED AGENT!!!");

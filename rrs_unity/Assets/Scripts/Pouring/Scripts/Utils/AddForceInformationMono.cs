@@ -45,9 +45,16 @@ public class AddForceInformationMono : MonoBehaviour
         weight = weight - (workspaceMass + coupledGripperMass);
         bool pourer = fixedJoint.gameObject.name.Contains("mounting (1)") ? true : false;
         if (pourer)
+        {
+            movo_ref.right_arm_force.setForceMagnitude(weight);
             this.setPourerMeasuredWeight(weight);
+        }
         else
+        {
+            movo_ref.left_arm_force.setForceMagnitude(weight);
             this.setPouredMeasuredWeight(weight);
+        }
+            
     }
 
     private void weightMeasurementReal()
