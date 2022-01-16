@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using NVIDIA.Flex;
+using System;
 
 public class UserGUI : MonoBehaviour
 {
@@ -35,10 +36,10 @@ public class UserGUI : MonoBehaviour
 
     void Start()
     {
-        right_marker.transform.localPosition = initial_right_marker.localPosition;
-        right_marker.transform.localRotation = initial_right_marker.localRotation;
-        left_marker.transform.localPosition = initial_left_marker.localPosition;
-        left_marker.transform.localRotation = initial_left_marker.localRotation;
+        right_marker.transform.position = initial_right_marker.position;
+        right_marker.transform.rotation = initial_right_marker.rotation;
+        left_marker.transform.position = initial_left_marker.position;
+        left_marker.transform.rotation = initial_left_marker.rotation;
     }
 
     private void OnGUI()
@@ -55,12 +56,41 @@ public class UserGUI : MonoBehaviour
 
         if (GUI.Button(new Rect(20, 110 + 200, 100, 50), "reset"))
         {
-            print("Restarting!!!");
-            right_marker.transform.localPosition = initial_right_marker.localPosition;
-            right_marker.transform.localRotation = initial_right_marker.localRotation;
-            left_marker.transform.localPosition = initial_left_marker.localPosition;
-            left_marker.transform.localRotation = initial_left_marker.localRotation;
             controller.ConfigureAgent(-1);
+            print("Restarting!!!");
+
+
+            if (Statics.current_environment == Statics.Environments.Real)
+            {
+                if (Statics.network_manager_left_arm != null)
+                {
+                    Statics.network_manager_left_arm.killAll();
+                    Statics.network_manager_left_arm = null;
+                }
+
+                if (Statics.network_manager_right_arm != null)
+                {
+                    Statics.network_manager_right_arm.killAll();
+                    Statics.network_manager_right_arm = null;
+                }
+
+                if (Statics.network_manager_movo_status != null)
+                {
+                    Statics.network_manager_movo_status.killAll();
+                    Statics.network_manager_right_arm = null;
+                }
+            }
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            SceneManager.LoadScene(0);
+
+            //right_marker.transform.localPosition = initial_right_marker.localPosition;
+            //right_marker.transform.localRotation = initial_right_marker.localRotation;
+            //left_marker.transform.localPosition = initial_left_marker.localPosition;
+            //left_marker.transform.localRotation = initial_left_marker.localRotation;
+          
         }
 
         // Pouring Mugs 

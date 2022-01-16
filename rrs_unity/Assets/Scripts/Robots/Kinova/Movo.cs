@@ -885,6 +885,7 @@ public class Movo : MonoBehaviour
 
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, scale);
 
+
         if (left_arm_force != null && right_arm_force != null)
         {
             lm = left_arm_force.forceMagnitude() * 1000;
@@ -892,6 +893,9 @@ public class Movo : MonoBehaviour
 
             raw_lm = left_arm_force.raw_magnitude * 1000;
             raw_rm = right_arm_force.raw_magnitude * 1000;
+
+            //print("Left Check :" + left_arm_force.check);
+            //print("Right Check :" + right_arm_force.check);
 
             GUI.Label(new Rect(10, 50, 2000, 100), "Right Hand Weight: " + rm.ToString("N2"));
             GUI.Label(new Rect(10, 75, 2000, 100), "Left Hand Weight: " + lm.ToString("N2"));

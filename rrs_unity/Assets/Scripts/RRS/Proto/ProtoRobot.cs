@@ -430,12 +430,13 @@ namespace RRS.Tools.Protobuf
 
         private List<double> list = new List<double>();
         double[] filtered_list;
-        private int window = 20;
+        private int window = 1;
         private float distance = 0.01f;
 
-        bool use_filter = true;
+        bool use_filter = false;
+        bool use_moving_average = false;
         IIR_Butterworth_Interface IBI;
-        double f1 = 49;          //Cut-off
+        double f1 = 10;          //Cut-off
         static double  sf = 100; //Sampling frequency
         int order_filt = 2;      //Order
         double Nyquist_F = sf / 2;
@@ -444,7 +445,7 @@ namespace RRS.Tools.Protobuf
 
         public double current_magnitude = 0;
         public float raw_magnitude = 0;
-
+        public bool check;
         public HapticRender()
         {
 
@@ -456,16 +457,24 @@ namespace RRS.Tools.Protobuf
             IBI = new IIR_Butterworth_C_Sharp.IIR_Butterworth_Implementation();
 
             coeff_final = IBI.Lp2lp(f1 / Nyquist_F, order_filt);
-            bool check = IBI.Check_stability_iir(coeff_final);
+            check = IBI.Check_stability_iir(coeff_final);
         }
 
         public void addMessurment(HapticRender next)
         {
+            window = use_moving_average ? 20 : 1;
+
             Vector3 vt = new Vector3(next.torque.x, next.torque.y, next.torque.theta);
             float final = vt.magnitude / distance;
 
             final = (final / Physics.gravity.magnitude);
             raw_magnitude = final;
+
+            if ( window == 1)
+            {
+                current_magnitude = raw_magnitude;
+                return;
+            }
 
             list.Add(final);
 
@@ -483,7 +492,7 @@ namespace RRS.Tools.Protobuf
 
         public float forceMagnitude()
         {
-            if (!use_filter)
+            if (!use_filter && use_moving_average)
             {
                 if (list.Count > 0)
                     return (float)list.Average();

@@ -224,8 +224,7 @@ public class RobotInferenceController : Agent
                 float deltaRotation = 0.0f;
                 float absDischarge = Mathf.Abs(discharge);
                 
-                print(absDischarge);
-
+               
                 if (absDischarge < 0.0001f)
                 {
                     deltaRotation = sourceTurningSpeed > 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
