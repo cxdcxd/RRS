@@ -29,6 +29,7 @@ public class RobotInferenceController : Agent
     public FlexContainer liquid_flex_container;
     public FlexArrayAsset liquid_asset;
 
+    private bool useOnlyLeftSensor = true;
     private Solid source;
     private Solid target;
     private Liquid liquid;
@@ -98,8 +99,13 @@ public class RobotInferenceController : Agent
             sensor.AddObservation(liquid.getFlexParticleContainer().adhesion); // 1 observation for adhesion of the fluid.
 
             sensor.AddObservation(target_to_fill); // 1 objservation for target weight to fill.
-            sensor.AddObservation(liquidInSource); // 1 observation for weight of the liquid in source container.
-            sensor.AddObservation(discharge); // 1 observation for mass flow rate. 
+            if (!useOnlyLeftSensor) {
+                sensor.AddObservation(liquidInSource); // 1 observation for weight of the liquid in source container.
+                sensor.AddObservation(discharge); // 1 observation for mass flow rate. 
+            } else {
+                sensor.AddObservation(0);
+                sensor.AddObservation(0);
+            }
             sensor.AddObservation(weightOfLiquid); // 1 observation for the current liquid weight in the target container.
             sensor.AddObservation(differenceFillLevel); // 1 observation for current difference from the target level.
             sensor.AddObservation(sourceTilt / 360); //  1 observation for current tilt of the source container about it's axis of rotation. {Action feedback}
@@ -147,7 +153,7 @@ public class RobotInferenceController : Agent
     {   
         // Get actions from agent's action buffer. Overall 4 actions. Move in x, y, z and rotate speed while pouring.
         int actionIndex = -1;
-        float turningSpeedMultiplier = 50.0f;
+        float turningSpeedMultiplier = 25.0f;
         sourceTurningSpeed = turningSpeedMultiplier * Mathf.Clamp(actionBuffers.ContinuousActions[++actionIndex], -1f, 1f); // rotate source by this angle about axis of rotation defined by relative position between source and target.
         robotMovingSpeed = 2.0f * Mathf.Clamp(actionBuffers.ContinuousActions[++actionIndex], -1f, 1f); // Move robotic hand by this speed.
 
@@ -159,10 +165,18 @@ public class RobotInferenceController : Agent
         float filledLevel = (float)weightOfLiquid / target_to_fill;
         float similarity = Vector3.Dot(source.getSolidObject().transform.up, target.getSolidObject().transform.up);
 
-        liquidInSource = sensor_right_arm.GetComponent<AddForceInformationMono>().getPourerMeasuredWeight();
-        if (liquidInSource > 0.01f && originalWeight == 0.0f)
+        bool condition = originalWeight == 0.0f;
+        if (!useOnlyLeftSensor)
         {
-            originalWeight = liquidInSource;
+            liquidInSource = sensor_right_arm.GetComponent<AddForceInformationMono>().getPourerMeasuredWeight();
+            condition = liquidInSource > 0.01f && originalWeight == 0.0f;
+        }
+        if (condition)
+        {
+            if (!useOnlyLeftSensor)
+                originalWeight = liquidInSource;
+            else
+                originalWeight = sensor_right_arm.GetComponent<AddForceInformationMono>().getPourerMeasuredWeight();
             if (originalWeight < target_to_fill)
             {
                 float targetOffset = Random.Range(0.01f, 0.025f);
@@ -174,14 +188,17 @@ public class RobotInferenceController : Agent
             }
         }
 
-        if (previousStepSourceLevel > 0.0f)
+        if (!useOnlyLeftSensor)
         {
-            discharge = previousStepSourceLevel - liquidInSource;
-        }
+            if (previousStepSourceLevel > 0.0f)
+            {
+                discharge = previousStepSourceLevel - liquidInSource;
+            }
 
-        if (previousStepSourceLevel != liquidInSource)
-        {
-            previousStepSourceLevel = liquidInSource;
+            if (previousStepSourceLevel != liquidInSource)
+            {
+                previousStepSourceLevel = liquidInSource;
+            }
         }
 
         Bounds targetBounds = target.getSolidObject().GetComponent<Renderer>().bounds;
@@ -222,26 +239,33 @@ public class RobotInferenceController : Agent
             else
             {
                 float deltaRotation = 0.0f;
-                float absDischarge = Mathf.Abs(discharge);
-                
-               
-                if (absDischarge < 0.0001f)
+                float absDischarge = 0.0f;
+                if (!useOnlyLeftSensor)
+                    absDischarge = Mathf.Abs(discharge);
+
+                if (!useOnlyLeftSensor)
                 {
-                    deltaRotation = sourceTurningSpeed > 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
-                }
+                    if (absDischarge < 0.0001f)
+                    {
+                        deltaRotation = sourceTurningSpeed > 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
+                    }
 
-                if (absDischarge > 0.0002f)
-                {   
-                     deltaRotation = sourceTurningSpeed < 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
+                    if (absDischarge > 0.0002f)
+                    {
+                        deltaRotation = sourceTurningSpeed < 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
+                    }
+                } else {
+                        deltaRotation = sourceTurningSpeed > 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
                 }
-
                 right_marker.transform.RotateAround(effectCenter, Vector3.forward, deltaRotation);
                 sourceTilt += deltaRotation;
             }
         }
 
-        isActionDone = (weightOfLiquid <= originalWeight) && ((weightOfLiquid > 0.01f && differenceFillLevel < 0.020f) || (weightOfLiquid > 0.01f && liquidInSource < 0.001f) ||
-                (weightOfLiquid >= target_to_fill));
+        bool isActionDone = (weightOfLiquid <= originalWeight) && ((weightOfLiquid > 0.01f && differenceFillLevel < 0.020f) || (weightOfLiquid >= target_to_fill));
+        if (!useOnlyLeftSensor)
+            isActionDone = (weightOfLiquid <= originalWeight) && ((weightOfLiquid > 0.01f && differenceFillLevel < 0.020f) || (weightOfLiquid > 0.01f && liquidInSource < 0.001f) ||
+                (weightOfLiquid >= target_to_fill)); 
 
         if (isActionDone)
         {
@@ -280,8 +304,11 @@ public class RobotInferenceController : Agent
                 }
                 print("Average Pouring Error: " + averagePouringError + " grams");
                 print("Episode " + numEpisodes + ": Final Reward: " + GetCumulativeReward());
-                var statsRecorder = Academy.Instance.StatsRecorder;
-                statsRecorder.Add("Avg. Pouring Error (grams)", averagePouringError);
+                if (!isTest)
+                {
+                    var statsRecorder = Academy.Instance.StatsRecorder;
+                    statsRecorder.Add("Avg. Pouring Error (grams)", averagePouringError);
+                }
             }
         }
     }
