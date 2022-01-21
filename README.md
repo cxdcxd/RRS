@@ -1,4 +1,4 @@
-# Realistic Robotic Simulator (RRS)
+# Realistic Robotic Simulator (RRS) for Pouring Liquids
 
 ![Alt text](sample2.png?raw=true "Title")
 
