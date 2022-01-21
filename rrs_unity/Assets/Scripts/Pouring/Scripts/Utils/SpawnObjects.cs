@@ -73,7 +73,8 @@ public class SpawnObjects: MonoBehaviour {
                                       FlexContainer flexParticleContainer, 
                                       FlexArrayAsset liquidAsset,
                                       float liquidVolume,
-                                      float density)
+                                      float density,
+                                      bool render_fluid=true)
     {
         if (liquid != null)
         {
@@ -85,7 +86,7 @@ public class SpawnObjects: MonoBehaviour {
         liquid.setFlexParticleContainer(flexParticleContainer);
         liquid.setLiquidAsset(liquidAsset);
         liquid.setEnvironmentName(agent.name);
-        liquid.createLiquid(liquidVolume, density, liquid_pourer:pourer);
+        liquid.createLiquid(liquidVolume, density, liquid_pourer:pourer, render_fluid:render_fluid);
 
         return liquid;
     }

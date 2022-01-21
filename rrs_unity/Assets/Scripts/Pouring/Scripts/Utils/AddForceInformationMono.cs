@@ -66,13 +66,13 @@ public class AddForceInformationMono : MonoBehaviour
         if (pourer)
         {
             forceMagnitude = movo_ref.right_arm_force.forceMagnitude();
-            weight = forceMagnitude / Physics.gravity.magnitude;
+            weight = forceMagnitude;
             this.setPourerMeasuredWeight(weight);
         }
         else
         {
             forceMagnitude = movo_ref.left_arm_force.forceMagnitude();
-            weight = forceMagnitude / Physics.gravity.magnitude;
+            weight = forceMagnitude;
             this.setPouredMeasuredWeight(weight);
         }  
     }

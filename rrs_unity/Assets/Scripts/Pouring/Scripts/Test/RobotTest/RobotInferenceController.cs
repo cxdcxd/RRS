@@ -11,7 +11,7 @@ public class RobotInferenceController : Agent
 {
     private int configureAgnet = -1;
     public NNModel model;
-
+    public bool render_liquid = true;
     public Movo movo_ref;
     public GameObject workspace;
     public GameObject sources;
@@ -28,6 +28,7 @@ public class RobotInferenceController : Agent
     public GameObject coupled_gripper_left;
     public FlexContainer liquid_flex_container;
     public FlexArrayAsset liquid_asset;
+    public bool render_fluid = true;
 
     private bool useOnlyLeftSensor = true;
     private Solid source;
@@ -51,7 +52,6 @@ public class RobotInferenceController : Agent
     private int numCompletedEpisodes = 0;
     private float timer = 0.0f;
     private bool isActionDone = false;
-
     private GameObject clickedPourer;
 
     /// <summary>
@@ -159,6 +159,8 @@ public class RobotInferenceController : Agent
 
         weightOfLiquid = sensor_left_arm.GetComponent<AddForceInformationMono>().getPouredMeasuredWeight();
         
+        //print("WEIGHT IN TARGET: " + weightOfLiquid);
+        
         if (weightOfLiquid > 0.01f)
             differenceFillLevel = Mathf.Abs(target_to_fill - weightOfLiquid);
 
@@ -219,7 +221,7 @@ public class RobotInferenceController : Agent
             if (!withinTargetRim)
             {
                 Vector3 newSourceLocation = Vector3.zero;
-                if (source.getSolidObject().transform.position.y - target.getSolidObject().transform.position.y >= 2.5f)
+                if (source.getSolidObject().transform.position.y - target.getSolidObject().transform.position.y >= 4.0f)
                 {
                     float deltaDistance = robotMovingSpeed > 0.0f ? (robotMovingSpeed * Time.deltaTime) : 0.0f;
                     newSourceLocation = deltaDistance * directionOfMovement;
@@ -262,9 +264,9 @@ public class RobotInferenceController : Agent
             }
         }
 
-        bool isActionDone = (weightOfLiquid <= originalWeight) && ((weightOfLiquid > 0.01f && differenceFillLevel < 0.020f) || (weightOfLiquid >= target_to_fill));
+        isActionDone = (weightOfLiquid <= originalWeight) && ((weightOfLiquid > 0.01f && differenceFillLevel < 0.005f) || (weightOfLiquid >= target_to_fill));
         if (!useOnlyLeftSensor)
-            isActionDone = (weightOfLiquid <= originalWeight) && ((weightOfLiquid > 0.01f && differenceFillLevel < 0.020f) || (weightOfLiquid > 0.01f && liquidInSource < 0.001f) ||
+            isActionDone = (weightOfLiquid <= originalWeight) && ((weightOfLiquid > 0.01f && differenceFillLevel < 0.005f) || (weightOfLiquid > 0.01f && liquidInSource < 0.001f) ||
                 (weightOfLiquid >= target_to_fill)); 
 
         if (isActionDone)
@@ -359,7 +361,7 @@ public class RobotInferenceController : Agent
             discharge = 0.0f;
             retract = false;
             retractTimer = 0.0f;
-            toleranceInPouringDeviation = 0.02f;
+            toleranceInPouringDeviation = 0.005f;
 
             // Spawn pourer
             createSolidObjects(sourceName);
@@ -403,7 +405,7 @@ public class RobotInferenceController : Agent
             target.setChildOf(workspace);
             target.getSolidObject().transform.localPosition = new Vector3(0.0f, 5, 0.0f);
             target.getSolidObject().transform.localRotation = Quaternion.identity;
-            target.getSolidObject().transform.localScale = new Vector3(3, 150, 3);
+            target.getSolidObject().transform.localScale = new Vector3(2, 100, 2);
 
             // Spawn liquid
             print("RUNNING INFERENCE EXPERIMENTS ON TRAINED AGENT!!!");
@@ -437,7 +439,7 @@ public class RobotInferenceController : Agent
                     break;
             }
             color.a = 0.85f;
-            liquid = SpawnObjects.createLiquid(liquid, source, this.gameObject, liquid_flex_container, liquid_asset, fixedSourceStartVolume, density);
+            liquid = SpawnObjects.createLiquid(liquid, source, this.gameObject, liquid_flex_container, liquid_asset, fixedSourceStartVolume, density, render_fluid:this.render_fluid);
             liquid.getFlexParticleContainer().fluidMaterial.color = color;
             print("Liquid is: " + liquid.getFlexParticleContainer().name);
             ResetLiquidStateInformation();

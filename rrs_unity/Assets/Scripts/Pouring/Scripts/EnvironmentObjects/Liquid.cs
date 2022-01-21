@@ -175,7 +175,7 @@ public class Liquid : MonoBehaviour {
     /// <summary>
     /// Creates the FLex liquid array actor.
     /// </summary>
-    private void createLiquidActor()
+    private void createLiquidActor(bool render = true)
     {
         // Add relevant components.
         FlexArrayActor liquidActor = this.getLiquid().AddComponent<FlexArrayActor>();
@@ -186,7 +186,8 @@ public class Liquid : MonoBehaviour {
         liquidActor.enabled = false;
         liquidActor.enabled = true;
         liquidActor.massScale = 1;
-        this.getLiquid().AddComponent<FlexFluidRenderer>(); // Must for rendering fluid in the scene.
+        if (render)
+            this.getLiquid().AddComponent<FlexFluidRenderer>(); // Must for rendering fluid in the scene.
         // Set to crate array actor.
         this.setLiquidActor(liquidActor);
     }
@@ -209,7 +210,7 @@ public class Liquid : MonoBehaviour {
 
     /// <summary>
     /// API to be used by client to create a liquid in scene with some desired set initial settings.
-    public void createLiquid(float volume, float density = 1.0f, Solid liquid_pourer=null) {
+    public void createLiquid(float volume, float density = 1.0f, Solid liquid_pourer=null, bool render_fluid = true) {
         // Create new gameobject for liquid
         this.setLiquidObject();
         
@@ -230,7 +231,7 @@ public class Liquid : MonoBehaviour {
         this.getLiquid().transform.rotation = liquid_pourer.transform.rotation;
 
         // Create flex array asset for this liquid.
-        createLiquidActor();
+        createLiquidActor(render_fluid);
         // Attach a particle system controller.
         attachParticleSystem();
         // Set particle weight
