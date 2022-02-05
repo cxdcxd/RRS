@@ -51,6 +51,7 @@ mkdir third_party
 cd third_party
 git clone https://github.com/oliora/ppconsul
 cd ppconsul
+git checkout 9f9cea32576f4f2add9f0dc908a2d8288207b6b6
 mkdir build
 cd build
 cmake ..
