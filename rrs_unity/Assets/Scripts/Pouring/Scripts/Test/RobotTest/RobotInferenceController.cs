@@ -6,6 +6,7 @@ using Unity.MLAgents;
 using Unity.Barracuda;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using System;
 
 public class RobotInferenceController : Agent
 {
@@ -53,6 +54,7 @@ public class RobotInferenceController : Agent
     private float timer = 0.0f;
     private bool isActionDone = false;
     private GameObject clickedPourer;
+    public float calibration_target_offset = 10;
 
     /// <summary>
     /// Creates Solid Game Object. Based on string provided, chooses source or target.
@@ -153,7 +155,8 @@ public class RobotInferenceController : Agent
     {   
         // Get actions from agent's action buffer. Overall 4 actions. Move in x, y, z and rotate speed while pouring.
         int actionIndex = -1;
-        float turningSpeedMultiplier = 25.0f;
+
+        float turningSpeedMultiplier = 25f;
         sourceTurningSpeed = turningSpeedMultiplier * Mathf.Clamp(actionBuffers.ContinuousActions[++actionIndex], -1f, 1f); // rotate source by this angle about axis of rotation defined by relative position between source and target.
         robotMovingSpeed = 2.0f * Mathf.Clamp(actionBuffers.ContinuousActions[++actionIndex], -1f, 1f); // Move robotic hand by this speed.
 
@@ -181,7 +184,7 @@ public class RobotInferenceController : Agent
                 originalWeight = sensor_right_arm.GetComponent<AddForceInformationMono>().getPourerMeasuredWeight();
             if (originalWeight < target_to_fill)
             {
-                float targetOffset = Random.Range(0.01f, 0.025f);
+                float targetOffset = UnityEngine.Random.Range(0.01f, 0.025f);
                 target_to_fill = originalWeight - targetOffset;
                 if (target_to_fill < 0.01f)
                 {
@@ -221,7 +224,7 @@ public class RobotInferenceController : Agent
             if (!withinTargetRim)
             {
                 Vector3 newSourceLocation = Vector3.zero;
-                if (source.getSolidObject().transform.position.y - target.getSolidObject().transform.position.y >= 4.0f)
+                if (source.getSolidObject().transform.position.y - target.getSolidObject().transform.position.y >= 6.0f)
                 {
                     float deltaDistance = robotMovingSpeed > 0.0f ? (robotMovingSpeed * Time.deltaTime) : 0.0f;
                     newSourceLocation = deltaDistance * directionOfMovement;
@@ -273,22 +276,33 @@ public class RobotInferenceController : Agent
         {
             if (!retract)
             {
-                retractTimer += Time.deltaTime;
+                //if (Statics.current_environment == Statics.Environments.Sim)
+                //{
+                    retractTimer += Time.deltaTime;
 
-                float cutoffTime = liquid.getFlexParticleContainer().viscosity < 10.0f ? 5.0f : (target_to_fill < 0.1 ? 10.0f : 15.0f);
-                
-                if (retractTimer < cutoffTime)
-                {
-                    if (sourceTurningSpeed < 0)
+                    float cutoffTime = liquid.getFlexParticleContainer().viscosity < 10.0f ? 5.0f : (target_to_fill < 0.1 ? 10.0f : 15.0f);
+
+                    if (retractTimer < cutoffTime)
                     {
-                        right_marker.transform.RotateAround(effectCenter, Vector3.forward, sourceTurningSpeed * Time.deltaTime);
-                        sourceTilt += sourceTurningSpeed * Time.deltaTime;
+                        if (sourceTurningSpeed < 0)
+                        {
+                            right_marker.transform.RotateAround(effectCenter, Vector3.forward, sourceTurningSpeed * Time.deltaTime);
+                            sourceTilt += sourceTurningSpeed * Time.deltaTime;
+                        }
                     }
-                }
-                else
-                {
-                    retract = true;
-                }
+                    else
+                    {
+                        retract = true;
+                    }
+                //}
+                //else
+                //{
+                //    retract = true;
+                //    right_marker.transform.position = initial_right_marker.position;
+                //    right_marker.transform.rotation = initial_right_marker.rotation;
+                //    left_marker.transform.position = initial_left_marker.position;
+                //    left_marker.transform.rotation = initial_left_marker.rotation;
+                //}
             }
             else
             {
@@ -405,7 +419,7 @@ public class RobotInferenceController : Agent
             target.setChildOf(workspace);
             target.getSolidObject().transform.localPosition = new Vector3(0.0f, 5, 0.0f);
             target.getSolidObject().transform.localRotation = Quaternion.identity;
-            target.getSolidObject().transform.localScale = new Vector3(2, 100, 2);
+            target.getSolidObject().transform.localScale = new Vector3(3, 150, 3);
 
             // Spawn liquid
             print("RUNNING INFERENCE EXPERIMENTS ON TRAINED AGENT!!!");
@@ -524,6 +538,7 @@ public class RobotInferenceController : Agent
     public void setTargetToPour(string target)
     {
         float t = float.Parse(target);
+        t = t - calibration_target_offset;
         this.target_to_fill = t / 1000f;
     }
 
