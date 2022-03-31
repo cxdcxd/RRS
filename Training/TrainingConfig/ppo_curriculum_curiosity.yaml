@@ -1,0 +1,185 @@
+default_settings: null
+behaviors:
+  NoPSModel:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 2048
+      buffer_size: 10240
+      learning_rate: 1e-5
+      learning_rate_schedule: linear
+      beta: 5.0e-3
+      epsilon: 0.05
+      lambd: 0.92
+      num_epoch: 5
+    network_settings:
+      use_recurrent: true
+      normalize: false
+      hidden_units: 512
+      num_layers: 3
+      sequence_length: 64
+      memory_size: 256
+      vis_encode_type: simple
+    reward_signals:
+      extrinsic:
+        gamma: 0.99
+        strength: 1.0
+      curiosity:
+        strength: 0.02
+        gamma: 0.99
+    keep_checkpoints: 5
+    max_steps: 10000000
+    time_horizon: 256
+    summary_freq: 100000
+  
+environment_parameters: 
+  density:
+    sampler_type: uniform
+    sampler_parameters:
+      min_value: 0.75
+      max_value: 1.75
+
+  fluid_rest_distance:
+    sampler_type: uniform
+    sampler_parameters:
+      min_value: 0.10
+      max_value: 0.15
+
+  tolerance:
+    sampler_type: uniform
+    sampler_parameters:
+      min_value: 0.02
+      max_value: 0.02
+
+  
+  adhesion:
+    curriculum:
+      - name: AdhesionFirstLesson
+        completion_criteria:
+          measure: progress
+          behavior: NoPSModel
+          signal_smoothing: true
+          min_lesson_threshold: 100
+          threshold: 0.25
+        value: 
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 0.0
+            max_value: 0.005
+      - name: AdhesionSecondLesson
+        completion_criteria:
+          measure: progress
+          behavior: NoPSModel
+          signal_smoothing: true
+          min_lesson_threshold: 100
+          threshold: 0.50
+        value: 
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 0.005
+            max_value: 0.010
+      - name: AdhesionThirdLesson
+        value:
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 0.010
+            max_value: 0.025
+
+  cohesion:
+    curriculum:
+      - name: CohesionFirstLesson
+        completion_criteria:
+          measure: progress
+          behavior: NoPSModel
+          signal_smoothing: true
+          min_lesson_threshold: 100
+          threshold: 0.25
+        value: 
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 0.0
+            max_value: 0.005
+      - name: CohesionSecondLesson
+        completion_criteria:
+          measure: progress
+          behavior: NoPSModel
+          signal_smoothing: true
+          min_lesson_threshold: 100
+          threshold: 0.50
+        value: 
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 0.005
+            max_value: 0.01
+      - name: CohesionThirdLesson
+        value:
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 0.01
+            max_value: 0.2
+
+  surfaceTension:
+    curriculum:
+      - name: SurfaceTensionFirstLesson
+        completion_criteria:
+          measure: progress
+          behavior: NoPSModel
+          signal_smoothing: true
+          min_lesson_threshold: 100
+          threshold: 0.25
+        value: 
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 0.0
+            max_value: 0.005
+      - name: SurfaceTensionSecondLesson
+        completion_criteria:
+          measure: progress
+          behavior: NoPSModel
+          signal_smoothing: true
+          min_lesson_threshold: 100
+          threshold: 0.50
+        value: 
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 0.005
+            max_value: 0.01
+      - name: SurfaceTensionThirdLesson
+        value:
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 0.01
+            max_value: 0.02
+  
+  viscosity:
+    curriculum:
+      - name: ViscosityFirstLesson
+        completion_criteria:
+          measure: progress
+          behavior: NoPSModel
+          signal_smoothing: true
+          min_lesson_threshold: 100
+          threshold: 0.25
+        value: 
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 0.0
+            max_value: 50.0
+      - name: ViscositySecondLesson
+        completion_criteria:
+          measure: progress
+          behavior: NoPSModel
+          signal_smoothing: true
+          min_lesson_threshold: 100
+          threshold: 0.50
+        value: 
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 50.0
+            max_value: 100.0
+      - name: ViscosityThirdLesson
+        value: 
+          sampler_type: uniform
+          sampler_parameters: 
+            min_value: 100.0
+            max_value: 200.0
+     

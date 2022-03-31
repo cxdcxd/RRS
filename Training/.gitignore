@@ -1,0 +1,7 @@
+Assets/ML-Agents
+*.meta
+results
+temp
+ServerBuild
+Recordings
+Logs
