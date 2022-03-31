@@ -48,18 +48,18 @@ setup ~/rrs_ros/devel/setup.bash
 
 # Run example
 
-## 1) ROS Side:
+## Step 1: (ROS Side)
 ```
-roslaunch rrs_ros rrs_main.launch                         
+roslaunch rrs_ros rrs_main.launch 
 ```
 
-## 2) Unity Side:
+## Step 2: (Unity Side)
 ```
-open the scenes/Demo
+open the scenes/DemoLiquidPouring
 Unity3D -> Play
 ```
 
-## 3) ROS Side:
+## Step 3: (ROS Side)
 ```
 roslaunch mpc real_movo_sc.launch                         
 ```
@@ -84,7 +84,11 @@ roslaunch mpc real_movo_sc.launch
       <use_relative_origin>false</use_relative_origin>
     </Config>
     
-# For RL and Gym development
+# For RL and Gym Training (No need to ROS Side)
+```
+open the Training\Assets\Scenes\NoParticleState.unity
+```
+
 ## Virtual Environment  
 ```
 mkdir ~/python-envs
@@ -104,11 +108,11 @@ pip3 install -e ./ml-agents
 
 ## Tensor Board 
 ```
-tensorboard --logdir results
+tensorboard.exe --logdir=".\results\PourNet-LSTM" --host="0.0.0.0" --port=6006
 ```  
 
 ## Train example
 ```
-mlagents-learn config/ppo/3DBall.yaml --run-id=first3DBallRun
+ mlagents-learn.exe .\TrainingConfig\TrainingConfig\ppo_curriculum_curiosity_lstm.yaml --env=".\ServerBuild\ServerBuild\LearnPouring" --num-envs=32 --base-port=5000 --run-id="PourNet-LSTM-Left-2"
 ```  
 
