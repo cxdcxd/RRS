@@ -1,0 +1,179 @@
+syntax = "proto2";
+
+message MovoCommand 
+{
+optional string cmd = 1;
+optional RVector3 right_arm_xyz = 2;
+optional RVector3 right_arm_rpy = 3;
+optional RVector3 left_arm_xyz = 4;
+optional RVector3 left_arm_rpy = 5;
+optional int32 version = 6 [default = 0];
+optional uint64 time_span = 7 [default = 0];
+optional int32 right_gripper = 8 [default = 0];
+optional int32 left_gripper = 9 [default = 0];
+optional int32 zposition = 10 [default = 0];
+optional int32 voice = 11 [default = 0];
+optional bool led = 12 [default = false];
+optional int32 speed_x = 13 [default = 0];
+optional int32 speed_y = 14 [default = 0];
+optional int32 speed_w = 15 [default = 0];
+optional float speed_head_x = 16 [default = 0];
+optional float speed_head_y = 17 [default = 0];
+optional float speed_head_w = 18 [default = 0];
+optional RVector3 haptic_reduction_monitor = 19;
+optional ObservationRL observation = 20;
+}
+
+message ObservationRL
+{
+
+optional RVector3 a_position = 1;
+optional RVector3 a_rotation = 2;
+optional SVector4 a_rotation_q = 3;
+optional RVector3 b_position = 4;
+optional RVector3 b_rotation = 5;
+optional SVector4 b_rotation_q = 6;
+
+}
+
+message RVector3 
+{
+optional float x = 1 [default = 0];
+optional float y = 2 [default = 0];
+optional float z = 3 [default = 0];
+}
+
+message SVector4
+{
+optional float x = 1 [default = 0];
+optional float y = 2 [default = 0];
+optional float z = 3 [default = 0];
+optional float w = 4 [default = 0];
+}
+
+message MovoJoint
+{
+optional float position = 1 [default = 0];
+optional float velocity = 2 [default = 0];
+optional float effort = 3 [default = 0];
+}
+
+message MovoArm
+{
+repeated MovoJoint joints = 1;
+optional MovoJoint gripper = 2;
+}
+
+message MovoHead
+{
+repeated MovoJoint joints = 1;
+}
+
+message RVector6 
+{
+optional float x = 1 [default = 0];
+optional float y = 2 [default = 0];
+optional float z = 3 [default = 0];
+optional float roll = 4 [default = 0];
+optional float pitch = 5 [default = 0];
+optional float yaw = 6 [default = 0];
+}
+
+message RVector7 
+{
+optional float x = 1 [default = 0];
+optional float y = 2 [default = 0];
+optional float z = 3 [default = 0];
+optional float qx = 4 [default = 0];
+optional float qy = 5 [default = 0];
+optional float qz = 6 [default = 0];
+optional float qw = 7 [default = 0];
+}
+
+message RobolandConnection 
+{ 
+optional string ip = 1;
+optional string status = 2;
+optional uint64 time = 3 [default = 0]; 
+} 
+
+message MovoStatus 
+{
+optional int32 id = 1 [default = 0];
+optional RVector3 location = 2;
+optional RVector3 target_location = 3;
+optional RVector3 temp_target_location = 4;
+optional int32 state = 5 [default = 0];
+optional float battery = 6 [default = 0];
+repeated RVector3 path = 7;
+repeated RVector3 temp_path = 8;
+optional int32 temprature = 9 [default = 0];
+optional Laser laser = 10;
+optional int32 version = 11 [default = 0];
+optional uint64 time_span = 12 [default = 0];
+optional int32 speed1 = 13 [default = 0];
+optional int32 speed2 = 14 [default = 0];
+optional int32 position = 15 [default = 0];
+optional int32 load = 16 [default = 0];
+optional int32 sensor = 17 [default = 0];
+optional int32 alarm = 18 [default = 0];
+optional bytes map_data = 19;
+optional int32 map_size = 20 [default = 0];
+optional HapticRender right_arm_haptic_render = 21;
+optional HapticRender left_arm_haptic_render = 22;
+optional MovoArm right_arm = 23;
+optional MovoArm left_arm = 24;
+optional MovoHead head = 25;
+optional RVector6 right_arm_end_effector = 26;
+optional RVector6 left_arm_end_effector = 27;
+optional RVector7 q_right_arm_end_effector = 28;
+optional RVector7 q_left_arm_end_effector = 29;
+optional float z_axes = 30; 
+optional SVector4 temp_target_rotation = 31;
+}
+
+message Laser 
+{
+repeated float ranges = 1;
+optional int32 robot_id = 2 [default = 0];
+optional float angel_min = 3 [default = 0];
+optional float angel_max = 4 [default = 0];
+optional float angel_increment = 5 [default = 0];
+optional float range_min = 6 [default = 0];
+optional float range_max = 7 [default = 0];
+optional float time_increment = 8 [default = 0];
+optional float scan_time = 9 [default = 0];
+} 
+
+message HapticCommand 
+{ 
+optional string cmd = 1; 
+optional RVector3 position = 2; 
+optional RVector3 rotation = 3;
+repeated float rotation_matrix = 4; 
+optional RVector3 velocity_linear = 5; 
+optional RVector3 velocity_angular = 6; 
+optional float gripper_gap = 7 [default = 0]; 
+optional float gripper_angle = 8 [default = 0]; 
+optional float velocity_linear_gripper = 9 [default = 0]; 
+optional float velocity_angular_gripper = 10 [default = 0]; 
+optional int32 version = 11 [default = 0]; 
+optional uint64 time_span = 12 [default = 0]; 
+optional SVector4 rotation_q = 13;
+} 
+
+message HapticCommands
+{ 
+repeated HapticCommand list = 1;
+} 
+
+message HapticRender 
+{ 
+optional string cmd = 1; 
+optional RVector3 force = 2; 
+optional RVector3 torque = 3; 
+optional float gripper_force = 4 [default = 0]; 
+optional int32 version = 5 [default = 0]; 
+optional uint64 time_span = 6 [default = 0]; 
+} 
+

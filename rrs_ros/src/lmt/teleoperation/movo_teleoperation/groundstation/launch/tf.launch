@@ -1,0 +1,14 @@
+<launch>
+	
+	 <arg name="a_frame_name" default="camera_link"/>
+	 <arg name="b_frame_name" default="ft_sensor0_wrench"/>
+	 <arg name="c_frame_name" default="right_gripper_base_link"/>
+	
+	 <node pkg="tf" type="static_transform_publisher" name="broadcaster_laserscan_base_to_laser1" output="screen"
+		args="0 0 0 0.5 -0.5 0.5 0.5 $(arg b_frame_name) $(arg a_frame_name) 10"
+	 />
+
+	<node pkg="tf" type="static_transform_publisher" name="broadcaster_laserscan_base_to_laser2" output="screen"
+		args="0 0 0 0 0 0 1 $(arg c_frame_name) $(arg b_frame_name) 10"
+	 />
+</launch>

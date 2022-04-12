@@ -1,0 +1,7 @@
+<launch>
+
+<node name="groundstation_node" pkg="robot_groundstation" type="groundstation_node" output="screen">
+<param name="station_mode" type="string" value="WIFI" />
+</node>  
+
+</launch>
