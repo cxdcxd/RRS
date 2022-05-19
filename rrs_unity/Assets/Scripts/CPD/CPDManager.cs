@@ -14,9 +14,6 @@ public class CPDManager : MonoBehaviour
     public string skill_file_name = "1.txt";
     public string scenario_file_name = "1.txt";
 
-    private float originalWidth = 1000;
-    private float originalHeight = 900;
-
     public GameObject user;
     public GameObject robot;
     public GameObject skillpoint_prefab;
@@ -24,46 +21,40 @@ public class CPDManager : MonoBehaviour
     public GameObject robot_prefab;
     public GameObject user_prefab;
 
+
+
+    private float originalWidth = 1000;
+    private float originalHeight = 900;
     bool is_teleoperation_mode = false;
     public static bool is_network_inited = false;
-
-    RVector7 tele_robot_location = new RVector7();
-
+    public int current_step = 0;
+    public float delta_d = 0.6f;
+    public Mode operation_mpde = Mode.SharedAutonomy;
     public Movo movo_ref;
     public string mode = "";
 
-    public List<RVector7> robot_point_list = new List<RVector7>();
-    public List<RVector7> skill_point_list = new List<RVector7>();
-    public List<float> skill_time_list = new List<float>();
-    public List<RVector7> scenario_point_list = new List<RVector7>();
-    public List<RVector7> cpd_point_list = new List<RVector7>();
-    public List<RVector7> user_point_list = new List<RVector7>();
 
+    List<RVector7> robot_point_list = new List<RVector7>();
+    List<RVector7> skill_point_list = new List<RVector7>();
+    List<RVector7> scenario_point_list = new List<RVector7>();
+    List<RVector7> cpd_point_list = new List<RVector7>();
+    List<RVector7> user_point_list = new List<RVector7>();
+    RVector7 tele_robot_location = new RVector7();
     List<GameObject> skill_point_object_list = new List<GameObject>();
     List<GameObject> robot_point_object_list = new List<GameObject>();
     List<GameObject> cpd_point_object_list = new List<GameObject>();
     List<GameObject> user_point_object_list = new List<GameObject>();
-
     bool start_recording_skill = false;
     bool start_recording_scenario = false;
-
     bool update_render_cpd_result = false;
-
     bool is_switch_to_skill = false;
-
-    public Mode operation_mpde = Mode.SharedAutonomy;
-
     Vector3 initial_user_point;
     float next_scnario_time = 0;
     List<float> travel_times = new List<float>();
-    public int current_step = 0;
-    float distance_threshold = 0.6f;
     float teleoperation_two_points_travel_time = 0;
     float average_teleoperation_two_points_travel_time = 0;
-
     RVector7 old_user_location = new RVector7();
     RVector7 old_robot_location = new RVector7();
-
     bool is_begin = false;
     float old_valid_time = 0;
     int reset_trail = 0;
@@ -77,15 +68,12 @@ public class CPDManager : MonoBehaviour
     int disconnetion_index = 0;
     int bench_state = 0;
     bool is_go_to_skill = false;
-
     float p_max_distance = 0;
     float p_tracking_error = 0;
     float p_user_traj_len = 0;
     float p_robot_traj_len = 0;
-
     DateTime time_cpd_request_start = DateTime.Now;
     DateTime time_cpd_request_done = DateTime.Now;
-
     float total_max_distance = 0;
     float total_tracking_error = 0;
     float total_user_traj_len = 0;
@@ -99,7 +87,6 @@ public class CPDManager : MonoBehaviour
         tele_robot_location = new RVector7();
         robot_point_list = new List<RVector7>();
         skill_point_list = new List<RVector7>();
-        skill_time_list = new List<float>();
         scenario_point_list = new List<RVector7>();
         cpd_point_list = new List<RVector7>();
         user_point_list = new List<RVector7>();
@@ -109,14 +96,13 @@ public class CPDManager : MonoBehaviour
         cpd_point_object_list = new List<GameObject>();
         user_point_object_list = new List<GameObject>();
 
-         is_begin = false;
-         old_valid_time = 0;
-         reset_trail = 0;
-         scenario_index = 0;
-         is_play_scenario = false;
-         cpd_valid_result = true;
-         disconnetion_index = 0;
-
+        is_begin = false;
+        old_valid_time = 0;
+        reset_trail = 0;
+        scenario_index = 0;
+        is_play_scenario = false;
+        cpd_valid_result = true;
+        disconnetion_index = 0;
 
         foreach (var item in skill_point_object_list)
         {
@@ -129,14 +115,13 @@ public class CPDManager : MonoBehaviour
         }
 
         old_user_location = new RVector7();
-        old_robot_location = new RVector7(); 
+        old_robot_location = new RVector7();
 
         skill_point_object_list = new List<GameObject>();
         cpd_point_object_list = new List<GameObject>();
         is_switch_to_skill = false;
         is_teleoperation_mode = false;
         is_go_to_skill = false;
-
 
         user.transform.position = initial_user_point;
         //user.transform.rotation = initial_user_point.rotation;
@@ -227,6 +212,12 @@ public class CPDManager : MonoBehaviour
             for (int i = 0; i < cmd.result_points.Length; i++)
             {
                 cpd_point_list.Add(cmd.result_points[i]);
+
+                //Reput the qs to registered points
+                cpd_point_list[i].qx = skill_point_list[i].qx;
+                cpd_point_list[i].qy = skill_point_list[i].qy;
+                cpd_point_list[i].qz = skill_point_list[i].qz;
+                cpd_point_list[i].qw = skill_point_list[i].qw;
             }
 
             update_render_cpd_result = true;
@@ -241,7 +232,7 @@ public class CPDManager : MonoBehaviour
 
     float dist(RVector7 a, RVector7 b)
     {
-        float d = Mathf.Sqrt( ( a.x - b.x ) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
+        float d = Mathf.Sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
         return d;
     }
 
@@ -276,7 +267,7 @@ public class CPDManager : MonoBehaviour
         int start = 0;
         int finish = list.Count;
 
-        if ( current_predicted_step != -1)
+        if (current_predicted_step != -1)
         {
             start = current_predicted_step - 20;
             finish = current_predicted_step + 20;
@@ -296,7 +287,7 @@ public class CPDManager : MonoBehaviour
                 min_index = index;
             }
         }
-        
+
         return min_index;
     }
 
@@ -530,9 +521,9 @@ public class CPDManager : MonoBehaviour
     {
         if (Time.time >= next_scnario_time)
         {
-            next_scnario_time = Time.time + (1 / 30); //30 hz record
+            next_scnario_time = Time.time + (1 / 10); //10 hz record
 
-            if (is_play_scenario )
+            if (is_play_scenario)
             {
                 if (scenario_index < scenario_point_list.Count && cpd_valid_result)
                 {
@@ -556,7 +547,7 @@ public class CPDManager : MonoBehaviour
 
                     float d = dist(next_user_location, old_user_location);
 
-                    if (d >= distance_threshold)
+                    if (scenario_index % 7 == 0)
                     {
                         scenario_step_index++;
                         next_user_location.gx = user.transform.position.x;
@@ -584,34 +575,25 @@ public class CPDManager : MonoBehaviour
                 scenario_point_list.Add(r);
             }
 
-            if (start_recording_skill)
-            {
-                RVector7 r = new RVector7();
 
-                r.x = user.transform.localPosition.x;
-                r.y = user.transform.localPosition.y;
-                r.z = user.transform.localPosition.z;
-
-                r.qx = user.transform.localRotation.x;
-                r.qy = user.transform.localRotation.y;
-                r.qz = user.transform.localRotation.z;
-                r.qw = user.transform.localRotation.w;
-
-                float d = dist(r, old_user_location);
-                //print(d);
-                if (d >= distance_threshold)
-                {
-                    skill_point_list.Add(r);
-                    old_user_location = r;
-                }
-            }
 
             if (is_begin)
             {
                 float d = dist(tele_robot_location, old_robot_location);
 
-                if (d >= distance_threshold)
+
+
+                if (d >= delta_d)
                 {
+
+                    if (start_recording_skill)
+                    {
+
+                        skill_point_list.Add(tele_robot_location);
+
+
+                    }
+
                     if (current_step == 0)
                         old_valid_time = Time.time;
                     else
@@ -622,13 +604,13 @@ public class CPDManager : MonoBehaviour
 
                     if (is_switch_to_skill == false)
                     {
-                        
-                            travel_times.Add(teleoperation_two_points_travel_time);
-                            average_teleoperation_two_points_travel_time = travel_times.Average();
 
-                            robot_point_list.Add(tele_robot_location);
-                            old_robot_location = tele_robot_location;
-                            current_step++;
+                        travel_times.Add(teleoperation_two_points_travel_time);
+                        average_teleoperation_two_points_travel_time = travel_times.Average();
+
+                        robot_point_list.Add(tele_robot_location);
+                        old_robot_location = tele_robot_location;
+                        current_step++;
                     }
                 }
             }
@@ -639,6 +621,8 @@ public class CPDManager : MonoBehaviour
             }
             else
             {
+                print(scenario_step_index);
+
                 if (operation_mpde == Mode.SharedAutonomy)
                 {
                     if (current_step > 0 && current_step < skill_point_list.Count && scenario_step_index != old_scenario_step_index)
@@ -705,7 +689,7 @@ public class CPDManager : MonoBehaviour
 
                 Statics.main_tele_network.sendMessage(r);
             }
-                
+
         }
 
         //float distance = cdist(tele_robot_location, robot.transform.position);
@@ -719,11 +703,12 @@ public class CPDManager : MonoBehaviour
         else
         {
             Vector3 target = new Vector3(tele_robot_location.x, tele_robot_location.y, tele_robot_location.z);
-            robot.transform.position =  target;
+            robot.transform.position = target;
         }
 
+
         //robot.transform.position = new Vector3(tele_robot_location.x, tele_robot_location.y, tele_robot_location.z);
-        //robot.transform.rotation = new Quaternion(tele_robot_location.qx, tele_robot_location.qy, tele_robot_location.qz, tele_robot_location.qw);
+        robot.transform.rotation = new Quaternion(tele_robot_location.qx, tele_robot_location.qy, tele_robot_location.qz, tele_robot_location.qw);
     }
 
     float cdist(RVector7 a, Vector3 b)
@@ -738,28 +723,28 @@ public class CPDManager : MonoBehaviour
         FileStream fs = new FileStream("c:\\skillcpd\\benchmarks\\" + mode + "_" + method + ".txt", FileMode.Append, FileAccess.Write);
         StreamWriter sw = new StreamWriter(fs);
 
-        if ( total == false)
+        if (total == false)
             sw.WriteLine(name + " " + p_max_distance + " " + p_tracking_error + " " + p_robot_traj_len + " " + p_user_traj_len);
         else
         {
             sw.WriteLine(name + " " + p_max_distance + " " + p_tracking_error + " " + p_robot_traj_len + " " + p_user_traj_len);
             sw.WriteLine(name + " " + total_max_distance + " " + total_tracking_error + " " + total_robot_traj_len + " " + total_user_traj_len);
         }
-        
+
         sw.Close();
         fs.Close();
     }
 
     public void Update()
     {
-        if ( reset_trail > 0)
+        if (reset_trail > 0)
         {
             user.GetComponent<TrailRenderer>().time = 0;
             robot.GetComponent<TrailRenderer>().time = 0;
 
             reset_trail++;
 
-            if ( reset_trail > 30)
+            if (reset_trail > 30)
             {
                 user.GetComponent<TrailRenderer>().time = 100;
                 robot.GetComponent<TrailRenderer>().time = 100;
@@ -844,12 +829,12 @@ public class CPDManager : MonoBehaviour
             KeyQ();
         }
 
-        if ( Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.T))
         {
             KeyT();
         }
 
-        if ( Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.B))
         {
             KeyB();
         }
@@ -930,7 +915,7 @@ public class CPDManager : MonoBehaviour
                 total_user_traj_len += p_user_traj_len;
                 total_robot_traj_len += p_robot_traj_len;
 
-                if ( bench_index < 26)
+                if (bench_index < 26)
                 {
                     total_max_distance = total_max_distance / 26;
                     total_tracking_error = total_tracking_error / 26;
@@ -951,7 +936,7 @@ public class CPDManager : MonoBehaviour
                 else
                 {
                     print("benchmark finish");
-                 
+
                     saveCurrentBenchStep(mode, operation_mpde.ToString(), bench_index.ToString(), true);
                     bench_state = 3;
                 }
@@ -967,13 +952,13 @@ public class CPDManager : MonoBehaviour
 
         foreach (var item in robot_point_list)
         {
-            if ( skip_first == false)
+            if (skip_first == false)
             {
                 skip_first = true;
                 continue;
             }
 
-            if ( old == null)
+            if (old == null)
             {
                 old = item;
             }
@@ -997,15 +982,15 @@ public class CPDManager : MonoBehaviour
         {
             float d = findClosestDistinSkill(item, robot_point_object_list);
 
-           if ( d < distance_threshold)
-           {
-              //ok
-           }
-           else
-           {
-              //real error
-              x++;
-              e += d;
+            if (d < delta_d)
+            {
+                //ok
+            }
+            else
+            {
+                //real error
+                x++;
+                e += d;
             }
 
         }
@@ -1108,7 +1093,7 @@ public class CPDManager : MonoBehaviour
             cut_skill_list.Add(item);
             i++;
 
-            if ( i >= robot_count)
+            if (i >= robot_count)
             {
                 break;
             }
@@ -1179,22 +1164,22 @@ public class CPDManager : MonoBehaviour
         GUI.Label(new Rect(10, 350, 300, 50), "Skill Name : " + skill_file_name);
 
 
-        if (GUI.Button(new Rect(10, 400, 100, 40), "Mode 1"))
+        if (GUI.Button(new Rect(10, 400, 100, 40), "Nothing"))
         {
             operation_mpde = Mode.Nothing;
         }
 
-        if (GUI.Button(new Rect(10, 450, 100, 40), "Mode 2"))
+        if (GUI.Button(new Rect(10, 450, 100, 40), "Shared"))
         {
             operation_mpde = Mode.SharedAutonomy;
         }
 
-        if (GUI.Button(new Rect(10, 500, 100, 40), "Mode 3"))
+        if (GUI.Button(new Rect(10, 500, 100, 40), "SkillCPD"))
         {
             operation_mpde = Mode.SharedAutonomyCPD;
         }
 
-        if (GUI.Button(new Rect(10, 550, 100, 40), "Play the scenario"))
+        if (GUI.Button(new Rect(10, 550, 100, 40), "Play"))
         {
             is_play_scenario = !is_play_scenario;
         }
@@ -1209,13 +1194,12 @@ public class CPDManager : MonoBehaviour
         //    is_rigid = false;
         //}
 
-        if ( GUI.Button(new Rect(10,700,100,40),"Run Benchmark") )
+        if (GUI.Button(new Rect(10, 710, 100, 40), "Benchmark"))
         {
             bench_state = 1;
         }
 
-
-        GUI.Label(new Rect(1000, 750, 1000, 1000),
+        GUI.Label(new Rect(10, 600, 1000, 1000),
         "E: Stop/Start Recording \nP: Show points for robot_point \nR: Stop/Start Recording Skill \nS: Save the Skill  \nW: Save the scenario \nL: Load the skill \nQ: Load the scenario \nT: Network disconnetion on/off \nB: Start tracking");
 
     }
