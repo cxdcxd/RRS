@@ -1,0 +1,5 @@
+panda:
+  panda_inv_pid:
+    p: 10
+    i: 0.1
+    d: 0.1
