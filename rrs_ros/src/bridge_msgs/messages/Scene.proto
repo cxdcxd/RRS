@@ -22,6 +22,26 @@ message Net2StationInfo
    repeated Net2ServiceInfo items = 3; 
 } 
 
+message RRSCPDCommand
+{
+   repeated RVector7 points_a = 1;
+   repeated RVector7 points_b = 2;
+   repeated RVector7 points_skill = 3;
+   optional uint32 mode = 4;
+   optional uint32 param1 = 5;
+   optional uint32 param2 = 6;
+}
+
+message RRSCPDResult
+{
+   repeated RVector7 result_points = 1;
+   optional uint32 result_iterations = 2;
+   optional SVector3 result_T = 3;
+   repeated float result_R = 4;
+   optional float result_1 = 5;
+   optional float result_2 = 6;
+}
+
 message Header 
 {
    optional Type message_type = 1 [default = DEALER];
