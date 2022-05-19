@@ -22,7 +22,44 @@ using System.Threading.Tasks;
         int Version { get; set; }
     }
 
-    [ProtoContract]
+[Serializable]
+[ProtoContract]
+public class RRSCPDCommand
+{
+    [ProtoMember(1)]
+    public RVector7[] points_a;
+    [ProtoMember(2)]
+    public RVector7[] points_b;
+    [ProtoMember(3)]
+    public RVector7[] points_skill;
+    [ProtoMember(4)]
+    public int mode;
+    [ProtoMember(5)]
+    public int param1;
+    [ProtoMember(6)]
+    public int param2;
+}
+
+[Serializable]
+[ProtoContract]
+
+public class RRSCPDResult
+{
+    [ProtoMember(1)]
+    public RVector7[] result_points;
+    [ProtoMember(2)]
+    public int result_iterations;
+    [ProtoMember(3)]
+    public SVector3 result_T;
+    [ProtoMember(4)]
+    public float[] result_R;
+    [ProtoMember(5)]
+    public float result_1;
+    [ProtoMember(6)]
+    public float result_2;
+}
+
+[ProtoContract]
     public class RVector3
     {
         [ProtoMember(1)]
@@ -95,6 +132,12 @@ public class RVector7
     public float qz = 0;
     [ProtoMember(7)]
     public float qw = 0;
+    [ProtoMember(8)]
+    public float gx = 0;
+    [ProtoMember(9)]
+    public float gy = 0;
+    [ProtoMember(10)]
+    public float gz = 0;
 
     public RVector7()
     {
