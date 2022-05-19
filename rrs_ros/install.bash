@@ -43,6 +43,10 @@ sudo apt install -y ros-melodic-navigation
 sudo apt install -y ros-melodic-bfl
 sudo apt install -y ros-melodic-moveit-visual-tools
 sudo apt install -y ros-melodic-fake-joint-launch
+sudo apt install -y ros-melodic-soem
+sudo apt install -y ros-melodic-socketcan-interface
+sudo apt install -y ros-melodic-hector-*
+sudo apt install -y ros-melodic-octomap-rviz-plugins
 
 if [ ! -e third_party ]
 then
@@ -58,6 +62,14 @@ cmake ..
 make
 sudo make install
 cd ..
+cd ..
+
+git clone https://github.com/berndporr/iir1
+cd iir1
+git checkout d4f6d212dcf0bcceab5a29c082a10cdcdd9e0e8b
+cmake .
+make
+sudo make install
 cd ..
 
 git clone https://github.com/danfis/libccd.git
