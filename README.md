@@ -4,7 +4,7 @@
 
 | OS  | Kernel Version | ROS Version | Nvidia Driver Version | CUDA Version | Unity Version | Ml Agents
 | --- | ----------| ----------- | ------------ | ------------ | ------------ | ------------ 
-| Ubuntu 18.04.06 LTS | 5.4.0-58-generic | ROS Melodic | 460.27.04 | 11.2 | Unity 2020.3.22f1 | 1.0.0
+| Ubuntu 18.04.06 LTS | 5.4.0-58-generic | ROS Melodic | 460.27.04 | 11.2 | Unity 2020.3.22f1 | Release_17
 
 <!--# Unity Version
     Unity 2020.3.22f1-->
@@ -50,7 +50,7 @@ setup ~/rrs_ros/devel/setup.bash
 
 ## Step 1: (ROS Side)
 ```
-roslaunch rrs_ros rrs_main.launch 
+ros launch rrs_ros rrs_main.launch 
 ```
 
 ## Step 2: (Unity Side)
@@ -61,7 +61,7 @@ Unity3D -> Play
 
 ## Step 3: (ROS Side)
 ```
-roslaunch mpc real_movo_sc.launch                         
+ros launch mpc real_movo_sc.launch                         
 ```
 
 # Settings (rrs_ros) 
