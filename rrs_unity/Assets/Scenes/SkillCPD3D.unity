@@ -356,17 +356,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skill_file_name: 1.txt
   scenario_file_name: 1.txt
-  user: {fileID: 0}
-  robot: {fileID: 0}
-  skillpoint_prefab: {fileID: 0}
-  cpdpoint_prefab: {fileID: 0}
-  robot_prefab: {fileID: 0}
-  user_prefab: {fileID: 0}
+  user: {fileID: 422308629}
+  robot: {fileID: 2024850158}
+  skillpoint_prefab: {fileID: 2661904748028091699, guid: e4717ba1510bbe84bb34943a9458e475, type: 3}
+  cpdpoint_prefab: {fileID: 2661904748028091699, guid: 6cfe08736b6389d47b744a2fec156649, type: 3}
+  robot_prefab: {fileID: 2661904748028091699, guid: df563de7fbd1a3f49b26a90c5f38b78d, type: 3}
+  user_prefab: {fileID: 2661904748028091699, guid: 112b827fa5b50cb4c95558a8b18e8708, type: 3}
+  current_step: 0
+  delta_d: 0.6
+  operation_mpde: 1
   movo_ref: {fileID: 0}
   mode: 
-  skill_time_list: []
-  operation_mpde: 1
-  current_step: 0
   is_rigid: 1
 --- !u!4 &54744401
 Transform:
