@@ -74,6 +74,16 @@ sudo make install
 cd ..
 cd ..
 
+git clone https://github.com/gadomski/fgt.git
+cd fgt
+mkdir build
+cd build
+cmake ..
+make
+sudo make install 
+cd ..
+cd ..
+
 git clone https://github.com/berndporr/iir1
 cd iir1
 git checkout d4f6d212dcf0bcceab5a29c082a10cdcdd9e0e8b
