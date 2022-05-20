@@ -44,6 +44,12 @@ public class Manager : MonoBehaviour
                 Statics.network_manager_right_arm.killAll();
                 Statics.network_manager_right_arm = null;
             }
+            
+            if (Statics.network_manager_arm != null)
+            {
+                Statics.network_manager_arm.killAll();
+                Statics.network_manager_arm = null;
+            }
 
             if (Statics.network_manager_movo_status != null)
             {

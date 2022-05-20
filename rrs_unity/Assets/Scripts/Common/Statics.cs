@@ -14,6 +14,7 @@ public class Statics
 
     public static Network<HapticCommand, HapticRender> network_manager_left_arm; //Send NMPC command and receive force
     public static Network<HapticCommand, HapticRender> network_manager_right_arm; //Send NMPC command and receive force
+    public static Network<HapticCommand, HapticRender> network_manager_arm; //Send NMPC command and receive force for franka
     public static Network<RRSNull, MovoStatus> network_manager_movo_status; //Receive Movo status
 
     public static Network<RVector7, RVector7> main_tele_network;
@@ -29,6 +30,7 @@ public class Statics
     public static Config current_config;
     public static Environments current_environment = Environments.Sim;
     public static Movo movo_ref;
+    public static Franka franka_ref;
     public static CPDManager cpd_manager_ref;
     public static float right_container_distance = 0.16f;
     public static float left_container_distance = 0.24f;
