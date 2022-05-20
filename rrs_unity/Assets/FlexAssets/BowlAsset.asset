@@ -5194,7 +5194,7 @@ MonoBehaviour:
   m_inflatableStiffness: 0
   m_fixedParticles: 
   m_rebuildAsset: 0
-  m_boundaryMesh: {fileID: 9088270703349142167, guid: 0a73716ae73e9a4468c96965d55b0bb2, type: 3}
+  m_boundaryMesh: {fileID: -1703136266599439062, guid: 4d8455a12a7e7684f80813069cd053bf, type: 3}
   m_meshLocalScale: {x: 1, y: 1, z: 1}
   m_meshExpansion: 0
   m_particleSpacing: 0.01
