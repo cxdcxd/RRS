@@ -218,4 +218,5 @@
     <child link="panda_link8"/>
     <axis xyz="0 0 0"/>
   </joint>
+  
 </robot>
