@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+ 
+
+ 
+<!--  rviz visualization-->
+  <node pkg="tf" type="static_transform_publisher" name="base_to_link0" args="0 0 0 0 0 0 1 base panda_link0 100" />
+  <node pkg="tf" type="static_transform_publisher" name="world_to_base" args="0 0 0 0 0 0 1 world base 100" />
+
+
+ 
+  <node name="nlopt_mpc_main_node" pkg="mpc" type="main_sc" output="screen">
+    <param name="plot_obstacle" type="bool" value="true" />
+    <param name="arm_name_space" type="string" value="panda"/>
+    <rosparam file="$(find mpc)/config/nlmpc.yaml" command="load" />
+  </node>
+
+
+  
+</launch>

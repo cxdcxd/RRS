@@ -71,6 +71,7 @@
 //Protobuf
 #include <Scene.pb.h>
 #include <movo_msgs/JacoAngularVelocityCmd7DOF.h>
+#include <franka_core_msgs/JointCommand.h>
 
 using namespace std;
 using namespace lmt::Tools::Network;
@@ -80,8 +81,8 @@ namespace lmt
 
 struct settings
 {
-  std::string consul_network_address = "10.147.20.149";
-  std::string local_network_address = "10.147.20.149";
+  std::string consul_network_address = "127.0.0.1";
+  std::string local_network_address = "127.0.0.1";
   std::string consul_network_mask = "255.255.255.0";
   std::string consul_network_port = "8500";
   std::string ntp_server_host_name = "test";
@@ -95,29 +96,37 @@ public:
               int argc,
               char *argv[]);
 
+  std::vector<char> callbackDataNMPCMarker(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataNMPCLeftMarker(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataNMPCRightMarker(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataCameraColor(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataCameraInfo(std::vector<char> buffer, unsigned int priority, std::string sender);
+  void chatterCallbackVelFranka(const franka_core_msgs::JointCommand::ConstPtr& msg);
   void chatterCallbackVelLeft(const movo_msgs::JacoAngularVelocityCmd7DOF::ConstPtr& msg);
   void chatterCallbackVelRight(const movo_msgs::JacoAngularVelocityCmd7DOF::ConstPtr& msg);
 
   std::shared_ptr<Net2Publisher> publisher_joint_command_left;
   std::shared_ptr<Net2Publisher> publisher_joint_command_right;
+  std::shared_ptr<Net2Publisher> publisher_joint_command_franka;
 
   std::shared_ptr<Net2Subscriber> subscriber_camera_color;
   std::shared_ptr<Net2Subscriber> subscriber_camera_info;
   std::shared_ptr<Net2Subscriber> subscriber_joint_state;
+  std::shared_ptr<Net2Subscriber> subscriber_joint_state_franka;
   std::shared_ptr<Net2Subscriber> subscriber_nmpc_right_marker;
   std::shared_ptr<Net2Subscriber> subscriber_nmpc_left_marker;
-
+  std::shared_ptr<Net2Subscriber> subscriber_nmpc_marker;
+  
   ros::Publisher pub_camera_color;
   ros::Publisher pub_camera_info;
+  ros::Publisher pub_joint_state_franka;
   ros::Publisher pub_joint_state;
   ros::Publisher pub_joint_state_right;
   ros::Publisher pub_joint_state_left;
   ros::Publisher pub_right_end_effector;
   ros::Publisher pub_right_end_effector_stamp;
+  ros::Publisher pub_franka_end_effector;
+  ros::Publisher pub_franka_end_effector_stamp;
   ros::Publisher pub_left_end_effector;
   ros::Publisher pub_left_end_effector_stamp;
 
@@ -130,6 +139,7 @@ public:
 
   ros::Subscriber sub_jaco_right_vel;
   ros::Subscriber sub_jaco_left_vel;
+  ros::Subscriber sub_franka_vel;
 
   RRSRobot robot_protocol;
 
@@ -149,10 +159,12 @@ public:
   void chatterCallbackCMD(const geometry_msgs::Twist::ConstPtr& msg);
   void chatterCallbackJointCommand(const movo_msgs::JacoJointCmd::ConstPtr& msg);
   std::vector<char> callbackDataJointState(std::vector<char> buffer, unsigned int priority, std::string sender);
+  std::vector<char> callbackDataJointStateFranka(std::vector<char> buffer, unsigned int priority, std::string sender);
 
   void publishCameraColor(char* data, int size);
   void publishCameraInfo(char* data, int size);
   void publishJointState(char* data, int size);
+  void publishJointStateFranka(char* data, int size);
 
   bool is_file_exist(const char *fileName);
   bool loadYaml();

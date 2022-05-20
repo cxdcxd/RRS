@@ -37,6 +37,7 @@ namespace lmt
 
     net2 = new Net2();
 
+
     this->net2->Init(config,"rrs_ros","test");
 
     this->test_step = 1;
@@ -44,6 +45,10 @@ namespace lmt
     subscriber_camera_color = net2->subscriber();
     subscriber_camera_color->delegateNewData = std::bind(&Net2TestROS::callbackDataCameraColor, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     ProcessResult<int> result3 = subscriber_camera_color->Start("rrs-camera_color");
+
+    subscriber_nmpc_marker = net2->subscriber();
+    subscriber_nmpc_marker->delegateNewData = std::bind(&Net2TestROS::callbackDataNMPCMarker, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    ProcessResult<int> resultNMPC = subscriber_nmpc_marker->Start("rrs-nmpc_franka_in");
 
     subscriber_nmpc_right_marker = net2->subscriber();
     subscriber_nmpc_right_marker->delegateNewData = std::bind(&Net2TestROS::callbackDataNMPCRightMarker, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
@@ -61,11 +66,18 @@ namespace lmt
     subscriber_joint_state->delegateNewData = std::bind(&Net2TestROS::callbackDataJointState, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     ProcessResult<int> result11 = subscriber_joint_state->Start("rrs-joint_state");
 
+    subscriber_joint_state_franka = net2->subscriber();
+    subscriber_joint_state_franka->delegateNewData = std::bind(&Net2TestROS::callbackDataJointStateFranka, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    ProcessResult<int> resultf = subscriber_joint_state_franka->Start("rrs-franka_joint_state");
+
     publisher_joint_command_right = net2->publisher("joint_right");
     publisher_joint_command_right->Start();
 
     publisher_joint_command_left = net2->publisher("joint_left");
     publisher_joint_command_left->Start();
+
+    publisher_joint_command_franka = net2->publisher("joint_franka");
+    publisher_joint_command_franka->Start();
 
     //TO ROS
     pub_camera_color = nh.advertise<sensor_msgs::Image>("movo/camera/image_raw", 1);
@@ -73,16 +85,20 @@ namespace lmt
     pub_joint_state = nh.advertise<sensor_msgs::JointState>("joint_states",1);
     pub_joint_state_right = nh.advertise<sensor_msgs::JointState>("/movo/right_arm_controller/state",1);
     pub_joint_state_left = nh.advertise<sensor_msgs::JointState>("/movo/left_arm_controller/state",1);
-
+    pub_joint_state_franka = nh.advertise<sensor_msgs::JointState>("/franka_ros_interface/custom_franka_state_controller/joint_states",1);
+    
     //TO NMPC
     pub_left_end_effector = nh.advertise<geometry_msgs::Pose>("left/nmpc_controller/in/goal", 1);
     pub_left_end_effector_stamp = nh.advertise<geometry_msgs::PoseStamped>("left/nmpc_controller/in/goal/stamp", 1);
     pub_right_end_effector = nh.advertise<geometry_msgs::Pose>("right/nmpc_controller/in/goal", 1);
     pub_right_end_effector_stamp = nh.advertise<geometry_msgs::PoseStamped>("right/nmpc_controller/in/goal/stamp", 1);
+    pub_franka_end_effector = nh.advertise<geometry_msgs::Pose>("/nmpc_controller/in/goal", 1);
+    pub_franka_end_effector_stamp = nh.advertise<geometry_msgs::PoseStamped>("/nmpc_controller/in/goal/stamp", 1);
 
     //FROM NMPC
     sub_jaco_right_vel = nh.subscribe("/movo/right_arm/angular_vel_cmd",1, &Net2TestROS::chatterCallbackVelRight, this);
     sub_jaco_left_vel = nh.subscribe("/movo/left_arm/angular_vel_cmd",1, &Net2TestROS::chatterCallbackVelLeft, this);
+    sub_franka_vel = nh.subscribe("/franka_ros_interface/motion_controller/arm/joint_commands",1, &Net2TestROS::chatterCallbackVelFranka, this);
   }
   
   std::vector<char> Net2TestROS::callbackDataCameraInfo(std::vector<char> buffer, unsigned int priority, std::string sender)
@@ -132,27 +148,50 @@ namespace lmt
   pub_camera_info.publish(camera_info_msg);
 }
 
-  void Net2TestROS::chatterCallbackVelRight(const movo_msgs::JacoAngularVelocityCmd7DOF::ConstPtr& msg)
-  {
-    //ROS_INFO("Got velocity for right hand");
+void Net2TestROS::chatterCallbackVelFranka(const franka_core_msgs::JointCommand::ConstPtr& msg)
+{
+ //ROS_INFO("Got velocity for right hand");
 
-    RRSJointCommand cmd;
-   
-    cmd.add_goal(msg->theta_shoulder_pan_joint);
-    cmd.add_goal(msg->theta_shoulder_lift_joint);
-    cmd.add_goal(msg->theta_arm_half_joint);
-    cmd.add_goal(msg->theta_elbow_joint);
-    cmd.add_goal(msg->theta_wrist_spherical_1_joint);
-    cmd.add_goal(msg->theta_wrist_spherical_2_joint);
-    cmd.add_goal(msg->theta_wrist_3_joint);
+  RRSJointCommand cmd;
   
-    int bsize = cmd.ByteSize();
-    char buffer[bsize];
-    cmd.SerializeToArray(buffer,bsize);
+  cmd.add_goal(msg->velocity[0]);
+  cmd.add_goal(msg->velocity[1]);
+  cmd.add_goal(msg->velocity[2]);
+  cmd.add_goal(msg->velocity[3]);
+  cmd.add_goal(msg->velocity[4]);
+  cmd.add_goal(msg->velocity[5]);
+  cmd.add_goal(msg->velocity[6]);
+  
 
-    //ROS_WARN("Send Done");
-    publisher_joint_command_right->send(buffer,bsize,1);
-  }
+  int bsize = cmd.ByteSize();
+  char buffer[bsize];
+  cmd.SerializeToArray(buffer,bsize);
+
+  //ROS_WARN("Send Done");
+  publisher_joint_command_franka->send(buffer,bsize,1);
+}
+
+void Net2TestROS::chatterCallbackVelRight(const movo_msgs::JacoAngularVelocityCmd7DOF::ConstPtr& msg)
+{
+  //ROS_INFO("Got velocity for right hand");
+
+  RRSJointCommand cmd;
+  
+  cmd.add_goal(msg->theta_shoulder_pan_joint);
+  cmd.add_goal(msg->theta_shoulder_lift_joint);
+  cmd.add_goal(msg->theta_arm_half_joint);
+  cmd.add_goal(msg->theta_elbow_joint);
+  cmd.add_goal(msg->theta_wrist_spherical_1_joint);
+  cmd.add_goal(msg->theta_wrist_spherical_2_joint);
+  cmd.add_goal(msg->theta_wrist_3_joint);
+
+  int bsize = cmd.ByteSize();
+  char buffer[bsize];
+  cmd.SerializeToArray(buffer,bsize);
+
+  //ROS_WARN("Send Done");
+  publisher_joint_command_right->send(buffer,bsize,1);
+}
 
   void Net2TestROS::chatterCallbackVelLeft(const movo_msgs::JacoAngularVelocityCmd7DOF::ConstPtr& msg)
   {
@@ -264,6 +303,25 @@ void Net2TestROS::publishCameraColor(char* data, int size)
   
 }
 
+void Net2TestROS::publishJointStateFranka(char* data, int size)
+{
+  RRSJointState state_msg;
+  state_msg.ParseFromArray(data,size);
+
+  sensor_msgs::JointState ros_state_msg;
+
+  for ( int i = 0 ; i < 7 ; i++)
+  {
+    ros_state_msg.name.push_back(state_msg.name(i));
+    ros_state_msg.position.push_back(state_msg.position(i));
+    ros_state_msg.velocity.push_back(state_msg.velocity(i));
+    ros_state_msg.effort.push_back(state_msg.effort(i));
+  }
+
+  pub_joint_state.publish(ros_state_msg);
+  pub_joint_state_franka.publish(ros_state_msg);
+}
+
 void Net2TestROS::publishJointState(char* data, int size)
 {
   //11
@@ -301,6 +359,45 @@ void Net2TestROS::publishJointState(char* data, int size)
   pub_joint_state.publish(ros_state_msg);
   pub_joint_state_right.publish(ros_state_right_msg);
   pub_joint_state_left.publish(ros_state_left_msg);
+}
+
+std::vector<char> Net2TestROS::callbackDataNMPCMarker(std::vector<char> buffer, unsigned int priority, std::string sender)
+{
+  std::vector<char> result;
+  if ( priority == 10 ) return result;
+ 
+  ROS_INFO("Franka Marker Received");
+
+  RVector7 rvector7_msg;
+  rvector7_msg.ParseFromArray(&buffer[0],buffer.size());
+
+  geometry_msgs::Pose msg;
+
+  msg.position.x = rvector7_msg.x();
+  msg.position.y = rvector7_msg.y();
+  msg.position.z = rvector7_msg.z();
+
+  msg.orientation.x = rvector7_msg.qx();
+  msg.orientation.y = rvector7_msg.qy();
+  msg.orientation.z = rvector7_msg.qz();
+  msg.orientation.w = rvector7_msg.qw();
+
+  pub_franka_end_effector.publish(msg);
+
+  geometry_msgs::PoseStamped msgs;
+
+  msgs.pose.position.x = msg.position.x;
+  msgs.pose.position.y = msg.position.y;
+  msgs.pose.position.z = msg.position.z;
+
+  msgs.pose.orientation.x = msg.orientation.x;
+  msgs.pose.orientation.y = msg.orientation.y;
+  msgs.pose.orientation.z = msg.orientation.z;
+  msgs.pose.orientation.w = msg.orientation.w;
+
+  msgs.header.frame_id = "base_link";
+
+  pub_franka_end_effector_stamp.publish(msgs);
 }
 
 std::vector<char> Net2TestROS::callbackDataNMPCRightMarker(std::vector<char> buffer, unsigned int priority, std::string sender)
@@ -397,6 +494,15 @@ std::vector<char> Net2TestROS::callbackDataJointState(std::vector<char> buffer, 
   std::vector<char> result;
   if ( priority == 10 ) return result;
   publishJointState(&buffer[0],buffer.size());
+  return result;
+}
+
+std::vector<char> Net2TestROS::callbackDataJointStateFranka(std::vector<char> buffer, unsigned int priority, std::string sender)
+{
+  //11
+  std::vector<char> result;
+  if ( priority == 10 ) return result;
+  publishJointStateFranka(&buffer[0],buffer.size());
   return result;
 }
 

@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_conversions
   pcl_ros
   movo_msgs
+  franka_core_msgs
   hardware_interface
   controller_manager
   joint_limits_interface

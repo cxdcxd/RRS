@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+ <launch>
+         <node pkg="rrs_ros" type="consul.sh" name="consul" output="screen" args="$(find rrs_ros)/scripts"/>
+
+	<!-- send robot urdf to param server -->
+	
+        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_panda_description)/robots/panda_arm_hand.urdf.xacro"/>
+	<!-- Robot state publisher -->
+	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+	    <param name="publish_frequency" type="double" value="50" />
+	    <param name="tf_prefix" type="string" value="" />
+	</node>
+	  
+	<!-- Viz modules -->    
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rrs_ros)/rviz/main.rviz" output="screen"/>
+
+	<node pkg="rrs_ros" type="rrs_node" name="rrs_ros" output="screen"/>
+        <node pkg="rrs_ros" type="net2_node" name="net2_node" output="screen"/>
+	
+ 
+</launch>
