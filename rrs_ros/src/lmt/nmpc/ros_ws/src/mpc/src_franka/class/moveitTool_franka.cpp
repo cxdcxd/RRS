@@ -1,4 +1,4 @@
-#include<moveitTool.h>
+#include<moveitTool_franka.h>
 #include<chrono>
 MoveitTool::MoveitTool(ros::NodeHandle n):nh(n)
 {
@@ -24,7 +24,7 @@ MoveitTool::MoveitTool(ros::NodeHandle n):nh(n)
   
   joint_num = joint_names.size();
   //std::cout<<joint_num<<std::endl;
-//  ROS_INFO("Valid link of the robot:");
+  //ROS_INFO("Valid link of the robot:");
   for(auto link:link_model_ptrs)
     std::cout << link->getName() << std::endl;
 

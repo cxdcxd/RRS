@@ -1,4 +1,4 @@
-#include <hessianCal.h>
+#include <hessianCal_franka.h>
 #include <ros/ros.h>
 
 void HessianCal::getAnalyticalJacobian(const vector<double> &qs, Matrix7d &jacobian)//updated

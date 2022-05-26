@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch> 
+  <node name="nlopt_mpc_main_node" pkg="mpc" type="main_nlopt_mpc" output="screen">
+    <rosparam file="$(find mpc)/config/panda_inv_pid.yaml" command="load" />
+    <rosparam file="$(find mpc)/config/nlmpc.yaml" command="load" />
+  </node>
+<!--  <node name="goal_imarker" pkg="mpc" type="set_marker_goal"/>-->
+</launch>

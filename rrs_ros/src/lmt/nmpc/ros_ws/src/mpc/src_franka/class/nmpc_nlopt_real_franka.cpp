@@ -124,8 +124,8 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   
   state_sub_started = false;
   goal_sub_started = false;
-  goal_sub = nh.subscribe("/simple_marker/feedback",100,&NmpcNlopt::goalSubCB,this);
-
+  //goal_sub = nh.subscribe("/simple_marker/feedback",100,&NmpcNlopt::goalSubCB,this);
+  goal_sub = nh.subscribe("/nmpc_controller/in/goal",1,&NmpcNlopt::goalSubCBFromOut,this);
   // this is for using a trajectory controller
   goal_pub = nh.advertise<franka_core_msgs::JointCommand>("/franka_ros_interface/motion_controller/arm/joint_commands",1);
   
@@ -136,8 +136,8 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
                          "panda_joint5","panda_joint6","panda_joint7"};
 
   // server for toggle tracking mode
-  track_toggle_server = nh.advertiseService("/franka_ros_interface/track_toggle",&NmpcNlopt::track_toggle_cb,this);
-  track_mode = false;
+  //track_toggle_server = nh.advertiseService("/franka_ros_interface/track_toggle",&NmpcNlopt::track_toggle_cb,this);
+  track_mode = true;
 
   
   Ts = 0.2;
@@ -486,11 +486,6 @@ void NmpcNlopt::octomap_sub_cb(const octomap_msgs::OctomapConstPtr octo_msg)
 }
 
 
-bool NmpcNlopt::track_toggle_cb(std_srvs::EmptyRequest &req, std_srvs::EmptyResponse &res)
-{
-  track_mode = track_mode?false:true;
-  return true;
-}
 
 void NmpcNlopt::addObstacle(const std::string &obj_name, const shapes::ShapeConstPtr &obj_shape, const Eigen::Affine3d &obj_transform)
 {

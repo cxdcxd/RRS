@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
-
- 
-
+  <arg name="load_gripper" default="true"/> 
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_panda_description)/robots/panda_arm_hand.urdf.xacro load_gripper:=$(arg load_gripper)"/>
+<!-- semantic-->
+   <param name="robot_description_semantic" command="$(find xacro)/xacro '$(find panda_moveit_config)/config/panda_arm_hand.srdf.xacro'" if="$(arg load_gripper)" />
  
 <!--  rviz visualization-->
   <node pkg="tf" type="static_transform_publisher" name="base_to_link0" args="0 0 0 0 0 0 1 base panda_link0 100" />

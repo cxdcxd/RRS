@@ -153,7 +153,16 @@ void Net2TestROS::chatterCallbackVelFranka(const franka_core_msgs::JointCommand:
  //ROS_INFO("Got velocity for right hand");
 
   RRSJointCommand cmd;
+  //std::cout<<msg->position[0]<<'||'<<msg->position[1]<<'||'<<msg->position[2]<<'||'<<msg->position[3]<<'||'<<msg->position[4]<<'||'<<msg->position[5]<<msg->position[6]<<std::endl;
+  cmd.add_goal(msg->position[0]);
+  cmd.add_goal(msg->position[1]);
+  cmd.add_goal(msg->position[2]);
+  cmd.add_goal(msg->position[3]);
+  cmd.add_goal(msg->position[4]);
+  cmd.add_goal(msg->position[5]);
+  cmd.add_goal(msg->position[6]);
   
+  /*
   cmd.add_goal(msg->velocity[0]);
   cmd.add_goal(msg->velocity[1]);
   cmd.add_goal(msg->velocity[2]);
@@ -161,7 +170,7 @@ void Net2TestROS::chatterCallbackVelFranka(const franka_core_msgs::JointCommand:
   cmd.add_goal(msg->velocity[4]);
   cmd.add_goal(msg->velocity[5]);
   cmd.add_goal(msg->velocity[6]);
-  
+  */
 
   int bsize = cmd.ByteSize();
   char buffer[bsize];
@@ -317,7 +326,7 @@ void Net2TestROS::publishJointStateFranka(char* data, int size)
     ros_state_msg.velocity.push_back(state_msg.velocity(i));
     ros_state_msg.effort.push_back(state_msg.effort(i));
   }
-
+  //std::cout << ros_state_msg<<std::endl;
   pub_joint_state.publish(ros_state_msg);
   pub_joint_state_franka.publish(ros_state_msg);
 }
@@ -366,7 +375,7 @@ std::vector<char> Net2TestROS::callbackDataNMPCMarker(std::vector<char> buffer, 
   std::vector<char> result;
   if ( priority == 10 ) return result;
  
-  ROS_INFO("Franka Marker Received");
+  //ROS_INFO("Franka Marker Received");
 
   RVector7 rvector7_msg;
   rvector7_msg.ParseFromArray(&buffer[0],buffer.size());
@@ -381,7 +390,7 @@ std::vector<char> Net2TestROS::callbackDataNMPCMarker(std::vector<char> buffer, 
   msg.orientation.y = rvector7_msg.qy();
   msg.orientation.z = rvector7_msg.qz();
   msg.orientation.w = rvector7_msg.qw();
-
+  //std::cout << msg.orientation << std::endl;
   pub_franka_end_effector.publish(msg);
 
   geometry_msgs::PoseStamped msgs;

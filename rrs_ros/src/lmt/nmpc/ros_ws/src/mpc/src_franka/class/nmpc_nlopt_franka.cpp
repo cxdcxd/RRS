@@ -1,5 +1,5 @@
 
-#include <nmpc_nlopt.h>
+#include <nmpc_nlopt_sc_franka.h>
 #include <chrono>
 
 NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)

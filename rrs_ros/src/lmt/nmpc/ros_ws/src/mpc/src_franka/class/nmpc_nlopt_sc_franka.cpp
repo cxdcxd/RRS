@@ -1,12 +1,11 @@
-
-#include <nmpc_nlopt_sc.h>
+#include <nmpc_nlopt_sc_franka.h>
 #include <chrono>
 
 NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
 {
  // string node_name = ros::this_node::getName();
   bool param_ok=true;
- double Q1v,Q2v,Pf1v,Pf2v,Rv;
+  double Q1v,Q2v,Pf1v,Pf2v,Rv;
   if(!nh.getParam("nlopt_mpc_main_node/nlmpc/cost_weight/Q1v",Q1v))
   {
     ROS_ERROR("error loading  Q1v param");
@@ -71,11 +70,6 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
      param_ok = false;
   }
 
-  if(!nh.getParam("nlopt_mpc_main_node/arm_name_space",arm_name_space))
-  {
-    ROS_ERROR("error loading  arm_name_space");
-     param_ok = false;
-  }
 
   if(!nh.getParam("nlopt_mpc_main_node/plot_obstacle",plot_obstacle))
   {
@@ -104,9 +98,9 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   ROS_WARN("Unity Sim Param Done");
   //ROS_WARN_STREAM("Path " << "/movo/"+arm_name_space+"_arm_controller/state");
 
-  joint_state_sub = nh.subscribe("/panda_simulator/custom_franka_state_controller/joint_states", 10, &NmpcNlopt::jointStateSubCB_sim,this); 
-  movo2kinova_offset = {0,3.1416,0,3.1416,0,3.1416,0};
-
+  joint_state_sub = nh.subscribe("/franka_ros_interface/custom_franka_state_controller/joint_states", 10, &NmpcNlopt::jointStateSubCB_sim,this); 
+  //movo2kinova_offset = {0,3.1416,0,3.1416,0,3.1416,0};
+  //ROS_WARN("-------------GET STARTED");
   state_sub_started = false;
   goal_sub_started = false;
  
@@ -114,22 +108,22 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
 
   goal_sub = nh.subscribe("/nmpc_controller/in/goal",1,&NmpcNlopt::goalSubCBFromOut,this);
 
-  velocity_pub = nh.advertise<franka_core_msgs::JointCommand>("/panda_simulator/motion_controller/arm/joint_commands",1);
+  velocity_pub = nh.advertise<franka_core_msgs::JointCommand>("/franka_ros_interface/motion_controller/arm/joint_commands",1);
 
- string this_arm_base = arm_name_space;
- obstacle_marker.header.frame_id = this_arm_base;
+  //string this_arm_base = arm_name_space;
+  //obstacle_marker.header.frame_id = this_arm_base;
   
-  goal_msg.names = {"panda_joint1","panda_joint2","panda_joint3","panda_joint4",
-                         "panda_joint5","panda_joint6","panda_joint7"};
+  goal_msg.names = {"panda_link1","panda_link2","panda_link3","panda_link4",
+                         "panda_link5","panda_link6","panda_hand"};
   cylinders_added = false;
- 
+  
   self_cylinders_pub = nh.advertise<perception_msgs::Cylinders>("/nmpc_controller/out/cylinder_poses",1);
 
   eef_pose_pub = nh.advertise<geometry_msgs::Pose>("/nmpc_controller/out/eef_pose",1);
 
   // server for toggle tracking mode
-  track_toggle_server = nh.advertiseService("/panda_simulator/track_toggle",&NmpcNlopt::track_toggle_cb,this);
-  track_mode = false;
+  //track_toggle_server = nh.advertiseService("/panda_simulator/track_toggle",&NmpcNlopt::track_toggle_cb,this);
+  track_mode = true;
 
   
   Ts = 0.2;
@@ -168,9 +162,8 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   position_goal.resize(joint_num);
   // start the thread
   thread1 = std::thread(velocitiesSend_thread_sim,&curr_joint_values, velocity_pub, &exitFlag, &joint_velocities, &goal_msg, &joint_velocities_mutex, &position_goal_mutex,&new_goal_got, &position_goal);
-  //thread1 = std::thread(velocitiesSend_thread_real, velocity_pub, &exitFlag, &joint_velocities, &joint_velocities_mutex,&new_goal_got);
+  //thread1 = std::thread(velocitiesSend_thread_real, velocity_pub, &exitFlag, &joint_velocities,  &goal_msg, &joint_velocities_mutex,&new_goal_got);
 
-  // start cost val cal thread and initiliaze shared in-output container
   num_cost_loops = ph/num_cost_threads;
   last_num_cost_loops = num_cost_loops+ph%num_cost_threads;
   num_cnt_loops = ph/num_cnt_threads;
@@ -197,6 +190,7 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
  	ros::Duration(0.1).sleep();
   }
 
+
   // constraint calculation threads preparetion
   activated = false;
   calculate_grad = false;
@@ -208,25 +202,27 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
     threads_ptr[i] = std::thread(cntCalThread, i, this);
     ros::Duration(0.1).sleep();
   }
+  
   // shared in-output constainer for constraint cal thread INITIALIZATION
   partial_cnt_val.resize(num_cnt_threads);
   partial_cnt_grads.resize(num_cnt_threads);
   MoveitTools_array.resize(num_cnt_threads);
   for(int i=0;i<num_cnt_threads;i++)
     MoveitTools_array[i] = new MoveitTool(nh);
-
-	cal_cost_count = 0;
+  //ROS_WARN("--------------");
+	
+  cal_cost_count = 0;
 	time_avg = 0;
 
   // initialize marker for visualizing predicted trajectory
   line_strip.scale.x = 5e-3;
   line_strip.scale.y = 5e-3;
   line_strip.scale.z = 5e-3;
-  line_strip.header.frame_id = this_arm_base;
+  line_strip.header.frame_id = "panda";
 
   // init tf for goal from outside
-  transformStamped_goal.header.frame_id = this_arm_base;
-  transformStamped_goal.child_frame_id = arm_name_space+"goal_from_outside";
+  transformStamped_goal.header.frame_id = "panda";
+  transformStamped_goal.child_frame_id = "panda_goal_from_outside";
 
   // initialize tf listener
   tfListener =  std::make_shared<tf2_ros::TransformListener>(tfBuffer);
@@ -236,10 +232,19 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   ros::Duration(3).sleep();
 
   geometry_msgs::TransformStamped transformStamped;
-  
-  
-  tf::transformMsgToEigen(transformStamped.transform, base2this_arm_base);
 
+
+  tf::transformMsgToEigen(transformStamped.transform, other_arm_base2this_arm_base);
+
+  try{
+  transformStamped = tfBuffer.lookupTransform("panda", "base_link",
+                           ros::Time(0));
+  }
+  catch (tf2::TransformException &ex) {
+  ROS_WARN("%s",ex.what());
+  return;
+  }
+  tf::transformMsgToEigen(transformStamped.transform, base2this_arm_base);
 
   try{
   transformStamped = tfBuffer.lookupTransform("base_link", "upper_body_link",
@@ -250,7 +255,6 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   return;
   }
   body_height = transformStamped.transform.translation.z;
-  
   
 }
 
@@ -307,21 +311,21 @@ void NmpcNlopt::jointStateSubCB_sim(const sensor_msgs::JointState::ConstPtr& msg
    // lb[7*i+6] = -0.8;
     //ub[7*i+6] = 0.8;
  // }
-
+  //std::cout << msg<<std::endl;
   for (int i=0;i<ch;i++){
     for (int j=0;j<7;j++){
       //std::cout << msg->position[j] << std::endl;
-      if ((uplimit[j]-msg->position[j+2])/0.2>0.5){
-        ub[7*i+j] = 0.5;
+      if ((uplimit[j]-msg->position[j])/0.2>0.34){
+        ub[7*i+j] = 0.34;
         }
       else {
-        ub[7*i+j] = (uplimit[j]-msg->position[j+2])/0.2;
+        ub[7*i+j] = (uplimit[j]-msg->position[j])/0.2;
       }
-      if ((lowlimit[j]-msg->position[j+2])/0.2<-0.5){
-        lb[7*i+j] = -0.5;
+      if ((lowlimit[j]-msg->position[j])/0.2<-0.34){
+        lb[7*i+j] = -0.34;
       }
       else {
-        lb[7*i+j] = (lowlimit[j]-msg->position[j+2])/0.2;
+        lb[7*i+j] = (lowlimit[j]-msg->position[j])/0.2;
       }
       if (u[7*i+j] > ub[7*i+j] || u[7*i+j] < lb[7*i+j]){
         u[7*i+j] = (ub[7*i+j]+lb[7*i+j])/2;
@@ -331,15 +335,16 @@ void NmpcNlopt::jointStateSubCB_sim(const sensor_msgs::JointState::ConstPtr& msg
   
   optimizer.set_lower_bounds(lb);
   optimizer.set_upper_bounds(ub);
- 
+  //simple_optimizer.set_lower_bounds(lb);
+  //simple_optimizer.set_upper_bounds(ub);
   if(!state_sub_started)
   {
     state_sub_started = true;
     for(int i=0;i<joint_num;i++)
     {
       //ROS_INFO("-------------------Joint state received------------------");
-      //std::cout << joint_num<<std::endl;
-      curr_joint_values[i] = msg->position[i+2];
+      //std::cout << msg->position[i]<<std::endl;
+      curr_joint_values[i] = msg->position[i];
       last_joint_values[i] = curr_joint_values[i];
       curr_joint_vels[i] = 0;
     }
@@ -350,16 +355,15 @@ void NmpcNlopt::jointStateSubCB_sim(const sensor_msgs::JointState::ConstPtr& msg
     for(int i=0;i<joint_num;i++)
     {
       last_joint_values[i] = curr_joint_values[i];
-      curr_joint_values[i] = msg->position[i+2];
-      //curr_joint_vels[i] = (curr_joint_values[i] - last_joint_values[i])/interval.toSec();//calculate joint velocity
-      curr_joint_vels[i] = msg->velocity[i+2];
+      curr_joint_values[i] = msg->position[i];
+      curr_joint_vels[i] = (curr_joint_values[i] - last_joint_values[i])/interval.toSec();//calculate joint velocity
     }
   }
 }
 
 void NmpcNlopt::goalSubCBFromOut(const geometry_msgs::PoseConstPtr& msg)
 {
-  goal_position << msg->position.x,msg->position.y,msg->position.z,
+  goal_position << msg->position.x,-msg->position.y,msg->position.z,
                    msg->orientation.w,msg->orientation.x,
                    msg->orientation.y,msg->orientation.z;
 
@@ -373,44 +377,13 @@ void NmpcNlopt::goalSubCBFromOut(const geometry_msgs::PoseConstPtr& msg)
   transformStamped_goal.transform.rotation.z = msg->orientation.z;
   transformStamped_goal.transform.rotation.w = msg->orientation.w;
   br.sendTransform(transformStamped_goal);
-
+  //std::cout << goal_position<<std::endl;
+  //ROS_WARN("Goal received");
   if(!goal_sub_started)
     goal_sub_started = true;
 }
 
-void NmpcNlopt::goalSubCB(const visualization_msgs::InteractiveMarkerFeedbackConstPtr &msg)
-{
-  // convert quaternion to rpy
-//  tf::Matrix3x3 rot(tf::Quaternion(msg->pose.orientation.x,
-//                                     msg->pose.orientation.y,
-//                                     msg->pose.orientation.z,
-//                                     msg->pose.orientation.w));
-//  double roll,pitch,yaw;
-//  rot.getRPY(roll,pitch,yaw);
-//  goal1 << msg->pose.position.x,msg->pose.position.y,msg->pose.position.z,
-//                   roll,pitch,yaw;
 
-
-  goal_position << msg->pose.position.x,msg->pose.position.y,msg->pose.position.z,
-                   msg->pose.orientation.w,msg->pose.orientation.x,
-                   msg->pose.orientation.y,msg->pose.orientation.z;
-  //std::cout << goal_position << std::endl;
-
-  if(!goal_sub_started)
-    goal_sub_started = true;
-
-
-//   interactive marker is used for moving obstacle
-//      obstacle_state.pose.position.x = msg->pose.position.x;
-//      obstacle_state.pose.position.y = msg->pose.position.y;
-//      obstacle_state.pose.position.z = msg->pose.position.z;
-//      obstacle_state.pose.orientation.x = msg->pose.orientation.x;
-//      obstacle_state.pose.orientation.y = msg->pose.orientation.y;
-//      obstacle_state.pose.orientation.z = msg->pose.orientation.z;
-//      obstacle_state.pose.orientation.w = msg->pose.orientation.w;
-//      gazebo_model_pub.publish(obstacle_state);
-
-}
 
 void NmpcNlopt::octomap_sub_cb(const octomap_msgs::OctomapConstPtr octo_msg)
 {
@@ -425,11 +398,6 @@ void NmpcNlopt::octomap_sub_cb(const octomap_msgs::OctomapConstPtr octo_msg)
 }
 
 
-bool NmpcNlopt::track_toggle_cb(std_srvs::EmptyRequest &req, std_srvs::EmptyResponse &res)
-{
-  track_mode = track_mode?false:true;
-  return true;
-}
 
 void NmpcNlopt::addObstacle(const std::string &obj_name, const shapes::ShapeConstPtr &obj_shape, const Eigen::Affine3d &obj_transform,const bool plot)
 {
@@ -901,7 +869,7 @@ void NmpcNlopt::optimize(std::vector<double>& u, double mincost)
   }
   auto t2 = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
-  std::cout << duration << std::endl;
+  //std::cout << duration << std::endl;
 
   // discard mvs in [1,ch-1]-th time step
   // only send the mv in the frist time step: 0th time step
@@ -921,7 +889,7 @@ void NmpcNlopt::optimize(std::vector<double>& u, double mincost)
   line_strip.color.r = 1.0;
   line_strip.id = 1;
   line_strip.type = visualization_msgs::Marker::LINE_STRIP;
-  line_strip.ns = arm_name_space+"_trajectory";
+  line_strip.ns = "panda_trajectory";
   line_strip.points.clear();
   line_strip.points.resize(ph+1);
 
@@ -948,15 +916,75 @@ void NmpcNlopt::optimize(std::vector<double>& u, double mincost)
     line_strip.points[i+1] = traj_point_x;
   }
 
-  marker_publisher.publish(line_strip);
+  //marker_publisher.publish(line_strip);
 
   line_strip.color.g = 1.0;
   line_strip.color.r = 0.0;
   line_strip.id = 3;
   line_strip.type = visualization_msgs::Marker::POINTS;
-  line_strip.ns = arm_name_space+"_trajectory_point";
-  marker_publisher.publish(line_strip);
+  line_strip.ns = "panda_trajectory_point";
+  //marker_publisher.publish(line_strip);
 }
+
+
+
+void NmpcNlopt::velocitiesSend_thread_real(ros::Publisher publisher2real, bool* exitFlag,
+                                      std::vector<double>* v_ptr, franka_core_msgs::JointCommand* msg,
+                                      pthread_mutex_t *joint_velocities_mutex,
+                                      bool* new_goal_got)
+{
+  double passsed_time_after_new_goal;
+  std::vector<double> temp_v(7);
+  ros::Duration d(0.01);
+  double flag;
+  //franka_core_msgs::JointCommand* msg;
+  while(ros::ok() && !(*exitFlag))
+  {
+    //std::cout << (*v_ptr)[0] <<(*v_ptr)[1] <<(*v_ptr)[2] << std::endl;
+    if((*v_ptr)[0]!=-200)
+    {
+
+      if(*new_goal_got)
+      {
+        passsed_time_after_new_goal = 0;
+        *new_goal_got = false;
+      }
+      else
+      {
+        passsed_time_after_new_goal +=0.01;
+        if(passsed_time_after_new_goal > 0.2)
+        {
+          //ROS_WARN("Joint velocities not updte for a long time, sending 0 velocities to robot.");
+          std::fill(temp_v.begin(),temp_v.end(),0);
+        }
+        else
+        {
+          //ROS_WARN("===========asign joint velocites=====================");
+          pthread_mutex_lock(joint_velocities_mutex);
+          temp_v = *v_ptr;
+          //std::cout << temp_v[0]<<"-----"<<temp_v[1]<<"------"<<temp_v[2] << "------"<<temp_v[3]<<"-----"<<temp_v[4]<<"------"<<temp_v[5]<< std::endl;
+          pthread_mutex_unlock(joint_velocities_mutex);
+        }
+      }
+
+      //msg->header.seq++;
+      //msg->position.clear();
+      //franka_core_msgs::JointCommand msg_point;
+      //msg_point.time_from_start = d;
+      
+      //msg->velocity = {-1.037792060227770554, -0.01601235411041661, 0.019782607023391807, 0.0342050140544315, 0.029840531355804868, -0.05411935298621688,-1.322};
+      //msg->names = {"panda_joint1","panda_joint2","panda_joint3","panda_joint4",
+                         //"panda_joint5","panda_joint6","panda_joint7"};
+      
+      
+      msg->velocity=temp_v;
+      msg->mode=msg->VELOCITY_MODE;
+      publisher2real.publish(*msg);
+    }
+    d.sleep();
+  }
+}
+
 
 void NmpcNlopt::velocitiesSend_thread_sim(std::vector<double>* c_ptr,ros::Publisher publisher, bool* exitFlag,
                                       std::vector<double>* v_ptr, franka_core_msgs::JointCommand* msg,
@@ -1006,8 +1034,7 @@ void NmpcNlopt::velocitiesSend_thread_sim(std::vector<double>* c_ptr,ros::Publis
       //msg_point.time_from_start = d;
       
       //msg->velocity = {-1.037792060227770554, -0.01601235411041661, 0.019782607023391807, 0.0342050140544315, 0.029840531355804868, -0.05411935298621688,-1.322};
-      msg->names = {"panda_joint1","panda_joint2","panda_joint3","panda_joint4",
-                         "panda_joint5","panda_joint6","panda_joint7"};
+      msg->names = {"panda_link1","panda_link2","panda_link3","panda_link4", "panda_link5","panda_link6","panda_hand"};
       
       //velocity mode
       //->velocity=temp_v;
@@ -1036,74 +1063,6 @@ void NmpcNlopt::velocitiesSend_thread_sim(std::vector<double>* c_ptr,ros::Publis
   }
   std::cout << "Velocities sending thread ended. " << std::endl;
 }
-
-void NmpcNlopt::velocitiesSend_thread_real(ros::Publisher publisher2real, bool* exitFlag,
-                                      std::vector<double>* v_ptr,
-                                      pthread_mutex_t *joint_velocities_mutex,
-                                      bool* new_goal_got)
-{
-  double passsed_time_after_new_goal;
-  std::vector<double> temp_v(7);
-  ros::Duration d(0.01);
-  double flag;
-  
-  while(ros::ok() && !(*exitFlag))
-  {
-    franka_core_msgs::JointCommand* msg;
-    //std::cout << (*v_ptr)[0] <<(*v_ptr)[1] <<(*v_ptr)[2] << std::endl;
-    if((*v_ptr)[0]!=-200)
-    {
-
-      if(*new_goal_got)
-      {
-        passsed_time_after_new_goal = 0;
-        *new_goal_got = false;
-      }
-      else
-      {
-        passsed_time_after_new_goal +=0.01;
-        if(passsed_time_after_new_goal > 0.2)
-        {
-          //ROS_WARN("Joint velocities not updte for a long time, sending 0 velocities to robot.");
-          std::fill(temp_v.begin(),temp_v.end(),0);
-        }
-        else
-        {
-          //ROS_WARN("===========asign joint velocites=====================");
-          pthread_mutex_lock(joint_velocities_mutex);
-          temp_v = *v_ptr;
-          //std::cout << temp_v[0]<<"-----"<<temp_v[1]<<"------"<<temp_v[2] << "------"<<temp_v[3]<<"-----"<<temp_v[4]<<"------"<<temp_v[5]<< std::endl;
-          pthread_mutex_unlock(joint_velocities_mutex);
-        }
-      }
-      
-      msg->header.seq++;
-      //msg->position.clear();
-      //franka_core_msgs::JointCommand msg_point;
-      //msg_point.time_from_start = d;
-      
-      //msg->velocity = {-1.037792060227770554, -0.01601235411041661, 0.019782607023391807, 0.0342050140544315, 0.029840531355804868, -0.05411935298621688,-1.322};
-      msg->names = {"panda_joint1","panda_joint2","panda_joint3","panda_joint4",
-                         "panda_joint5","panda_joint6","panda_joint7"};
-      
-    
-      /*
-      msg->position=*position_goal_ptr;
-        //msg->velocity={0.3,0,0,0,0,0,0};
-      msg->mode = msg->POSITION_MODE;
-      publisher.publish(*msg);
-      //std::cout << msg->velocity[6] << std::endl;
-      //msg = msg_point; 
-      */
-      msg->velocity=temp_v;
-      msg->mode=msg->VELOCITY_MODE;
-      publisher2real.publish(*msg);
-    }
-    d.sleep();
-  }
-  std::cout << "Velocities sending thread ended. " << std::endl;
-}
-
 
 
 void NmpcNlopt::initialize()
@@ -1189,7 +1148,7 @@ void NmpcNlopt::controlLoop()
   eef_pose_pub.publish(eef_pose_msg);
 
 //  if(track_mode&&goal_sub_started)
-  if(goal_sub_started)
+  if(track_mode)
   {
     optimize(u,mincost);
 

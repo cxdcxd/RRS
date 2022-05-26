@@ -80,6 +80,14 @@ target_link_libraries(moveitTool
   ${catkin_LIBRARIES}
   fcl
 )
+#moveittool franka
+add_library(moveitTool_franka
+   src_franka/class/moveitTool_franka.cpp
+ )
+target_link_libraries(moveitTool_franka
+  ${catkin_LIBRARIES}
+  fcl
+)
 
 add_library(nmpc_nlopt
   src/class/nmpc_nlopt.cpp
@@ -108,6 +116,15 @@ target_link_libraries(nmpc_nlopt_movo_pc_real
   moveitTool
 )
 
+#franka nmpc
+add_library(nmpc_nlopt_sc_franka
+  src_franka/class/nmpc_nlopt_sc_franka.cpp
+  src_franka/class/hessianCal_franka.cpp
+)
+target_link_libraries(nmpc_nlopt_sc_franka
+  ${EXT_LIBRARY}
+  moveitTool_franka
+)
 
 add_library(nmpc_nlopt_movo_sim
   src/class/nmpc_nlopt_movo_sim.cpp
@@ -137,7 +154,12 @@ target_link_libraries(main_real
   ${catkin_LIBRARIES}
   nmpc_nlopt_real
 )
-
+#franka
+add_executable(main_sc src_franka/main_sc_franka.cpp)
+target_link_libraries(main_sc
+  ${catkin_LIBRARIES}
+  nmpc_nlopt_sc_franka
+)
 
 
 

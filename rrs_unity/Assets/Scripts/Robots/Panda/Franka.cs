@@ -127,13 +127,24 @@ public class Franka : MonoBehaviour
         {
             if (enable_script_control)
             {
-                arm_1 += d_joints[0] * Time.deltaTime;
-                arm_2 += d_joints[1] * Time.deltaTime;
-                arm_3 += d_joints[2] * Time.deltaTime;
-                arm_4 += d_joints[3] * Time.deltaTime;
-                arm_5 += d_joints[4] * Time.deltaTime;
-                arm_6 += d_joints[5] * Time.deltaTime;
-                arm_7 += d_joints[6] * Time.deltaTime;
+                if (inited){
+                    arm_1 = d_joints[0]* Mathf.Rad2Deg;
+                    arm_2 = d_joints[1]* Mathf.Rad2Deg;
+                    arm_3 = d_joints[2]* Mathf.Rad2Deg;
+                    arm_4 = -d_joints[3]* Mathf.Rad2Deg;
+                    arm_5 = d_joints[4]* Mathf.Rad2Deg;
+                    arm_6 = -d_joints[5]* Mathf.Rad2Deg;
+                    arm_7 = d_joints[6]* Mathf.Rad2Deg;
+                    //print(arm_1);
+                }
+                //arm_1 += d_joints[0] *  Mathf.Rad2Deg;
+               // arm_2 += d_joints[1] *  Mathf.Rad2Deg;
+               // arm_3 += d_joints[2] *  Mathf.Rad2Deg;
+               // arm_4 += d_joints[3] *  Mathf.Rad2Deg;
+               // arm_5 += d_joints[4] *  Mathf.Rad2Deg;
+               // arm_6 += d_joints[5] *  Mathf.Rad2Deg;
+              //  arm_7 += d_joints[6] *  Mathf.Rad2Deg;
+                //print(arm_1);
             }
         }
         else
@@ -165,7 +176,7 @@ public class Franka : MonoBehaviour
             d_joints[i] = cmd.goal[i];
         }
 
-        print("Received");
+        //print("Received");
     }
    
     void sendNMPCMarkers()
@@ -187,6 +198,8 @@ public class Franka : MonoBehaviour
         marker.qw = c_rot.w;
 
         MemoryStream ms = new MemoryStream();
+
+        //print(marker.x);
         Serializer.Serialize<RVector7>(ms, marker);
         byte[] data = ms.ToArray();
 
@@ -212,7 +225,6 @@ public class Franka : MonoBehaviour
             Statics.network_manager_arm.sendMessage(command);
         }
 
-        //print("published");
     }
 
     private void sendState()
@@ -279,14 +291,14 @@ public class Franka : MonoBehaviour
         joint_state_msg.velocity = new float[joint_numbers];
         joint_state_msg.effort = new float[joint_numbers];
 
-        joint_state_msg.name[0] = Links.panda_link0.ToString();
-        joint_state_msg.name[1] = Links.panda_link1.ToString();
-        joint_state_msg.name[2] = Links.panda_link2.ToString();
-        joint_state_msg.name[3] = Links.panda_link3.ToString();
-        joint_state_msg.name[4] = Links.panda_link4.ToString();
-        joint_state_msg.name[5] = Links.panda_link5.ToString();
-        joint_state_msg.name[6] = Links.panda_link6.ToString();
-        joint_state_msg.name[7] = Links.panda_hand.ToString();
+        joint_state_msg.name[0] = Links.panda_link1.ToString();
+        joint_state_msg.name[1] = Links.panda_link2.ToString();
+        joint_state_msg.name[2] = Links.panda_link3.ToString();
+        joint_state_msg.name[3] = Links.panda_link4.ToString();
+        joint_state_msg.name[4] = Links.panda_link5.ToString();
+        joint_state_msg.name[5] = Links.panda_link6.ToString();
+        joint_state_msg.name[6] = Links.panda_hand.ToString();
+        joint_state_msg.name[7] = Links.panda_link0.ToString();
 
         //print(right_arm_1 * Mathf.Deg2Rad);
         //print(right_arm_2 * Mathf.Deg2Rad * -1);
@@ -294,9 +306,9 @@ public class Franka : MonoBehaviour
         (joint_state_msg.position[0], joint_state_msg.velocity[0], joint_state_msg.effort[0]) = (arm_1 * Mathf.Deg2Rad , 0, 0);
         (joint_state_msg.position[1], joint_state_msg.velocity[1], joint_state_msg.effort[1]) = (arm_2 * Mathf.Deg2Rad , 0, 0);
         (joint_state_msg.position[2], joint_state_msg.velocity[2], joint_state_msg.effort[2]) = (arm_3 * Mathf.Deg2Rad , 0, 0);
-        (joint_state_msg.position[3], joint_state_msg.velocity[3], joint_state_msg.effort[3]) = (arm_4 * Mathf.Deg2Rad , 0, 0);
+        (joint_state_msg.position[3], joint_state_msg.velocity[3], joint_state_msg.effort[3]) = (-arm_4 * Mathf.Deg2Rad , 0, 0);
         (joint_state_msg.position[4], joint_state_msg.velocity[4], joint_state_msg.effort[4]) = (arm_5 * Mathf.Deg2Rad , 0, 0);
-        (joint_state_msg.position[5], joint_state_msg.velocity[5], joint_state_msg.effort[5]) = (arm_6 * Mathf.Deg2Rad , 0, 0);
+        (joint_state_msg.position[5], joint_state_msg.velocity[5], joint_state_msg.effort[5]) = (-arm_6 * Mathf.Deg2Rad , 0, 0);
         (joint_state_msg.position[6], joint_state_msg.velocity[6], joint_state_msg.effort[6]) = (arm_7 * Mathf.Deg2Rad , 0, 0);
         (joint_state_msg.position[7], joint_state_msg.velocity[7], joint_state_msg.effort[7]) = (0, 0, 0);
 
@@ -318,10 +330,10 @@ public class Franka : MonoBehaviour
         MemoryStream ms = new MemoryStream();
         Serializer.Serialize<RRSJointState>(ms, joint_state_msg);
         byte[] data = ms.ToArray();
-
+        inited=true;
         publisher_joint_state.Send(data);
 
-        print("Franka State Published");
+        //print("Franka State Published");
     }
 
    

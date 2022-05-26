@@ -1,4 +1,4 @@
-#include <nmpc_nlopt_sc.h>
+#include <nmpc_nlopt_sc_franka.h>
 
 int main(int argc, char** argv)
 {

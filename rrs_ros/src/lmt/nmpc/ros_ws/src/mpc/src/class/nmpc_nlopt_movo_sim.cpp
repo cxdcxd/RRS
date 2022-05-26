@@ -178,8 +178,8 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   new_goal_got = false;
   position_goal.resize(joint_num);
   // start the thread
-  //thread1 = std::thread(velocitiesSend_thread_sim,&curr_joint_values, velocity_pub, &exitFlag, &joint_velocities, &goal_msg, &joint_velocities_mutex, &position_goal_mutex,&new_goal_got, &position_goal);
-  thread1 = std::thread(velocitiesSend_thread_real, velocity_pub, &exitFlag, &joint_velocities, &joint_velocities_mutex,&new_goal_got);
+  thread1 = std::thread(velocitiesSend_thread_sim,&curr_joint_values, velocity_pub, &exitFlag, &joint_velocities, &goal_msg, &joint_velocities_mutex, &position_goal_mutex,&new_goal_got, &position_goal);
+  //thread1 = std::thread(velocitiesSend_thread_real, velocity_pub, &exitFlag, &joint_velocities, &joint_velocities_mutex,&new_goal_got);
 
   // start cost val cal thread and initiliaze shared in-output container
   num_cost_loops = ph/num_cost_threads;
