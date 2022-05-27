@@ -126,8 +126,8 @@ public class Franka : MonoBehaviour
         if (Statics.current_environment == Statics.Environments.Sim)
         {
             if (enable_script_control)
-            {
-                if (inited){
+            {   //position mode
+                /*if (inited){
                     arm_1 = d_joints[0]* Mathf.Rad2Deg;
                     arm_2 = d_joints[1]* Mathf.Rad2Deg;
                     arm_3 = d_joints[2]* Mathf.Rad2Deg;
@@ -136,14 +136,15 @@ public class Franka : MonoBehaviour
                     arm_6 = -d_joints[5]* Mathf.Rad2Deg;
                     arm_7 = d_joints[6]* Mathf.Rad2Deg;
                     //print(arm_1);
-                }
-                //arm_1 += d_joints[0] *  Mathf.Rad2Deg;
-               // arm_2 += d_joints[1] *  Mathf.Rad2Deg;
-               // arm_3 += d_joints[2] *  Mathf.Rad2Deg;
-               // arm_4 += d_joints[3] *  Mathf.Rad2Deg;
-               // arm_5 += d_joints[4] *  Mathf.Rad2Deg;
-               // arm_6 += d_joints[5] *  Mathf.Rad2Deg;
-              //  arm_7 += d_joints[6] *  Mathf.Rad2Deg;
+                }*/
+                //velocity mode
+                arm_1 += d_joints[0] *  Time.deltaTime * Mathf.Rad2Deg;
+                arm_2 += d_joints[1] *  Time.deltaTime * Mathf.Rad2Deg;
+                arm_3 += d_joints[2] *  Time.deltaTime * Mathf.Rad2Deg;
+                arm_4 -= d_joints[3] *  Time.deltaTime * Mathf.Rad2Deg;
+                arm_5 += d_joints[4] *  Time.deltaTime * Mathf.Rad2Deg;
+                arm_6 -= d_joints[5] *  Time.deltaTime * Mathf.Rad2Deg;
+                arm_7 += d_joints[6] *  Time.deltaTime * Mathf.Rad2Deg;
                 //print(arm_1);
             }
         }
@@ -330,7 +331,7 @@ public class Franka : MonoBehaviour
         MemoryStream ms = new MemoryStream();
         Serializer.Serialize<RRSJointState>(ms, joint_state_msg);
         byte[] data = ms.ToArray();
-        inited=true;
+        //inited=true;
         publisher_joint_state.Send(data);
 
         //print("Franka State Published");

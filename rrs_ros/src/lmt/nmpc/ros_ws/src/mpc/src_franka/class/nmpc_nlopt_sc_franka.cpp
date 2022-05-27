@@ -161,8 +161,8 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   new_goal_got = false;
   position_goal.resize(joint_num);
   // start the thread
-  thread1 = std::thread(velocitiesSend_thread_sim,&curr_joint_values, velocity_pub, &exitFlag, &joint_velocities, &goal_msg, &joint_velocities_mutex, &position_goal_mutex,&new_goal_got, &position_goal);
-  //thread1 = std::thread(velocitiesSend_thread_real, velocity_pub, &exitFlag, &joint_velocities,  &goal_msg, &joint_velocities_mutex,&new_goal_got);
+  //thread1 = std::thread(velocitiesSend_thread_sim,&curr_joint_values, velocity_pub, &exitFlag, &joint_velocities, &goal_msg, &joint_velocities_mutex, &position_goal_mutex,&new_goal_got, &position_goal);
+  thread1 = std::thread(velocitiesSend_thread_real, velocity_pub, &exitFlag, &joint_velocities,  &goal_msg, &joint_velocities_mutex,&new_goal_got);
 
   num_cost_loops = ph/num_cost_threads;
   last_num_cost_loops = num_cost_loops+ph%num_cost_threads;
@@ -237,7 +237,7 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   tf::transformMsgToEigen(transformStamped.transform, other_arm_base2this_arm_base);
 
   try{
-  transformStamped = tfBuffer.lookupTransform("panda", "base_link",
+  transformStamped = tfBuffer.lookupTransform("panda", "panda_link0",
                            ros::Time(0));
   }
   catch (tf2::TransformException &ex) {
@@ -247,7 +247,7 @@ NmpcNlopt::NmpcNlopt(ros::NodeHandle nh):MoveitTool(nh)
   tf::transformMsgToEigen(transformStamped.transform, base2this_arm_base);
 
   try{
-  transformStamped = tfBuffer.lookupTransform("base_link", "upper_body_link",
+  transformStamped = tfBuffer.lookupTransform("panda_link0", "upper_body_link",
                            ros::Time(0));
   }
   catch (tf2::TransformException &ex) {
@@ -967,15 +967,13 @@ void NmpcNlopt::velocitiesSend_thread_real(ros::Publisher publisher2real, bool* 
         }
       }
 
-      //msg->header.seq++;
+      msg->header.seq++;
       //msg->position.clear();
       //franka_core_msgs::JointCommand msg_point;
       //msg_point.time_from_start = d;
       
       //msg->velocity = {-1.037792060227770554, -0.01601235411041661, 0.019782607023391807, 0.0342050140544315, 0.029840531355804868, -0.05411935298621688,-1.322};
-      //msg->names = {"panda_joint1","panda_joint2","panda_joint3","panda_joint4",
-                         //"panda_joint5","panda_joint6","panda_joint7"};
-      
+      msg->names = {"panda_link1","panda_link2","panda_link3","panda_link4", "panda_link5","panda_link6","panda_hand"};
       
       msg->velocity=temp_v;
       msg->mode=msg->VELOCITY_MODE;
