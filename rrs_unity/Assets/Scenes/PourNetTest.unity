@@ -1680,7 +1680,7 @@ MonoBehaviour:
   coupled_gripper_left: {fileID: 1458894719}
   liquid_flex_container: {fileID: 11400000, guid: 893fcc1ea9f0f7e4ea6519efca9f6391, type: 2}
   liquid_asset: {fileID: 11400000, guid: 8288073472bf17243a2543d3714f9f0c, type: 2}
-  render_fluid: 0
+  render_fluid: 1
   calibration_target_offset: 10
 --- !u!1 &1221124389
 GameObject:

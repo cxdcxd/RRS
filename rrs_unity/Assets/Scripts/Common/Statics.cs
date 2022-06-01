@@ -30,6 +30,7 @@ public class Statics
     public static Config current_config;
     public static Environments current_environment = Environments.Sim;
     public static Movo movo_ref;
+    public static MovoMini movo_mini_ref;
     public static Franka franka_ref;
     public static CPDManager cpd_manager_ref;
     public static float right_container_distance = 0.16f;
