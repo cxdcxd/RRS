@@ -31,6 +31,7 @@ public class CPDManager : MonoBehaviour
     public float delta_d = 0.6f;
     public Mode operation_mpde = Mode.SharedAutonomy;
     public Movo movo_ref;
+    public Franka franka_ref;
     public string mode = "";
 
 
@@ -323,7 +324,7 @@ public class CPDManager : MonoBehaviour
 
         scenario_point_list = new List<RVector7>();
 
-        FileStream fs = new FileStream("c:\\skillcpd\\scenarios\\" + scenario_file_name, FileMode.Open, FileAccess.Read);
+        FileStream fs = new FileStream(Application.dataPath + "/Benchmarks/scenarios/" + scenario_file_name, FileMode.Open, FileAccess.Read);
         StreamReader sr = new StreamReader(fs);
 
         string a = sr.ReadToEnd();
@@ -382,7 +383,7 @@ public class CPDManager : MonoBehaviour
 
         skill_point_list = new List<RVector7>();
 
-        FileStream fs = new FileStream("c:\\skillcpd\\skills\\" + skill_file_name, FileMode.Open, FileAccess.Read);
+        FileStream fs = new FileStream(Application.dataPath + "/Benchmarks/skills/" + skill_file_name, FileMode.Open, FileAccess.Read);
         StreamReader sr = new StreamReader(fs);
 
         string a = sr.ReadToEnd();
@@ -720,7 +721,7 @@ public class CPDManager : MonoBehaviour
     {
         print("Save the current benchmark");
 
-        FileStream fs = new FileStream("c:\\skillcpd\\benchmarks\\" + mode + "_" + method + ".txt", FileMode.Append, FileAccess.Write);
+        FileStream fs = new FileStream(Application.dataPath + "/Benchmarks/" + mode + "_" + method + ".txt", FileMode.Append, FileAccess.Write);
         StreamWriter sw = new StreamWriter(fs);
 
         if (total == false)
@@ -783,7 +784,7 @@ public class CPDManager : MonoBehaviour
         {
             print("Save the recorded skill");
 
-            FileStream fs = new FileStream("c:\\skillcpd\\skills\\" + skill_file_name, FileMode.Create, FileAccess.Write);
+            FileStream fs = new FileStream(Application.dataPath + "/Benchmarks/skills/" + skill_file_name, FileMode.Create, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
 
             int i = 0;
@@ -803,7 +804,7 @@ public class CPDManager : MonoBehaviour
         {
             print("Save the scenario");
 
-            FileStream fs = new FileStream("c:\\skillcpd\\scenarios\\" + scenario_file_name, FileMode.Create, FileAccess.Write);
+            FileStream fs = new FileStream(Application.dataPath + "/Benchmarks/scenarios/" + scenario_file_name, FileMode.Create, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
 
             int i = 0;

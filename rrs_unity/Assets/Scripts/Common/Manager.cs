@@ -19,7 +19,10 @@ public class Manager : MonoBehaviour
         inited = true;
 
         if ( Statics.current_environment == Statics.Environments.Sim)
-        print("RRS Ready " + Statics.current_config.consul_network_address);
+        {
+            print(Application.dataPath);
+            print("RRS Ready " + Statics.current_config.consul_network_address);
+        }
         else
         {
             print("Real Network Ready");
@@ -56,7 +59,23 @@ public class Manager : MonoBehaviour
                 Statics.network_manager_movo_status.killAll();
                 Statics.network_manager_right_arm = null;
             }
+
+
         }
+
+        if (Statics.main_tele_network != null)
+        {
+            Statics.main_tele_network.killAll();
+            Statics.main_tele_network = null;
+        }
+
+        if (Statics.main_cpd_network != null)
+        {
+            Statics.main_cpd_network.killAll();
+            Statics.main_cpd_network = null;
+        }
+
+        CPDManager.is_network_inited = false;
 
         GC.Collect();
         GC.WaitForPendingFinalizers();

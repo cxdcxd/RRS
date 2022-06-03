@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.4437053, g: 0.49304253, b: 0.57258886, a: 1}
+  m_IndirectSpecularColor: {r: 0.44370526, g: 0.49304253, b: 0.57258886, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -265,11 +265,12 @@ MonoBehaviour:
   cpdpoint_prefab: {fileID: 2661904748028091699, guid: 6cfe08736b6389d47b744a2fec156649, type: 3}
   robot_prefab: {fileID: 2661904748028091699, guid: df563de7fbd1a3f49b26a90c5f38b78d, type: 3}
   user_prefab: {fileID: 2661904748028091699, guid: 112b827fa5b50cb4c95558a8b18e8708, type: 3}
-  movo_ref: {fileID: 9014223842663809284}
-  mode: 
-  skill_time_list: []
-  operation_mpde: 1
   current_step: 0
+  delta_d: 0.6
+  operation_mpde: 1
+  movo_ref: {fileID: 9014223842663809284}
+  franka_ref: {fileID: 0}
+  mode: 
   is_rigid: 1
 --- !u!4 &54744401
 Transform:
@@ -12698,7 +12699,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6342204864346197905
 Transform:
   m_ObjectHideFlags: 0
@@ -17075,7 +17076,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6342204864346197904}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7282391e7e246274daeb7d1e27664e5c, type: 3}
   m_Name: 

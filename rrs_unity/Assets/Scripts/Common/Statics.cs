@@ -33,6 +33,7 @@ public class Statics
     public static MovoMini movo_mini_ref;
     public static Franka franka_ref;
     public static CPDManager cpd_manager_ref;
+    
     public static float right_container_distance = 0.16f;
     public static float left_container_distance = 0.24f;
 
@@ -106,6 +107,8 @@ public class Statics
 
             Net2.delegateInfoServiceNewLog += Net2__delegateInfoServiceNewLog;
             Net2.Init(net2_config);
+
+            
         }
         else
         {
@@ -121,7 +124,24 @@ public class Statics
             
 
         }
+
+        //CPD Part is common for both Sim and Real
+        Statics.main_tele_network = new Network<RVector7, RVector7>("127.0.0.1", "127.0.0.1", "9870", "9871", "0", NetworkType.PUBSUB, "Tele", false);
+        Statics.main_tele_network.eventDataUpdated += Main_tele_network_eventDataUpdated;
+        Statics.main_cpd_network = new Network<RRSCPDCommand, RRSCPDResult>("127.0.0.1", "127.0.0.1", "9872", "9873", "0", NetworkType.PUBSUB, "CPD", false);
+        Statics.main_cpd_network.eventDataUpdated += Main_cpd_network_eventDataUpdated;
        
+    }
+
+    private void Main_tele_network_eventDataUpdated()
+    {
+        cpd_manager_ref.Main_tele_network_eventDataUpdated();
+    }
+
+    private void Main_cpd_network_eventDataUpdated()
+    {
+        cpd_manager_ref.Main_cpd_network_eventDataUpdated();
+        
     }
 
     private void Network_manager_movo_status_eventDataUpdated()

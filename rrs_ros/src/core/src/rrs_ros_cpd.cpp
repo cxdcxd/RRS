@@ -1,10 +1,9 @@
-#include "rrs_ros.hh"
-
+#include "rrs_ros_cpd.hh"
 
 namespace lmt
 {
 
-  Net2TestROS::Net2TestROS(ros::NodeHandle &nh,
+  Net2TestROSCPD::Net2TestROSCPD(ros::NodeHandle &nh,
    ros::NodeHandle &pnh,
    int argc,
    char *argv[])
@@ -43,27 +42,27 @@ namespace lmt
     this->test_step = 1;
 
     //subscriber_camera_color = net2->subscriber();
-    //subscriber_camera_color->delegateNewData = std::bind(&Net2TestROS::callbackDataCameraColor, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    //subscriber_camera_color->delegateNewData = std::bind(&Net2TestROSCPD::callbackDataCameraColor, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     //ProcessResult<int> result3 = subscriber_camera_color->Start("rrs-camera_color");
  
     //subscriber_cpd = net2->subscriber();
-    //subscriber_cpd->delegateNewData = std::bind(&Net2TestROS::callbackDataCPDx, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    //subscriber_cpd->delegateNewData = std::bind(&Net2TestROSCPD::callbackDataCPDx, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     //ProcessResult<int> result3 = subscriber_cpd->Start("rrs-cpd_command");
 
     subscriber_nmpc_right_marker = net2->subscriber();
-    subscriber_nmpc_right_marker->delegateNewData = std::bind(&Net2TestROS::callbackDataNMPCRightMarker, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    subscriber_nmpc_right_marker->delegateNewData = std::bind(&Net2TestROSCPD::callbackDataNMPCRightMarker, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     ProcessResult<int> resultNMPCR = subscriber_nmpc_right_marker->Start("rrs-nmpc_right_in");
 
     subscriber_nmpc_left_marker = net2->subscriber();
-    subscriber_nmpc_left_marker->delegateNewData = std::bind(&Net2TestROS::callbackDataNMPCLeftMarker, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    subscriber_nmpc_left_marker->delegateNewData = std::bind(&Net2TestROSCPD::callbackDataNMPCLeftMarker, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     ProcessResult<int> resultNMPCL = subscriber_nmpc_left_marker->Start("rrs-nmpc_left_in");
 
     //subscriber_camera_info = net2->subscriber();
-    //subscriber_camera_info->delegateNewData = std::bind(&Net2TestROS::callbackDataCameraInfo, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    //subscriber_camera_info->delegateNewData = std::bind(&Net2TestROSCPD::callbackDataCameraInfo, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     //ProcessResult<int> result5 = subscriber_camera_info->Start("rrs-camera_info");
 
     subscriber_joint_state = net2->subscriber();
-    subscriber_joint_state->delegateNewData = std::bind(&Net2TestROS::callbackDataJointState, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    subscriber_joint_state->delegateNewData = std::bind(&Net2TestROSCPD::callbackDataJointState, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     ProcessResult<int> result11 = subscriber_joint_state->Start("rrs-joint_state");
 
     publisher_joint_command_right = net2->publisher("joint_right");
@@ -86,25 +85,25 @@ namespace lmt
     pub_right_end_effector = nh.advertise<geometry_msgs::Pose>("right/nmpc_controller/in/goal", 1);
     pub_right_end_effector_stamp = nh.advertise<geometry_msgs::PoseStamped>("right/nmpc_controller/in/goal/stamp", 1);
 
-    sub_jaco_right_vel = nh.subscribe("/movo/right_arm/angular_vel_cmd",1, &Net2TestROS::chatterCallbackVelRight, this);
-    sub_jaco_left_vel = nh.subscribe("/movo/left_arm/angular_vel_cmd",1, &Net2TestROS::chatterCallbackVelLeft, this);
+    sub_jaco_right_vel = nh.subscribe("/movo/right_arm/angular_vel_cmd",1, &Net2TestROSCPD::chatterCallbackVelRight, this);
+    sub_jaco_left_vel = nh.subscribe("/movo/left_arm/angular_vel_cmd",1, &Net2TestROSCPD::chatterCallbackVelLeft, this);
 
     //Init Net1
-    net_interface = new Network(9871,9870,0,"tele","172.30.50.164",false,5);
-    net_interface->dataCallBackFunction = std::bind(&Net2TestROS::receiveCallback, this, std::placeholders::_1, std::placeholders::_2,std::placeholders::_3);
+    net_interface = new Network(9871,9870,0,"tele","127.0.0.1",false,5);
+    net_interface->dataCallBackFunction = std::bind(&Net2TestROSCPD::receiveCallback, this, std::placeholders::_1, std::placeholders::_2,std::placeholders::_3);
 
-    net_interface_cpd = new Network(9873,9872,0,"cpd","172.30.50.164",false,5);
-    net_interface_cpd->dataCallBackFunction = std::bind(&Net2TestROS::receiveCallbackCPD, this, std::placeholders::_1, std::placeholders::_2,std::placeholders::_3);
+    net_interface_cpd = new Network(9873,9872,0,"cpd","127.0.0.1",false,5);
+    net_interface_cpd->dataCallBackFunction = std::bind(&Net2TestROSCPD::receiveCallbackCPD, this, std::placeholders::_1, std::placeholders::_2,std::placeholders::_3);
   }
   
-void Net2TestROS::receiveCallback(char * data,int size,int index)
+void Net2TestROSCPD::receiveCallback(char * data,int size,int index)
 {
   //ROS_WARN("TELE GET");
 
   net_interface->tcpWrite(data,size);
 }
 
-void Net2TestROS::receiveCallbackCPD(char * data,int size,int index)
+void Net2TestROSCPD::receiveCallbackCPD(char * data,int size,int index)
 {
   //ROS_WARN("CPD GET");
 
@@ -286,7 +285,7 @@ void Net2TestROS::receiveCallbackCPD(char * data,int size,int index)
 
 }
 
-std::vector<char> Net2TestROS::callbackDataCameraInfo(std::vector<char> buffer, uint64_t priority, std::string sender)
+std::vector<char> Net2TestROSCPD::callbackDataCameraInfo(std::vector<char> buffer, uint64_t priority, std::string sender)
 {
 
   //5
@@ -296,7 +295,7 @@ std::vector<char> Net2TestROS::callbackDataCameraInfo(std::vector<char> buffer, 
   return result;
 }
 
-  void Net2TestROS::publishCameraInfo(char* data, int size)
+  void Net2TestROSCPD::publishCameraInfo(char* data, int size)
 {
   //5
   RRSCameraInfo info_msg;
@@ -333,7 +332,7 @@ std::vector<char> Net2TestROS::callbackDataCameraInfo(std::vector<char> buffer, 
   pub_camera_info.publish(camera_info_msg);
 }
 
-  void Net2TestROS::chatterCallbackVelRight(const movo_msgs::JacoAngularVelocityCmd7DOF::ConstPtr& msg)
+  void Net2TestROSCPD::chatterCallbackVelRight(const movo_msgs::JacoAngularVelocityCmd7DOF::ConstPtr& msg)
   {
     //ROS_INFO("Got velocity for right hand");
 
@@ -355,7 +354,7 @@ std::vector<char> Net2TestROS::callbackDataCameraInfo(std::vector<char> buffer, 
     publisher_joint_command_right->send(buffer,bsize,1);
   }
 
-  void Net2TestROS::chatterCallbackVelLeft(const movo_msgs::JacoAngularVelocityCmd7DOF::ConstPtr& msg)
+  void Net2TestROSCPD::chatterCallbackVelLeft(const movo_msgs::JacoAngularVelocityCmd7DOF::ConstPtr& msg)
   {
     //ROS_INFO("Got velocity for left hand");
 
@@ -378,7 +377,7 @@ std::vector<char> Net2TestROS::callbackDataCameraInfo(std::vector<char> buffer, 
   }
   
   
-  bool Net2TestROS::loadYaml()
+  bool Net2TestROSCPD::loadYaml()
   {
     try
     {
@@ -407,13 +406,13 @@ std::vector<char> Net2TestROS::callbackDataCameraInfo(std::vector<char> buffer, 
  return false;
 }
 
-bool Net2TestROS::is_file_exist(const char *fileName)
+bool Net2TestROSCPD::is_file_exist(const char *fileName)
 {
   std::ifstream infile(fileName);
   return infile.good();
 }
 
-bool Net2TestROS::saveYaml()
+bool Net2TestROSCPD::saveYaml()
 {
   try
   {
@@ -443,7 +442,7 @@ bool Net2TestROS::saveYaml()
   return false;
 }
 
-void Net2TestROS::publishCameraColor(char* data, int size)
+void Net2TestROSCPD::publishCameraColor(char* data, int size)
 {
   //3
 	std::vector<unsigned char> data_byte;
@@ -465,7 +464,7 @@ void Net2TestROS::publishCameraColor(char* data, int size)
   
 }
 
-void Net2TestROS::publishJointState(char* data, int size)
+void Net2TestROSCPD::publishJointState(char* data, int size)
 {
   //11
   RRSJointState state_msg;
@@ -504,7 +503,7 @@ void Net2TestROS::publishJointState(char* data, int size)
   pub_joint_state_left.publish(ros_state_left_msg);
 }
 
-std::vector<char> Net2TestROS::callbackDataNMPCRightMarker(std::vector<char> buffer, uint64_t priority, std::string sender)
+std::vector<char> Net2TestROSCPD::callbackDataNMPCRightMarker(std::vector<char> buffer, uint64_t priority, std::string sender)
 {
   //ROS_INFO("Get right marker");
 
@@ -543,7 +542,7 @@ std::vector<char> Net2TestROS::callbackDataNMPCRightMarker(std::vector<char> buf
   pub_right_end_effector_stamp.publish(msgs);
 }
 
-std::vector<char> Net2TestROS::callbackDataNMPCLeftMarker(std::vector<char> buffer, uint64_t priority, std::string sender)
+std::vector<char> Net2TestROSCPD::callbackDataNMPCLeftMarker(std::vector<char> buffer, uint64_t priority, std::string sender)
 {
   //ROS_INFO("Get left marker");
 
@@ -582,7 +581,7 @@ std::vector<char> Net2TestROS::callbackDataNMPCLeftMarker(std::vector<char> buff
   pub_left_end_effector_stamp.publish(msgs);
 }
 
-std::vector<char> Net2TestROS::callbackDataCPDx(std::vector<char> buffer, uint64_t priority, std::string sender)
+std::vector<char> Net2TestROSCPD::callbackDataCPDx(std::vector<char> buffer, uint64_t priority, std::string sender)
 {
 
   std::vector<char> results;
@@ -748,7 +747,7 @@ std::vector<char> Net2TestROS::callbackDataCPDx(std::vector<char> buffer, uint64
   return results;
 }
 
-std::vector<char> Net2TestROS::callbackDataCameraColor(std::vector<char> buffer, uint64_t priority, std::string sender)
+std::vector<char> Net2TestROSCPD::callbackDataCameraColor(std::vector<char> buffer, uint64_t priority, std::string sender)
 {
   //ROS_INFO("GET CAMERA COLOR");
   //3
@@ -758,7 +757,7 @@ std::vector<char> Net2TestROS::callbackDataCameraColor(std::vector<char> buffer,
   return result;
 }
 
-std::vector<char> Net2TestROS::callbackDataJointState(std::vector<char> buffer, uint64_t priority, std::string sender)
+std::vector<char> Net2TestROSCPD::callbackDataJointState(std::vector<char> buffer, uint64_t priority, std::string sender)
 {
   //11
   std::vector<char> result;
@@ -767,18 +766,18 @@ std::vector<char> Net2TestROS::callbackDataJointState(std::vector<char> buffer, 
   return result;
 }
 
-void Net2TestROS::update()
+void Net2TestROSCPD::update()
 {
    
 }
 
-void Net2TestROS::kill()
+void Net2TestROSCPD::kill()
 {
   this->net2->Shutdown();
   ROS_INFO("RRS ROS TERMINATED");
 }
 
-Net2TestROS::~Net2TestROS()
+Net2TestROSCPD::~Net2TestROSCPD()
 {
 
 }

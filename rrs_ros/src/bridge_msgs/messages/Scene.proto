@@ -22,6 +22,13 @@ message Net2StationInfo
    repeated Net2ServiceInfo items = 3; 
 } 
 
+message RobolandConnection
+{
+optional string ip = 1;
+optional string status = 2;
+optional uint64 time = 3 [default = 0];
+}
+
 message RRSCPDCommand
 {
    repeated RVector7 points_a = 1;

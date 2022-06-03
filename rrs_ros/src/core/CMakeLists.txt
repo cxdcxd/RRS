@@ -39,6 +39,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Dlmt_DEBUG")
 find_package(Boost COMPONENTS system thread date_time REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(PCL 1.2 REQUIRED)
+find_package(Cpd  REQUIRED)
+find_package(Fgt  REQUIRED)
 pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
 
 add_message_files(
@@ -65,8 +67,9 @@ add_definitions(${PCL_DEFINITIONS})
 
 
 add_library(rrsnet
-
- 	    src/Net2/Share/NTPClient.cpp
+ 
+            src/Net1/network.cpp
+ 	          src/Net2/Share/NTPClient.cpp
 
             src/Net2/Main/Base/Net2.cpp 
             src/Net2/Main/Base/Net2Base.cpp
@@ -85,10 +88,17 @@ add_library(rrsnet
 add_executable(rrs_node 
 
             src/rrs_node.cpp 
-	        src/rrs_ros.cpp 
+	          src/rrs_ros.cpp 
             src/rrs_net_test.cpp
 	    
 	    )
+
+add_executable(rrs_cpd_node
+
+            src/rrs_cpd_node.cpp 
+	          src/rrs_ros_cpd.cpp 
+            src/rrs_net_test.cpp
+)	
 
 add_executable(rrs_node_benchmark
 
@@ -101,6 +111,9 @@ target_link_libraries(rrsnet ${catkin_LIBRARIES} ${YAML_CPP_INCLUDEDIR} zmq ppco
 
 target_link_libraries(rrs_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${YAML_CPP_LIBRARIES} rrsnet )
 add_dependencies(rrs_node lmt_msgs_generate_messages_cpp config_server_generate_messages_cpp)
+
+target_link_libraries(rrs_cpd_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${YAML_CPP_LIBRARIES} rrsnet Cpd::Library-C++ Fgt::Library-C++)
+add_dependencies(rrs_cpd_node lmt_msgs_generate_messages_cpp config_server_generate_messages_cpp)
 
 target_link_libraries(rrs_node_benchmark ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${YAML_CPP_LIBRARIES} rrsnet )
 add_dependencies(rrs_node_benchmark lmt_msgs_generate_messages_cpp config_server_generate_messages_cpp)
