@@ -41,13 +41,13 @@ MonoBehaviour:
   m_iterationCount: 5
   m_gravity: {x: 0, y: -9.81, z: 0}
   m_radius: 0.25
-  m_solidRest: 0.001
-  m_fluidRest: 0.15
-  m_staticFriction: 0.1
-  m_dynamicFriction: 0.1
+  m_solidRest: 0.1
+  m_fluidRest: 0.12
+  m_staticFriction: 1
+  m_dynamicFriction: 1
   m_particleFriction: 1
   m_restitution: 0
-  m_adhesion: 0.1
+  m_adhesion: 0.002
   m_sleepThreshold: 0
   m_maxSpeed: 3.4028235e+38
   m_maxAcceleration: 3.4028235e+38
@@ -76,11 +76,11 @@ MonoBehaviour:
   m_diffuseLifetime: 0
   m_plasticThreshold: 0
   m_plasticCreep: 0
-  m_collisionDistance: 0.3
+  m_collisionDistance: 0.1
   m_particleCollisionMargin: 0
   m_shapeCollisionMargin: 0
   m_planes: []
   m_relaxationMode: 1
   m_relaxationFactor: 1
-  m_fluidMaterial: {fileID: 2100000, guid: e6bb4a2d00eee9b44a69e6352f81d27d, type: 2}
+  m_fluidMaterial: {fileID: 2100000, guid: b0b398ad584129b4c90ad0a082abce8b, type: 2}
   m_showTimers: 0

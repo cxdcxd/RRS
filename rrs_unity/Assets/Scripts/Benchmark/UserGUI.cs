@@ -25,7 +25,11 @@ public class UserGUI : MonoBehaviour
     public FlexContainer oil;
     public FlexContainer glycerine;
     public FlexContainer honey;
-    
+    public FlexContainer milk;
+    public FlexContainer handgel;
+    public FlexContainer ketchup;
+    public FlexContainer shampoo;
+
     private GameObject pouringContainer;
     private FlexContainer selectedLiquid;
 
@@ -94,6 +98,25 @@ public class UserGUI : MonoBehaviour
 
         }
 
+        // Select Mode: Tele or PourNet
+        if (GUI.Button(new Rect(20 + 150, 60 + 200, 100, 50), "Teleoperation"))
+        {
+            //Statics.current_config.mode = "movo_tele";
+            //print(Statics.current_config.mode);
+            controller.ConfigureAgent(-1);
+            print("Tele");
+
+        }
+
+        if (GUI.Button(new Rect(20 + 150, 110 + 200, 100, 50), "PourNet"))
+        {
+            //Statics.current_config.mode = "movo";
+            //print(Statics.current_config.mode);
+            controller.ConfigureAgent(1);
+            print("PourNet");
+
+        }
+
         // Pouring Mugs 
         if (GUI.Button(new Rect(20, 200 + 200, 100, 50), "Conical Glass"))
         {
@@ -117,27 +140,47 @@ public class UserGUI : MonoBehaviour
         }
 
         // Liquid Types
-        if (GUI.Button(new Rect(20 + 150, 200 + 200, 100, 50), "Water"))
+        if (GUI.Button(new Rect(20 + 150, 200 + 200, 100, 25), "Water"))
         {
             selectedLiquid = water;
         }
 
-        if (GUI.Button(new Rect(20 + 150, 250 + 200, 100, 50), "Ink"))
+        if (GUI.Button(new Rect(20 + 150, 225 + 200, 100, 25), "Milk"))
+        {
+            selectedLiquid = milk;
+        }
+
+        if (GUI.Button(new Rect(20 + 150, 250 + 200, 100, 25), "Ink"))
         {
             selectedLiquid = ink;
         }
 
-        if (GUI.Button(new Rect(20 + 150, 300 + 200, 100, 50), "Oil"))
+        if (GUI.Button(new Rect(20 + 150, 275 + 200, 100, 25), "Shampoo"))
+        {
+            selectedLiquid = shampoo;
+        }
+
+        if (GUI.Button(new Rect(20 + 150, 300 + 200, 100, 25), "Oil"))
         {
             selectedLiquid = oil;
         }
 
-        if (GUI.Button(new Rect(20 + 150, 350 + 200, 100, 50), "Glycerine"))
+        if (GUI.Button(new Rect(20 + 150, 325 + 200, 100, 25), "Handgel"))
+        {
+            selectedLiquid = handgel;
+        }
+
+        if (GUI.Button(new Rect(20 + 150, 350 + 200, 100, 25), "Glycerine"))
         {
             selectedLiquid = glycerine;
         }
 
-        if (GUI.Button(new Rect(20 + 150, 400 + 200, 100, 50), "Honey"))
+        if (GUI.Button(new Rect(20 + 150, 375 + 200, 100, 25), "Ketchup"))
+        {
+            selectedLiquid = ketchup;
+        }
+
+        if (GUI.Button(new Rect(20 + 150, 400 + 200, 100, 25), "Honey"))
         {
             selectedLiquid = honey;
         }

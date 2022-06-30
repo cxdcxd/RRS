@@ -10,6 +10,7 @@ public class ForceInformationLT : MonoBehaviour
     public GameObject target;
     public GameObject workspace;
     private float measuredWeight;
+    private float kgTog = 1000.0f;
 
     public float getMeasuredWeight()
     {
@@ -47,11 +48,11 @@ public class ForceInformationLT : MonoBehaviour
         if (target != null)
         {
             if (fixedJoint.gameObject.name.Contains("sourceHand")) {
-                GUI.Label(new Rect(10, 10, 1000, 20), "Liquid in source: " + this.getMeasuredWeight());
+                GUI.Label(new Rect(10, 10, 1000, 20), "Liquid in source: " + kgTog * this.getMeasuredWeight() + " g");
             } else
             {
-                GUI.Label(new Rect(10, 40, 1000, 20), "Target: " + targetWeight);
-                GUI.Label(new Rect(10, 80, 1000, 20), "Filled weight: " + this.getMeasuredWeight());
+                GUI.Label(new Rect(10, 40, 1000, 20), "Target: " + kgTog*targetWeight + " g");
+                GUI.Label(new Rect(10, 80, 1000, 20), "Filled weight: " + kgTog*this.getMeasuredWeight() + " g");
             }
         }
     }

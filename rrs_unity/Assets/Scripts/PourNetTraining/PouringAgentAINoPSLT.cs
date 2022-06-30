@@ -6,6 +6,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
+using Unity.Barracuda;
 
 public class PouringAgentAINoPSLT : Agent {
 
@@ -21,6 +22,9 @@ public class PouringAgentAINoPSLT : Agent {
     public PhysicMaterial robotPhysicsMaterial; // Physics material to use with robotic hand.
     public GameObject workspace; // Workspace for target hand.
     public bool render_fluid = true;
+    private int configureAgent = -1;
+    public NNModel model;
+    public float calibration_target_offset = 10;
 
     /// <summary>
     /// The objects below are created and used internally during the runtime.
@@ -177,9 +181,14 @@ public class PouringAgentAINoPSLT : Agent {
         createSolidObjects(sourceName);
         createSolidObjects(targetName);
 
+        //source.getSolidObject().transform.position = initialPosition;
+
+
         // // 3. align robots with solid objects
         robotHandForSource.holdObject(source, workspace, true, true);
         robotHandForTarget.holdObject(target, workspace, true, true, true);
+
+        robotHandForSource.transform.position = initialPosition;
 
         // 4. Create liquid
         if (isTest)
@@ -191,15 +200,15 @@ public class PouringAgentAINoPSLT : Agent {
                 //Application.Quit();
             } else
             {
-                target_to_fill = fill_targets[experiment_indexer];
-                experiment_indexer++;
+                //target_to_fill = fill_targets[experiment_indexer];
+                //experiment_indexer++;
                 float density = 1.0f;
                 //Color color = Color.clear;
 
                 switch (liquid_flex_container.name)
                 {
                     case "Water":
-                            density = 5.0f;
+                            density = 1.0f;
                             // color = colors[choice];
                             //color = new Color(0.0549019608f, 0.529411765f, 0.8f);
                             break;
@@ -223,6 +232,19 @@ public class PouringAgentAINoPSLT : Agent {
                             density = 1.092f;
                             //color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
                             break;
+                    case "Milk":
+                        density = 1.0f;
+                        //color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
+                        break;
+                    case "Shampoo":
+                        density = 1.26f;
+                        //color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
+                        break;
+                    case "Handgel":
+                        density = 1.3f;
+                        //color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
+                        break;
+
                 }
                 //color.a = 0.75f;
                 liquid = SpawnObjectsLT.createLiquid(liquid, robotHandForSource, this.gameObject, liquid_flex_container, liquidAsset, sourceStartVolume, density);
@@ -325,10 +347,10 @@ public class PouringAgentAINoPSLT : Agent {
         // Grasping at handle.
         timer += Time.deltaTime;
         liquidState = liquid.getLiquidState(source.getSolidObject(), target.getSolidObject(), workspace, liquidState);
-        if (timer > 5.0f)
+        if (timer > 8.0f)
         {
             performPouringAction(actions);
-            AddReward(-1f / MaxStep);
+            AddReward(-1.0f / MaxStep);
         }
     }
 
@@ -488,6 +510,41 @@ public class PouringAgentAINoPSLT : Agent {
                 }
             }
         }
+    }
+
+
+
+    /// <summary>
+    /// Configures the agent. Given an integer config, brain will switch from heuristics 
+    /// to trained agent.
+    /// </summary>
+    /// <param name="config">Config.
+    /// If -1 : use Heuristics.
+    /// If 1:  use trained brain.
+    /// </param>
+    public void ConfigureAgent(int config)
+    {
+        configureAgent = config;
+        if (configureAgent == -1)
+        {
+            SetModel("Heuristc", null);
+            EndEpisode();
+        }
+        else if (configureAgent == 1)
+        {
+            ResetScene();
+            //if (liquid.getFlexParticleContainer().viscosity < 10.0f) 
+            SetModel("NoPSModel", model);
+            //else
+            //    SetModel("PouringBrain", highViscosityModel);
+        }
+    }
+
+    public void setTargetToPour(string target)
+    {
+        float t = float.Parse(target);
+        t = t - calibration_target_offset;
+        this.target_to_fill = t / 1000f;
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)

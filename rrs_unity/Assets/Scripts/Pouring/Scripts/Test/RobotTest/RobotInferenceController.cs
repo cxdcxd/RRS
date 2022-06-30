@@ -424,37 +424,49 @@ public class RobotInferenceController : Agent
             // Spawn liquid
             print("RUNNING INFERENCE EXPERIMENTS ON TRAINED AGENT!!!");
             float density = 1.0f;
-            Color color = new Color(1f, 1f, 0.894117647f);
+            //Color color = new Color(1f, 1f, 0.894117647f);
             switch (liquid_flex_container.name)
             {
                 case "Water":
-                    color = new Color(0.0549019608f, 0.529411765f, 0.8f);
+                    //color = new Color(0.0549019608f, 0.529411765f, 0.8f);
                     density = 1.0f;
                     break;
                 case "Ink":
-                    color = new Color(0.0274509804f, 0.0509803922f, 0.0509803922f);
+                    //color = new Color(0.0274509804f, 0.0509803922f, 0.0509803922f);
                     density = 1.0081f;
                     break;
                 case "Oil":
-                    color = new Color(1f, 0.996078431f, 0.250980392f);
+                    //color = new Color(1f, 0.996078431f, 0.250980392f);
                     density = 0.917f;
                     break;
                 case "Honey":
-                    color = new Color(0.996078431f, 0.776470588f, 0.0823529412f);
+                    //color = new Color(0.996078431f, 0.776470588f, 0.0823529412f);
                     density = 1.42f;
                     break;
                 case "Glycerin":
-                    color = new Color(0.847058824f, 0.862745098f, 0.839215686f);
+                    //color = new Color(0.847058824f, 0.862745098f, 0.839215686f);
                     density = 1.26f;
                     break;
                 case "Ketchup":
-                    color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
+                    //color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
                     density = 1.092f;
                     break;
+                case "Milk":
+                    density = 1.0f;
+                    //color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
+                    break;
+                case "Shampoo":
+                    density = 1.26f;
+                    //color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
+                    break;
+                case "Handgel":
+                    density = 1.3f;
+                    //color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
+                    break;
             }
-            color.a = 0.85f;
+            //color.a = 0.85f;
             liquid = SpawnObjects.createLiquid(liquid, source, this.gameObject, liquid_flex_container, liquid_asset, fixedSourceStartVolume, density, render_fluid:this.render_fluid);
-            liquid.getFlexParticleContainer().fluidMaterial.color = color;
+            //liquid.getFlexParticleContainer().fluidMaterial.color = color;
             print("Liquid is: " + liquid.getFlexParticleContainer().name);
             ResetLiquidStateInformation();
         }

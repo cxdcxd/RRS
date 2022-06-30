@@ -42,7 +42,7 @@ MonoBehaviour:
   m_gravity: {x: 0, y: -9.8, z: 0}
   m_radius: 0.26
   m_solidRest: 1
-  m_fluidRest: 0.16
+  m_fluidRest: 0.13
   m_staticFriction: 2
   m_dynamicFriction: 2
   m_particleFriction: 2

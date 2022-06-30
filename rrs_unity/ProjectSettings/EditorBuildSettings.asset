@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/Demo.unity
+  - enabled: 0
+    path: Assets/Scenes/Old/Demo.unity
     guid: 853de7e2c76fd5b479742714e1edaa44
+  - enabled: 1
+    path: Assets/Scenes/PourNetTraining.unity
+    guid: b352b57144476a441b04aac7604654f5
   m_configObjects: {}

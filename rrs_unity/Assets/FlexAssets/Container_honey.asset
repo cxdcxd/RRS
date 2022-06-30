@@ -35,14 +35,14 @@ MonoBehaviour:
   m_maxParticles: 10000
   m_maxDiffuse: 0
   m_maxNeighbors: 100
-  m_maxContacts: 8
+  m_maxContacts: 6
   m_recreateSolver: 0
   m_substepCount: 3
   m_iterationCount: 5
   m_gravity: {x: 0, y: -9.81, z: 0}
   m_radius: 0.25
-  m_solidRest: 0.05
-  m_fluidRest: 0.16
+  m_solidRest: 0.04
+  m_fluidRest: 0.135
   m_staticFriction: 1
   m_dynamicFriction: 1
   m_particleFriction: 1
@@ -62,8 +62,8 @@ MonoBehaviour:
   m_surfaceTension: 0
   m_viscosity: 1
   m_vorticityConfinement: 0
-  m_anisotropyScale: 4
-  m_anisotropyMin: 0
+  m_anisotropyScale: 2
+  m_anisotropyMin: 0.1
   m_anisotropyMax: 1
   m_smoothing: 0.5
   m_solidPressure: 0

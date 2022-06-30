@@ -82,5 +82,5 @@ MonoBehaviour:
   m_planes: []
   m_relaxationMode: 1
   m_relaxationFactor: 1
-  m_fluidMaterial: {fileID: 2100000, guid: e6bb4a2d00eee9b44a69e6352f81d27d, type: 2}
+  m_fluidMaterial: {fileID: 2100000, guid: 4239888954f54484bacc7ac02ab008e2, type: 2}
   m_showTimers: 0

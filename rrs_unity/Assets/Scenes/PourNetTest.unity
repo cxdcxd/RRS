@@ -3616,6 +3616,10 @@ MonoBehaviour:
   oil: {fileID: 11400000, guid: 1c783149bfbe1f74b977df20ce2bd877, type: 2}
   glycerine: {fileID: 11400000, guid: 4500d9ad99edc5c48b1f5aea741d3bb3, type: 2}
   honey: {fileID: 11400000, guid: 6e7430a9121c0d0428c6028cd50c8b6a, type: 2}
+  milk: {fileID: 11400000, guid: 1c7baedc23a12e248b0add9ba774a96d, type: 2}
+  handgel: {fileID: 11400000, guid: 5cf3770cb15823c47b0c6712b917585b, type: 2}
+  ketchup: {fileID: 11400000, guid: afcf250c6a0fc3b4fa0fac1f96f1d7eb, type: 2}
+  shampoo: {fileID: 11400000, guid: d050295c11232a2409fefc4ce0117025, type: 2}
   controller: {fileID: 1198647948}
   stringToEdit: 50
   is_markers_visible: 0
