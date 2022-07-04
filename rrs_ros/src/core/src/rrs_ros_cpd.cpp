@@ -49,6 +49,7 @@ namespace lmt
     //subscriber_cpd->delegateNewData = std::bind(&Net2TestROSCPD::callbackDataCPDx, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     //ProcessResult<int> result3 = subscriber_cpd->Start("rrs-cpd_command");
 
+
     subscriber_nmpc_right_marker = net2->subscriber();
     subscriber_nmpc_right_marker->delegateNewData = std::bind(&Net2TestROSCPD::callbackDataNMPCRightMarker, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     ProcessResult<int> resultNMPCR = subscriber_nmpc_right_marker->Start("rrs-nmpc_right_in");
@@ -56,6 +57,7 @@ namespace lmt
     subscriber_nmpc_left_marker = net2->subscriber();
     subscriber_nmpc_left_marker->delegateNewData = std::bind(&Net2TestROSCPD::callbackDataNMPCLeftMarker, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     ProcessResult<int> resultNMPCL = subscriber_nmpc_left_marker->Start("rrs-nmpc_left_in");
+
 
     //subscriber_camera_info = net2->subscriber();
     //subscriber_camera_info->delegateNewData = std::bind(&Net2TestROSCPD::callbackDataCameraInfo, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
@@ -70,6 +72,8 @@ namespace lmt
 
     publisher_joint_command_left = net2->publisher("joint_left");
     publisher_joint_command_left->Start();
+
+
 
     //publisher_cpd = net2->publisher("cpd_result");
     //publisher_cpd->Start();
@@ -502,6 +506,8 @@ void Net2TestROSCPD::publishJointState(char* data, int size)
   pub_joint_state_right.publish(ros_state_right_msg);
   pub_joint_state_left.publish(ros_state_left_msg);
 }
+
+
 
 std::vector<char> Net2TestROSCPD::callbackDataNMPCRightMarker(std::vector<char> buffer, uint64_t priority, std::string sender)
 {

@@ -104,6 +104,8 @@ public:
               int argc,
               char *argv[]);
 
+  std::vector<char> callbackDataRightStatusGripper(std::vector<char> buffer, uint64_t priority, std::string sender);
+  std::vector<char> callbackDataLeftStatusGripper(std::vector<char> buffer, uint64_t priority, std::string sender);
   std::vector<char> callbackDataNMPCMarker(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataNMPCLeftMarker(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataNMPCRightMarker(std::vector<char> buffer, unsigned int priority, std::string sender);
@@ -115,6 +117,8 @@ public:
 
   std::shared_ptr<Net2Publisher> publisher_joint_command_left;
   std::shared_ptr<Net2Publisher> publisher_joint_command_right;
+  std::shared_ptr<Net2Publisher> publisher_joint_command_left_gripper;
+  std::shared_ptr<Net2Publisher> publisher_joint_command_right_gripper;
   std::shared_ptr<Net2Publisher> publisher_joint_command_franka;
 
   std::shared_ptr<Net2Subscriber> subscriber_camera_color;
@@ -123,6 +127,8 @@ public:
   std::shared_ptr<Net2Subscriber> subscriber_joint_state_franka;
   std::shared_ptr<Net2Subscriber> subscriber_nmpc_right_marker;
   std::shared_ptr<Net2Subscriber> subscriber_nmpc_left_marker;
+  std::shared_ptr<Net2Subscriber> subscriber_right_status_gripper;
+  std::shared_ptr<Net2Subscriber> subscriber_left_status_gripper;
   std::shared_ptr<Net2Subscriber> subscriber_nmpc_marker;
   
   ros::Publisher pub_camera_color;

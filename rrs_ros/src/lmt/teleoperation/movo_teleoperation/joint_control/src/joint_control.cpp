@@ -29,7 +29,6 @@ void JointControl::thrMain()
    }
 }
 
- 
 
 void JointControl::wait(int ms)
 {

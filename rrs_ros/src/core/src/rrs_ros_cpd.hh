@@ -106,6 +106,7 @@ public:
   void receiveCallback(char * data,int size,int index);
   void receiveCallbackCPD(char * data,int size,int index);
 
+
   std::vector<char> callbackDataNMPCLeftMarker(std::vector<char> buffer, uint64_t priority, std::string sender);
   std::vector<char> callbackDataNMPCRightMarker(std::vector<char> buffer, uint64_t priority, std::string sender);
   std::vector<char> callbackDataCameraColor(std::vector<char> buffer, uint64_t priority, std::string sender);

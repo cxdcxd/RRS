@@ -66,6 +66,14 @@ namespace lmt
     subscriber_nmpc_left_marker->delegateNewData = std::bind(&Net2TestROS::callbackDataNMPCLeftMarker, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     ProcessResult<int> resultNMPCL = subscriber_nmpc_left_marker->Start("rrs-nmpc_left_in");
 
+    subscriber_right_status_gripper = net2->subscriber();
+    subscriber_right_status_gripper->delegateNewData = std::bind(&Net2TestROS::callbackDataRightStatusGripper, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    ProcessResult<int> resultRightGripper = subscriber_right_status_gripper->Start("rrs-right_status_gripper");
+
+    subscriber_left_status_gripper = net2->subscriber();
+    subscriber_left_status_gripper->delegateNewData = std::bind(&Net2TestROS::callbackDataLeftStatusGripper, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
+    ProcessResult<int> resultLeftGripper = subscriber_left_status_gripper->Start("rrs-left_status_gripper");
+
     subscriber_camera_info = net2->subscriber();
     subscriber_camera_info->delegateNewData = std::bind(&Net2TestROS::callbackDataCameraInfo, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
     ProcessResult<int> result5 = subscriber_camera_info->Start("rrs-camera_info");
@@ -83,6 +91,12 @@ namespace lmt
 
     publisher_joint_command_left = net2->publisher("joint_left");
     publisher_joint_command_left->Start();
+
+    publisher_joint_command_right_gripper = net2->publisher("joint_right_gripper");
+    publisher_joint_command_right_gripper->Start();
+
+    publisher_joint_command_left_gripper = net2->publisher("joint_left_gripper");
+    publisher_joint_command_left_gripper->Start();
 
     publisher_joint_command_franka = net2->publisher("joint_franka");
     publisher_joint_command_franka->Start();
@@ -111,8 +125,23 @@ namespace lmt
     sub_jaco_right_vel = nh.subscribe("/movo/right_arm/angular_vel_cmd",1, &Net2TestROS::chatterCallbackVelRight, this);
     sub_jaco_left_vel = nh.subscribe("/movo/left_arm/angular_vel_cmd",1, &Net2TestROS::chatterCallbackVelLeft, this);
     sub_franka_vel = nh.subscribe("/franka_ros_interface/motion_controller/arm/joint_commands",1, &Net2TestROS::chatterCallbackVelFranka, this);
+  
+  
+    //TOJC
+
+    //FromJC
   }
   
+  std::vector<char> Net2TestROS::callbackDataRightStatusGripper(std::vector<char> buffer, uint64_t priority, std::string sender)
+{
+
+}
+
+std::vector<char> Net2TestROS::callbackDataLeftStatusGripper(std::vector<char> buffer, uint64_t priority, std::string sender)
+{
+
+}
+
   std::vector<char> Net2TestROS::callbackDataCameraInfo(std::vector<char> buffer, unsigned int priority, std::string sender)
   {
 
