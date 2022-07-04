@@ -25,6 +25,7 @@ namespace lmt
     ROS_INFO_STREAM("consul network mask :" << m_settings.consul_network_mask );
     ROS_INFO_STREAM("consul network port :" << m_settings.consul_network_port);
     ROS_INFO_STREAM("ntp server host name : " << m_settings.ntp_server_host_name);
+    ROS_INFO_STREAM("operation mode : " << m_settings.operation_mode);
 
     Net2Config config;
 
@@ -41,6 +42,13 @@ namespace lmt
     this->net2->Init(config,"rrs_ros","test");
 
     this->test_step = 1;
+
+    if ( m_settings.operation_mode == "ML")
+      operation_mode = OperationMode::ML;
+    if ( m_settings.operation_mode == "TeleMovo")
+      operation_mode = OperationMode::TeleMovo;
+    if ( m_settings.operation_mode == "TeleGripper")
+      operation_mode = OperationMode::TeleGripper;
 
     subscriber_camera_color = net2->subscriber();
     subscriber_camera_color->delegateNewData = std::bind(&Net2TestROS::callbackDataCameraColor, this, std::placeholders::_1,std::placeholders::_2,std::placeholders::_3);
@@ -88,10 +96,14 @@ namespace lmt
     pub_joint_state_franka = nh.advertise<sensor_msgs::JointState>("/franka_ros_interface/custom_franka_state_controller/joint_states",1);
     
     //TO NMPC
+    if ( operation_mode == OperationMode::ML )
+    {
     pub_left_end_effector = nh.advertise<geometry_msgs::Pose>("left/nmpc_controller/in/goal", 1);
     pub_left_end_effector_stamp = nh.advertise<geometry_msgs::PoseStamped>("left/nmpc_controller/in/goal/stamp", 1);
     pub_right_end_effector = nh.advertise<geometry_msgs::Pose>("right/nmpc_controller/in/goal", 1);
     pub_right_end_effector_stamp = nh.advertise<geometry_msgs::PoseStamped>("right/nmpc_controller/in/goal/stamp", 1);
+    }
+    
     pub_franka_end_effector = nh.advertise<geometry_msgs::Pose>("/nmpc_controller/in/goal", 1);
     pub_franka_end_effector_stamp = nh.advertise<geometry_msgs::PoseStamped>("/nmpc_controller/in/goal/stamp", 1);
 
@@ -239,6 +251,7 @@ void Net2TestROS::chatterCallbackVelRight(const movo_msgs::JacoAngularVelocityCm
        m_settings.consul_network_mask = m_config["consul_network_mask"].as<std::string>();
        m_settings.consul_network_port = m_config["consul_network_port"].as<std::string>();
        m_settings.ntp_server_host_name = m_config["ntp_server_host_name"].as<std::string>();
+       m_settings.operation_mode = m_config["operation_mode"].as<std::string>();
 
        return true;
      }
@@ -273,7 +286,7 @@ bool Net2TestROS::saveYaml()
     m_config["consul_network_mask"] = m_settings.consul_network_mask;
     m_config["consul_network_port"] = m_settings.consul_network_port;
     m_config["ntp_server_host_name"] = m_settings.ntp_server_host_name;
-
+    m_config["operation_mode"] = m_settings.operation_mode;
 
     fout << m_config; 
 
@@ -416,6 +429,7 @@ std::vector<char> Net2TestROS::callbackDataNMPCRightMarker(std::vector<char> buf
 
   std::vector<char> result;
   if ( priority == 10 ) return result;
+  if ( operation_mode != OperationMode::ML ) return result;
 
   RVector7 rvector7_msg;
   rvector7_msg.ParseFromArray(&buffer[0],buffer.size());
@@ -455,6 +469,7 @@ std::vector<char> Net2TestROS::callbackDataNMPCLeftMarker(std::vector<char> buff
 
   std::vector<char> result;
   if ( priority == 10 ) return result;
+  if ( operation_mode != OperationMode::ML ) return result;
 
   RVector7 rvector7_msg;
   rvector7_msg.ParseFromArray(&buffer[0],buffer.size());

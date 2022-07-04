@@ -20,6 +20,32 @@ namespace roboland
     send_counter = 0;
     get_new = false;
     
+    std::string path = ros::package::getPath("rrs_ros");
+    path = path + "/cfg/config.yaml";
+
+    config_path = path;
+
+    ROS_INFO_STREAM("Config path is : " << config_path);
+
+    bool cfg_result = loadYaml();
+
+    if ( cfg_result )
+    {
+      ROS_INFO_STREAM("operation mode : " << m_settings.operation_mode);
+
+      if ( m_settings.operation_mode == "ML")
+          operation_mode = OperationMode::ML;
+      if ( m_settings.operation_mode == "TeleMovo")
+          operation_mode = OperationMode::TeleMovo;
+      if ( m_settings.operation_mode == "TeleGripper")
+          operation_mode = OperationMode::TeleGripper;
+
+    }
+    else
+    {
+      operation_mode = OperationMode::TeleMovo;
+    } 
+
     //Gripper Feedback
     //TODO
 
@@ -43,10 +69,13 @@ namespace roboland
     pub_left_force_render = nh.advertise<joint_control::HapticRender>("movo/left_arm/force_render", 1);
     
     //nmpc version
+    if ( operation_mode == OperationMode::TeleMovo)
+    {
     pub_left_end_effector = nh.advertise<geometry_msgs::Pose>("left/nmpc_controller/in/goal", 1);
     pub_left_end_effector_stamp = nh.advertise<geometry_msgs::PoseStamped>("left/nmpc_controller/in/goal/stamp", 1);
     pub_right_end_effector = nh.advertise<geometry_msgs::Pose>("right/nmpc_controller/in/goal", 1);
     pub_right_end_effector_stamp = nh.advertise<geometry_msgs::PoseStamped>("right/nmpc_controller/in/goal/stamp", 1);
+    }
 
     sub_r_end_effector = nh.subscribe("/right/nmpc_controller/out/eef_pose", 1, &JointControlRos::callbackNmpcREefPose, this);
     sub_l_end_effector = nh.subscribe("/left/nmpc_controller/out/eef_pose", 1, &JointControlRos::callbackNmpcLEefPose, this);
@@ -57,6 +86,35 @@ namespace roboland
     //Open the gripper
     ROS_INFO("LMT Shared Joint Control Ready Version: 29/12/21");
   }
+  
+ bool JointControlRos::loadYaml()
+  {
+    try
+    {
+      if ( is_file_exist(config_path.c_str()) )
+      {
+       m_config = YAML::LoadFile(config_path.c_str());
+       m_settings.operation_mode = m_config["operation_mode"].as<std::string>();
+       return true;
+     }
+     else
+     {
+      ROS_WARN("Config file is not exist");
+    }
+  }
+  catch (...)
+  {
+   ROS_ERROR("Could not parse YAML config, or not exist");
+ }
+
+ return false;
+}
+
+bool JointControlRos::is_file_exist(const char *fileName)
+{
+  std::ifstream infile(fileName);
+  return infile.good();
+}
 
   void JointControlRos::callbackNmpcREefPose(const geometry_msgs::Pose::ConstPtr &msg)
   {
@@ -730,6 +788,9 @@ namespace roboland
 
   void JointControlRos::sendRightJacoArmNMPCQ(double x, double y, double z, double rx, double ry, double rz, double rw, string mode)
   {
+    if ( operation_mode == OperationMode::TeleMovo) 
+    {
+
     if ( x == 0 && y == 0 & z == 0 ) return;
     if ( isnan(rx) || isnan(ry) || isnan(rz)  || isnan(rw) ) return;
 
@@ -788,10 +849,19 @@ namespace roboland
     msgs.header.frame_id = "base_link";
 
     pub_right_end_effector_stamp.publish(msgs);
+   
+    }
+    else if (operation_mode == OperationMode::TeleGripper)
+    {
+      //TODO
+    }
   }
 
   void JointControlRos::sendLeftJacoArmNMPCQ(double x, double y, double z, double rx, double ry, double rz, double rw, string mode)
   {
+    if ( operation_mode == OperationMode::TeleMovo) 
+    {
+
     if ( x == 0 && y == 0 & z == 0 ) return;
     if ( isnan(rx) || isnan(ry) || isnan(rz)  || isnan(rw) ) return;
 
@@ -832,6 +902,7 @@ namespace roboland
     //ROS_INFO_STREAM("NMPC L x: " << msg.position.x << " y: " << msg.position.y << " z: " << msg.position.z );
     //ROS_INFO_STREAM("NMC cx: " << nmpc_left_current.position.x << " cy: " << nmpc_left_current.position.y << " cz: " << nmpc_left_current.position.z );
 
+
     if (nmpc_active)
       pub_left_end_effector.publish(msg);
 
@@ -849,6 +920,12 @@ namespace roboland
     msgs.header.frame_id = "base_link";
 
     pub_left_end_effector_stamp.publish(msgs);
+    }
+    else if ( operation_mode == OperationMode::TeleGripper) 
+    {
+      //TODO
+    }
+
   }
 
   void JointControlRos::sendRightGripperPos(int x)

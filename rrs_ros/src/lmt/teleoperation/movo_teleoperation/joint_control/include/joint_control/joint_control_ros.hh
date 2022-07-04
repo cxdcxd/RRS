@@ -16,9 +16,11 @@
 #include <sstream>
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <numeric>
+#include <yaml-cpp/yaml.h>
 
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
@@ -67,6 +69,19 @@ using namespace std;
 namespace roboland 
 {
 
+enum OperationMode
+{
+  ML,
+  TeleMovo,
+  TeleGripper
+};
+
+struct settings
+{
+  std::string operation_mode = "ML";
+};
+
+
 class JointControlRos 
 {
 
@@ -80,6 +95,14 @@ public:
 
   JointControl *joint_control;
   
+  bool is_file_exist(const char *fileName);
+  bool loadYaml();
+
+  std::string config_path = "";
+  YAML::Node m_config;
+  settings m_settings;
+  OperationMode operation_mode = OperationMode::ML;
+
   //Voice
   ros::Publisher pub_voice_cmd;
 

@@ -79,6 +79,13 @@ using namespace lmt::Tools::Network;
 namespace lmt
 {
 
+enum OperationMode
+{
+  ML,
+  TeleMovo,
+  TeleGripper
+};
+
 struct settings
 {
   std::string consul_network_address = "127.0.0.1";
@@ -86,6 +93,7 @@ struct settings
   std::string consul_network_mask = "255.255.255.0";
   std::string consul_network_port = "8500";
   std::string ntp_server_host_name = "test";
+  std::string operation_mode = "ML";
 };
 
 class Net2TestROS 
@@ -173,6 +181,7 @@ public:
   std::string config_path = "";
   YAML::Node m_config;
   settings m_settings;
+  OperationMode operation_mode = OperationMode::ML;
 
   void update();
   int test_step = 0;

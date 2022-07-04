@@ -1069,8 +1069,8 @@ void NmpcNlopt::initialize()
 	obj_pose = base2this_arm_base*obj_pose;
 	addObstacle("ground",obj_shape4,obj_pose,plot_obstacle);
 
-  shapes::ShapeConstPtr obj_shape5(new shapes::Box(0.4,0.1,0.75));
-	translation.x()=0.6;translation.y()=0;translation.z()=0.45;
+  shapes::ShapeConstPtr obj_shape5(new shapes::Box(0.4,0.1,0.25));
+	translation.x()=0.6;translation.y()=0;translation.z()=0;
 	obj_pose = translation*quater;
 	obj_pose = base2this_arm_base*obj_pose;
 	addObstacle("Table",obj_shape5,obj_pose,plot_obstacle);

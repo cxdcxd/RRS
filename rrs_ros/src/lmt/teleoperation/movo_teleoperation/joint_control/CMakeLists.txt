@@ -30,6 +30,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DROBOLAND_DEBUG")
 
 find_package(Boost COMPONENTS system thread date_time REQUIRED)
 find_package(PkgConfig REQUIRED)
+pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
 
 add_message_files(
   FILES
@@ -59,11 +60,11 @@ catkin_package(
 
 
 
-include_directories(include ${catkin_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIRS} ${YAML_CPP_INCLUDEDIR})
 
 #Add executables
 add_executable(joint_control_node src/joint_control_node.cpp src/joint_control_ros.cpp )
-target_link_libraries(joint_control_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} robojointcontrol)
+target_link_libraries(joint_control_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${YAML_CPP_LIBRARIES} robojointcontrol)
 
 add_library(robojointcontrol src/joint_control.cpp )
 target_link_libraries(robojointcontrol ${catkin_LIBRARIES} )
