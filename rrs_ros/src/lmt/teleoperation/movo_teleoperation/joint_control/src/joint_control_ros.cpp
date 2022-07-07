@@ -46,8 +46,16 @@ namespace roboland
       operation_mode = OperationMode::TeleMovo;
     } 
 
-    //Gripper Feedback
+    //Sim Gripper
+    pub_left_sim_gripper = nh.advertise<geometry_msgs::Pose>("left/sim/gripper/command", 1);
+    pub_right_sim_gripper = nh.advertise<geometry_msgs::Pose>("right/sim/gripper/command", 1);
+    
+    sub_right_sim_gripper_feedback = nh.subscribe("/right/sim/gripper/status", 1, &JointControlRos::callbackRightSimGripperStatus, this);
+    sub_left_sim_gripper_feedback = nh.subscribe("/left/sim/gripper/status", 1, &JointControlRos::callbackLeftSimGripperStatus, this);
+
+    //Real Gripper Feedback (Force Feedback for Example)
     //TODO
+
 
     //Gripper Control
     pub_right_gripper_cmd = nh.advertise<robotiq_2f_gripper_control::Robotiq2FGripper_robot_output>("Robotiq2FGripperRobotOutput_right", 1);
@@ -309,7 +317,7 @@ bool JointControlRos::is_file_exist(const char *fileName)
             float new_y = nmpc_left_offset.position.y - speed_z;
             float new_z = nmpc_left_offset.position.z + speed_x;
 
-            ROS_INFO_STREAM("LS " << speed_x << " " << speed_y << " " << speed_z << " " << speed_rx << " "  << speed_ry << " "  << speed_rz);
+            //ROS_INFO_STREAM("LS " << speed_x << " " << speed_y << " " << speed_z << " " << speed_rx << " "  << speed_ry << " "  << speed_rz);
 
             roll = roll + speed_rx;
             pitch = pitch + speed_ry;
@@ -318,7 +326,7 @@ bool JointControlRos::is_file_exist(const char *fileName)
             tf::Quaternion NewQuaternion;
             NewQuaternion.setRPY( roll, pitch, yaw );
 
-            ROS_INFO_STREAM("LF " << new_x << " " << new_y << " " << new_z << " " << NewQuaternion.x() << " "  << NewQuaternion.y() << " "  << NewQuaternion.z() << " " << NewQuaternion.w() << " " << desire_left_haptic.cmd);
+            //ROS_INFO_STREAM("LF " << new_x << " " << new_y << " " << new_z << " " << NewQuaternion.x() << " "  << NewQuaternion.y() << " "  << NewQuaternion.z() << " " << NewQuaternion.w() << " " << desire_left_haptic.cmd);
             
             if (speed_x !=0 || speed_y !=0 ||  speed_z !=0 ||  speed_rx !=0 ||  speed_ry !=0 ||  speed_rz !=0 )
             {
@@ -354,10 +362,10 @@ bool JointControlRos::is_file_exist(const char *fileName)
             float ry = 0;
             float rz = 0;
             float rw = 0;
-            float x_scale = 3;
+            float x_scale = 1;
 
-            if (desire_left_haptic.cmd == "vive")
-              x_scale = 1;
+            //if (desire_left_haptic.cmd == "vive")
+            //  x_scale = 1;
 
             mtx_left_arm_nmpc.lock();
 
@@ -372,14 +380,30 @@ bool JointControlRos::is_file_exist(const char *fileName)
 
             if (desire_left_haptic.cmd == "sigma7")
             {
+              if (operation_mode == OperationMode::TeleMovo)
+              {
+
+              x_scale = 3;
               x = nmpc_left_offset.position.x - (sigma_left_offset.position.y - pose_y) * x_scale;
               y = nmpc_left_offset.position.y + (sigma_left_offset.position.z - pose_z) * x_scale;
               z = nmpc_left_offset.position.z + (sigma_left_offset.position.x - pose_x) * x_scale;
+              
+              }
+              else if ( operation_mode == OperationMode::TeleGripper)
+              {
+
+              // x_scale = 18;
+              // x = current_left_sim_gripper_pose.position.x + (sigma_left_offset.position.x - pose_x) * x_scale;
+              // y = current_left_sim_gripper_pose.position.y + (sigma_left_offset.position.y - pose_y) * x_scale;
+              // z = current_left_sim_gripper_pose.position.z + (sigma_left_offset.position.z - pose_z) * x_scale;
+              
+              }
 
               rx = pose_msg.pose.orientation.x;
               ry = pose_msg.pose.orientation.y;
               rz = pose_msg.pose.orientation.z;
               rw = pose_msg.pose.orientation.w;
+
             }
             else if (desire_left_haptic.cmd == "vive")
             {
@@ -571,6 +595,22 @@ bool JointControlRos::is_file_exist(const char *fileName)
             sigma_right_offset.position.y = pose_y;
             sigma_right_offset.position.z = pose_z;
 
+            sigma_right_offset.orientation.x = desire_right_haptic.rotation_q[0];
+            sigma_right_offset.orientation.y = desire_right_haptic.rotation_q[1];
+            sigma_right_offset.orientation.z = desire_right_haptic.rotation_q[2];
+            sigma_right_offset.orientation.w = desire_right_haptic.rotation_q[3];
+
+            offset_right_sim_gripper_pose.position.x = current_right_sim_gripper_pose.position.x;
+            offset_right_sim_gripper_pose.position.y = current_right_sim_gripper_pose.position.y;
+            offset_right_sim_gripper_pose.position.z = current_right_sim_gripper_pose.position.z;
+
+            offset_right_sim_gripper_pose.orientation.x = current_right_sim_gripper_pose.orientation.x;
+            offset_right_sim_gripper_pose.orientation.y = current_right_sim_gripper_pose.orientation.y;
+            offset_right_sim_gripper_pose.orientation.z = current_right_sim_gripper_pose.orientation.z;
+            offset_right_sim_gripper_pose.orientation.w = current_right_sim_gripper_pose.orientation.w;
+
+            t = 0;
+
             mtx_right_arm_nmpc.unlock();
             
             //Convert Speed data to position
@@ -584,7 +624,7 @@ bool JointControlRos::is_file_exist(const char *fileName)
             float new_y = nmpc_right_offset.position.y - speed_z;
             float new_z = nmpc_right_offset.position.z + speed_x;
 
-            ROS_INFO_STREAM("RS " << speed_x << " " << speed_y << " " << speed_z << " " << speed_rx << " "  << speed_ry << " "  << speed_rz);
+            //ROS_INFO_STREAM("RS " << speed_x << " " << speed_y << " " << speed_z << " " << speed_rx << " "  << speed_ry << " "  << speed_rz);
 
             roll = roll + speed_rx;
             pitch = pitch + speed_ry;
@@ -593,7 +633,7 @@ bool JointControlRos::is_file_exist(const char *fileName)
             tf::Quaternion NewQuaternion;
             NewQuaternion.setRPY( roll, pitch, yaw );
 
-            ROS_INFO_STREAM("RF " << new_x << " " << new_y << " " << new_z << " " << NewQuaternion.x() << " "  << NewQuaternion.y() << " "  << NewQuaternion.z() << " " << NewQuaternion.w() << " " << desire_right_haptic.cmd);
+            //ROS_INFO_STREAM("RF " << new_x << " " << new_y << " " << new_z << " " << NewQuaternion.x() << " "  << NewQuaternion.y() << " "  << NewQuaternion.z() << " " << NewQuaternion.w() << " " << desire_right_haptic.cmd);
             
             if (speed_x !=0 || speed_y !=0 ||  speed_z !=0 ||  speed_rx !=0 ||  speed_ry !=0 ||  speed_rz !=0 )
             {
@@ -628,24 +668,28 @@ bool JointControlRos::is_file_exist(const char *fileName)
             float ry = 0;
             float rz = 0;
             float rw = 0;
-            float x_scale = 3;
+            float x_scale = 1;
 
-            if (desire_right_haptic.cmd == "vive")
-              x_scale = 1;
+            //if (desire_right_haptic.cmd == "vive")
+            //  x_scale = 1;
 
             mtx_right_arm_nmpc.lock();
 
-            if (init_offset_right == false)
-            {
-              sigma_right_offset.position.y = pose_y;
-              sigma_right_offset.position.x = pose_x;
-              sigma_right_offset.position.z = pose_z;
+             if (init_offset_right == false)
+             {
+               sigma_right_offset.position.y = pose_y;
+               sigma_right_offset.position.x = pose_x;
+               sigma_right_offset.position.z = pose_z;
 
-              init_offset_right = true;
-            }
+               init_offset_right = true;
+             }
 
             if (desire_right_haptic.cmd == "sigma7")
             {
+              if ( operation_mode == OperationMode::TeleMovo)
+              {
+
+              x_scale = 3;
               x = nmpc_right_offset.position.x - (sigma_right_offset.position.y - pose_y) * x_scale;
               y = nmpc_right_offset.position.y + (sigma_right_offset.position.z - pose_z) * x_scale;
               z = nmpc_right_offset.position.z + (sigma_right_offset.position.x - pose_x) * x_scale;
@@ -654,6 +698,32 @@ bool JointControlRos::is_file_exist(const char *fileName)
               ry = pose_msg.pose.orientation.y;
               rz = pose_msg.pose.orientation.z;
               rw = pose_msg.pose.orientation.w;
+
+              }
+              else if ( operation_mode == OperationMode::TeleGripper)
+              {
+
+              x_scale = 18;
+              x = offset_right_sim_gripper_pose.position.x - (sigma_right_offset.position.y - pose_y) * x_scale;
+              y = offset_right_sim_gripper_pose.position.y + (sigma_right_offset.position.x - pose_x) * x_scale;
+              z = offset_right_sim_gripper_pose.position.z - (sigma_right_offset.position.z - pose_z) * x_scale;
+
+              if ( t > 1 ) t == 1;
+
+              rx = (1-t) * offset_right_sim_gripper_pose.orientation.x + t * (pose_msg.pose.orientation.y -  0.707);
+              ry = (1-t) * offset_right_sim_gripper_pose.orientation.y - t * (pose_msg.pose.orientation.x);
+              rz = (1-t) * offset_right_sim_gripper_pose.orientation.z + t * (pose_msg.pose.orientation.z);
+              rw = (1-t) * offset_right_sim_gripper_pose.orientation.w + t * (pose_msg.pose.orientation.w -  0.707);
+
+              if ( t < 1)
+              t += 0.005;
+
+               ROS_INFO_STREAM("rx: " << rx << "t: " << t);
+
+              
+              }
+
+             
             }
             else if (desire_right_haptic.cmd == "ml")
             {
@@ -706,11 +776,18 @@ bool JointControlRos::is_file_exist(const char *fileName)
     }
   }
 
-  void JointControlRos::callbackRightArmPose(const kinova_msgs::KinovaPose::ConstPtr &msg)
+  void JointControlRos::callbackRightSimGripperStatus(const geometry_msgs::Pose::ConstPtr &msg)
   {
-    mtx_right_arm_pose.lock();
-    current_right_arm_pose = *msg;
-    mtx_right_arm_pose.unlock();
+    mtx_right_sim_gripper_pose.lock();
+    current_right_sim_gripper_pose = *msg;
+    mtx_right_sim_gripper_pose.unlock();
+  }
+
+  void JointControlRos::callbackLeftSimGripperStatus(const geometry_msgs::Pose::ConstPtr &msg)
+  {
+    mtx_left_sim_gripper_pose.lock();
+    current_left_sim_gripper_pose = *msg;
+    mtx_left_sim_gripper_pose.unlock();
   }
 
   bool JointControlRos::callbackArmHome(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
@@ -788,6 +865,8 @@ bool JointControlRos::is_file_exist(const char *fileName)
 
   void JointControlRos::sendRightJacoArmNMPCQ(double x, double y, double z, double rx, double ry, double rz, double rw, string mode)
   {
+    //ROS_INFO("RIGHT GRIPPER ***");
+
     if ( operation_mode == OperationMode::TeleMovo) 
     {
 
@@ -853,7 +932,25 @@ bool JointControlRos::is_file_exist(const char *fileName)
     }
     else if (operation_mode == OperationMode::TeleGripper)
     {
-      //TODO
+      if ( x == 0 && y == 0 & z == 0 ) return;
+      if ( isnan(rx) || isnan(ry) || isnan(rz)  || isnan(rw) ) return;
+
+      geometry_msgs::Pose msg;
+
+      msg.position.x = x;
+      msg.position.y = y;
+      msg.position.z = z;
+
+      if (mode == "sigma7")
+      {
+        msg.orientation.x = rx;
+        msg.orientation.y = ry;
+        msg.orientation.z = rz;
+        msg.orientation.w = rw;
+
+        pub_right_sim_gripper.publish(msg);
+      }
+      
     }
   }
 
@@ -902,7 +999,6 @@ bool JointControlRos::is_file_exist(const char *fileName)
     //ROS_INFO_STREAM("NMPC L x: " << msg.position.x << " y: " << msg.position.y << " z: " << msg.position.z );
     //ROS_INFO_STREAM("NMC cx: " << nmpc_left_current.position.x << " cy: " << nmpc_left_current.position.y << " cz: " << nmpc_left_current.position.z );
 
-
     if (nmpc_active)
       pub_left_end_effector.publish(msg);
 
@@ -920,10 +1016,31 @@ bool JointControlRos::is_file_exist(const char *fileName)
     msgs.header.frame_id = "base_link";
 
     pub_left_end_effector_stamp.publish(msgs);
+    
     }
     else if ( operation_mode == OperationMode::TeleGripper) 
     {
-      //TODO
+      if ( x == 0 && y == 0 & z == 0 ) return;
+      if ( isnan(rx) || isnan(ry) || isnan(rz)  || isnan(rw) ) return;
+
+      geometry_msgs::Pose msg;
+
+      msg.position.x = x;
+      msg.position.y = y;
+      msg.position.z = z;
+
+      if (mode == "sigma7")
+      {
+        msg.orientation.x = rx;
+        msg.orientation.y = ry;
+        msg.orientation.z = rz;
+        msg.orientation.w = rw;
+
+        pub_left_sim_gripper.publish(msg);
+
+      }
+
+      
     }
 
   }
@@ -969,7 +1086,7 @@ bool JointControlRos::is_file_exist(const char *fileName)
 
     if (home_wait == 0)
     {
-      ROS_INFO_STREAM("publish right " << right_current_gripper_pos);
+      //ROS_INFO_STREAM("publish right " << right_current_gripper_pos);
       pub_right_gripper_cmd.publish(g_msg);
     }
   }
@@ -1015,7 +1132,7 @@ bool JointControlRos::is_file_exist(const char *fileName)
 
     if (home_wait == 0)
     {
-      ROS_INFO_STREAM("publish left " << left_current_gripper_pos);
+      //ROS_INFO_STREAM("publish left " << left_current_gripper_pos);
       pub_left_gripper_cmd.publish(g_msg);
     }
   }

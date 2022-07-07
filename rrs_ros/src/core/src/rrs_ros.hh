@@ -143,6 +143,8 @@ public:
   ros::Publisher pub_franka_end_effector_stamp;
   ros::Publisher pub_left_end_effector;
   ros::Publisher pub_left_end_effector_stamp;
+  ros::Publisher pub_left_sim_gripper_feedback;
+  ros::Publisher pub_right_sim_gripper_feedback;
 
   ros::Subscriber sub_rrs_command;
   ros::Subscriber sub_joint_command;
@@ -154,6 +156,9 @@ public:
   ros::Subscriber sub_jaco_right_vel;
   ros::Subscriber sub_jaco_left_vel;
   ros::Subscriber sub_franka_vel;
+
+  ros::Subscriber sub_right_arm;
+  ros::Subscriber sub_left_arm;
 
   RRSRobot robot_protocol;
 
@@ -174,6 +179,8 @@ public:
   void chatterCallbackJointCommand(const movo_msgs::JacoJointCmd::ConstPtr& msg);
   std::vector<char> callbackDataJointState(std::vector<char> buffer, unsigned int priority, std::string sender);
   std::vector<char> callbackDataJointStateFranka(std::vector<char> buffer, unsigned int priority, std::string sender);
+  void callbackLeftSimGripperCommand(const geometry_msgs::Pose::ConstPtr& msg);
+  void callbackRightSimGripperCommand(const geometry_msgs::Pose::ConstPtr& msg);
 
   void publishCameraColor(char* data, int size);
   void publishCameraInfo(char* data, int size);

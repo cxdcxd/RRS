@@ -126,21 +126,103 @@ namespace lmt
     sub_jaco_left_vel = nh.subscribe("/movo/left_arm/angular_vel_cmd",1, &Net2TestROS::chatterCallbackVelLeft, this);
     sub_franka_vel = nh.subscribe("/franka_ros_interface/motion_controller/arm/joint_commands",1, &Net2TestROS::chatterCallbackVelFranka, this);
   
-  
-    //TOJC
+    //TOJC FromJC
+    pub_left_sim_gripper_feedback = nh.advertise<geometry_msgs::Pose>("/left/sim/gripper/status", 1);
+    pub_right_sim_gripper_feedback = nh.advertise<geometry_msgs::Pose>("/right/sim/gripper/status", 1);
+    
+    sub_right_arm = nh.subscribe("right/sim/gripper/command", 1, &Net2TestROS::callbackRightSimGripperCommand, this);
+    sub_left_arm = nh.subscribe("left/sim/gripper/command", 1, &Net2TestROS::callbackLeftSimGripperCommand, this);
+  }
 
-    //FromJC
+  void Net2TestROS::callbackRightSimGripperCommand(const geometry_msgs::Pose::ConstPtr& msg)
+  {
+    //ROS_INFO("Got velocity for right hand");
+    RVector7 cmd;
+    
+    cmd.set_x(msg->position.x);
+    cmd.set_y(msg->position.y);
+    cmd.set_z(msg->position.z);
+    cmd.set_qx(msg->orientation.x);
+    cmd.set_qy(msg->orientation.y);
+    cmd.set_qz(msg->orientation.z);
+    cmd.set_qw(msg->orientation.w);
+    
+    int bsize = cmd.ByteSize();
+    char buffer[bsize];
+    cmd.SerializeToArray(buffer,bsize);
+
+    //ROS_WARN("Send Done");
+    publisher_joint_command_right_gripper->send(buffer,bsize,1);
+  }
+
+  void Net2TestROS::callbackLeftSimGripperCommand(const geometry_msgs::Pose::ConstPtr& msg)
+  {
+    //ROS_INFO("Got velocity for right hand");
+    RVector7 cmd;
+    
+    cmd.set_x(msg->position.x);
+    cmd.set_y(msg->position.y);
+    cmd.set_z(msg->position.z);
+    cmd.set_qx(msg->orientation.x);
+    cmd.set_qy(msg->orientation.y);
+    cmd.set_qz(msg->orientation.z);
+    cmd.set_qw(msg->orientation.w);
+    
+    int bsize = cmd.ByteSize();
+    char buffer[bsize];
+    cmd.SerializeToArray(buffer,bsize);
+
+    //ROS_WARN("Send Done");
+    publisher_joint_command_left_gripper->send(buffer,bsize,1);
   }
   
   std::vector<char> Net2TestROS::callbackDataRightStatusGripper(std::vector<char> buffer, uint64_t priority, std::string sender)
-{
+  {
 
-}
+    std::vector<char> result;
+    if ( priority == 10 ) return result;
+    if ( operation_mode != OperationMode::TeleGripper ) return result;
 
-std::vector<char> Net2TestROS::callbackDataLeftStatusGripper(std::vector<char> buffer, uint64_t priority, std::string sender)
-{
+    RVector7 rvector7_msg;
+    rvector7_msg.ParseFromArray(&buffer[0],buffer.size());
 
-}
+    geometry_msgs::Pose msg;
+
+    msg.position.x = rvector7_msg.x();
+    msg.position.y = rvector7_msg.y();
+    msg.position.z = rvector7_msg.z();
+
+    msg.orientation.x = rvector7_msg.qx();
+    msg.orientation.y = rvector7_msg.qy();
+    msg.orientation.z = rvector7_msg.qz();
+    msg.orientation.w = rvector7_msg.qw();
+
+    pub_right_sim_gripper_feedback.publish(msg);
+
+  }
+
+  std::vector<char> Net2TestROS::callbackDataLeftStatusGripper(std::vector<char> buffer, uint64_t priority, std::string sender)
+  {
+    std::vector<char> result;
+    if ( priority == 10 ) return result;
+    if ( operation_mode != OperationMode::TeleGripper ) return result;
+
+    RVector7 rvector7_msg;
+    rvector7_msg.ParseFromArray(&buffer[0],buffer.size());
+
+    geometry_msgs::Pose msg;
+
+    msg.position.x = rvector7_msg.x();
+    msg.position.y = rvector7_msg.y();
+    msg.position.z = rvector7_msg.z();
+
+    msg.orientation.x = rvector7_msg.qx();
+    msg.orientation.y = rvector7_msg.qy();
+    msg.orientation.z = rvector7_msg.qz();
+    msg.orientation.w = rvector7_msg.qw();
+
+    pub_left_sim_gripper_feedback.publish(msg);
+  }
 
   std::vector<char> Net2TestROS::callbackDataCameraInfo(std::vector<char> buffer, unsigned int priority, std::string sender)
   {

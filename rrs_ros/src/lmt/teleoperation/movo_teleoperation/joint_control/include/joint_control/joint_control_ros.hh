@@ -113,6 +113,8 @@ public:
   ros::Subscriber sub_left_arm_feedback;
   ros::Subscriber sub_ft_right;
   ros::Subscriber sub_ft_left;
+  ros::Subscriber sub_right_sim_gripper_feedback;
+  ros::Subscriber sub_left_sim_gripper_feedback;
 
   ros::Subscriber sub_jaco_right_force_feedback;
   ros::Subscriber sub_jaco_left_force_feedback;
@@ -134,6 +136,9 @@ public:
 
   ros::Publisher pub_left_end_effector;
   ros::Publisher pub_left_end_effector_stamp;
+  
+  ros::Publisher pub_left_sim_gripper;
+  ros::Publisher pub_right_sim_gripper;
 
   std_msgs::Header right_hand_header;
   std_msgs::Header left_hand_header;
@@ -191,6 +196,9 @@ public:
 
   void callbackNmpcREefPose(const geometry_msgs::Pose::ConstPtr &msg);
   void callbackNmpcLEefPose(const geometry_msgs::Pose::ConstPtr &msg);
+
+  void callbackRightSimGripperStatus(const geometry_msgs::Pose::ConstPtr &msg);
+  void callbackLeftSimGripperStatus(const geometry_msgs::Pose::ConstPtr &msg);
 
   geometry_msgs::Pose nmpc_right_offset;
   geometry_msgs::Pose nmpc_left_offset;
@@ -266,6 +274,16 @@ public:
   std::mutex mtx_left_desire_haptic; 
   std::mutex mtx_right_arm_nmpc;
   std::mutex mtx_left_arm_nmpc;
+
+  geometry_msgs::Pose current_right_sim_gripper_pose;
+  geometry_msgs::Pose current_left_sim_gripper_pose;
+
+  geometry_msgs::Pose offset_right_sim_gripper_pose;
+  geometry_msgs::Pose offset_left_sim_gripper_pose;
+
+  std::mutex mtx_right_sim_gripper_pose;
+  std::mutex mtx_left_sim_gripper_pose;
+  float t = 0;
 
 };
 
