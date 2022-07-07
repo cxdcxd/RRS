@@ -70,6 +70,8 @@ public class LTGUI : MonoBehaviour
 
         if (GUI.Button(new Rect(20, 50 + 200, 100, 50), "reset"))
         {
+            MovoMini.last_gripper_command_left = null;
+            MovoMini.last_gripper_command_right = null;
             //controller.ConfigureAgent(-1);
             print("Restarting!!!");
             controller.ResetScene();

@@ -23,8 +23,8 @@ public class MovoMini : MonoBehaviour
 
     public GameObject right_gripper;
     public GameObject left_gripper;
-    RVector7 last_gripper_command_left = null;
-    RVector7 last_gripper_command_right = null;
+    public static RVector7 last_gripper_command_left = null;
+    public static RVector7 last_gripper_command_right = null;
     private bool inited = false;
     float next_status_time = 0;
 
@@ -39,17 +39,16 @@ public class MovoMini : MonoBehaviour
 
         if (Statics.current_environment == Statics.Environments.Sim)
         {
-            subscriber_rrs_joint_left_gripper = Net2.Subscriber("rrs_ros-gripper_left");
+            subscriber_rrs_joint_left_gripper = Net2.Subscriber("rrs_ros-joint_left_gripper");
             subscriber_rrs_joint_left_gripper.delegateNewData += Subscriber_rrs_joint_left_gripper_delegateNewData;
 
-            subscriber_rrs_joint_right_gripper = Net2.Subscriber("rrs_ros-gripper_right");
+            subscriber_rrs_joint_right_gripper = Net2.Subscriber("rrs_ros-joint_right_gripper");
             subscriber_rrs_joint_right_gripper.delegateNewData += Subscriber_rrs_joint_right_gripper_delegateNewData;
 
-            publisher_status_left = Net2.Publisher("gripper_status_left");
-            publisher_status_right = Net2.Publisher("gripper_status_right");
+            publisher_status_left = Net2.Publisher("left_status_gripper");
+            publisher_status_right = Net2.Publisher("right_status_gripper");
 
-            publisher_status_mode = Net2.Publisher("status_mode");
-
+            //publisher_status_mode = Net2.Publisher("status_mode");
         }
         
     }
@@ -68,13 +67,13 @@ public class MovoMini : MonoBehaviour
         Quaternion q = Helper.Ros2Unity(new Quaternion(t_last_gripper_command_right.qx, t_last_gripper_command_right.qy, t_last_gripper_command_right.qz, t_last_gripper_command_right.qw));
 
         last_gripper_command_right = new RVector7();
-        last_gripper_command_right.x = -p.y;
-        last_gripper_command_right.y = p.x;
+        last_gripper_command_right.x = p.x;
+        last_gripper_command_right.y = p.y;
         last_gripper_command_right.z = p.z;
 
-        last_gripper_command_right.qx = q.z;
+        last_gripper_command_right.qx = q.x;
         last_gripper_command_right.qy = q.y;
-        last_gripper_command_right.qz = -q.x;
+        last_gripper_command_right.qz = q.z;
         last_gripper_command_right.qw = q.w;
     }
 
@@ -91,12 +90,12 @@ public class MovoMini : MonoBehaviour
         Quaternion q = Helper.Ros2Unity(new Quaternion(t_last_gripper_command_left.qx, t_last_gripper_command_left.qy, t_last_gripper_command_left.qz, t_last_gripper_command_left.qw));
 
         last_gripper_command_left = new RVector7();
-        last_gripper_command_left.x = -p.y;
-        last_gripper_command_left.y = p.x;
+        last_gripper_command_left.x = p.x;
+        last_gripper_command_left.y = p.y;
         last_gripper_command_left.z = p.z;
 
-        last_gripper_command_left.qx = -q.y;
-        last_gripper_command_left.qy = q.x;
+        last_gripper_command_left.qx = q.x;
+        last_gripper_command_left.qy = q.y;
         last_gripper_command_left.qz = q.z;
         last_gripper_command_left.qw = q.w;
     }
@@ -115,9 +114,7 @@ public class MovoMini : MonoBehaviour
         {
             right_gripper.transform.position = new Vector3(last_gripper_command_right.x * t_s, last_gripper_command_right.y * t_s, last_gripper_command_right.z * t_s);
             right_gripper.transform.rotation = new Quaternion(last_gripper_command_right.qx, last_gripper_command_right.qy, last_gripper_command_right.qz , last_gripper_command_right.qw );
-            right_gripper.transform.Rotate(0, 0, 90);
-
-
+            //right_gripper.transform.Rotate(0, 0, 90);
         }
 
         if (last_gripper_command_left != null)
@@ -170,16 +167,6 @@ public class MovoMini : MonoBehaviour
 
         publisher_status_right.Send(data_right);
         publisher_status_left.Send(data_left);
-        }
-
-
-    void sendMode()
-    {
-        //MemoryStream ms = new MemoryStream();
-        //ms = new MemoryStream();
-        //Serializer.Serialize<string>(ms, Statics.current_config.mode);
-        //byte[] data = ms.ToArray();
-        //publisher_status_mode.Send(data);
     }
 
     // Update is called once per frame
@@ -193,7 +180,6 @@ public class MovoMini : MonoBehaviour
             next_status_time = Time.time + (1 / fps_status);
             sendStatus();
             updateMotors();
-            sendMode();
         }
 
         if (Manager.inited && !inited)
