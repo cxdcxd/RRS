@@ -693,18 +693,18 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 80000
+  MaxStep: 8000
   robot: {fileID: 3462205319118736533}
   sources: {fileID: 955130997}
   targets: {fileID: 1997148514}
-  liquid_flex_container: {fileID: 11400000, guid: aa46dc52562b4854b9620d2f20c63fb9, type: 2}
+  liquid_flex_container: {fileID: 11400000, guid: 1c7baedc23a12e248b0add9ba774a96d, type: 2}
   liquidAsset: {fileID: 11400000, guid: 8288073472bf17243a2543d3714f9f0c, type: 2}
   solidObjectPhysicsMaterial: {fileID: 13400000, guid: dff8b7a0a57e62744a7ba381ed6e2fa0, type: 2}
   robotPhysicsMaterial: {fileID: 13400000, guid: 0c4ce76aabcc5324cb849680c358b2c0, type: 2}
   workspace: {fileID: 932923744}
   render_fluid: 1
   model: {fileID: 0}
-  calibration_target_offset: 10
+  calibration_target_offset: 0
   target_to_fill: 50
   behaviorMode: 0
 --- !u!114 &2123271931
@@ -729,7 +729,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 7c920bae2140d0849953654785ce52d4, type: 3}
   m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: NoPSModel

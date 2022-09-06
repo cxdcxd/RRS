@@ -8,7 +8,8 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using Unity.Barracuda;
 
-public class PouringAgentAINoPSLT : Agent {
+public class PouringAgentAINoPSLT : Agent
+{
 
     /// <summary>
     /// The objects below are to be provided in runtime.
@@ -40,7 +41,6 @@ public class PouringAgentAINoPSLT : Agent {
     /// Objects used during runtime for end to end state and action tracking.
     /// </summary>    
     EnvironmentParameters defaultAcademyParameters; // ML-Agent's environment parameters.
-    BehaviorParameters MovoParameters; // ML-Agent's behavior parameters.
     private string sourceName; // Unique name to identify source liquid container.
     private string targetName; // Unique name to identify target liquid container.
     public float target_to_fill; // Target amount of liquid to fill.
@@ -69,41 +69,30 @@ public class PouringAgentAINoPSLT : Agent {
     /// Creates Solid Game Object. Based on string provided, chooses source or target.
     /// </summary>
     /// <param name="name"> Name of the soild actor to be generated.</param>
-    //private void createSolidObjects(string name)
-    //{
-    //    if (name == "SourceObject_" + gameObject.name)
-    //    {
-    //        source = SpawnObjects.createLiquidContainer(source, this.gameObject, sources, this.clickedPourer, name, solidObjectPhysicsMaterial, randomizePositions: false);
-    //    }
-    //    else if (name == "TargetObject_" + gameObject.name)
-    //    {
-    //        target = SpawnObjects.createLiquidContainer(target, this.gameObject, targets, null, name, solidObjectPhysicsMaterial, randomizePositions: false, true);
-    //    }
-    //    else print(name + " not configured for flex solid actor..");
-    //}
 
     private void createSolidObjects(string name)
     {
         if (name == "SourceObject_" + gameObject.name)
         {
-            source = SpawnObjectsLT.createLiquidContainer(source, this.gameObject, sources,  name, solidObjectPhysicsMaterial, clickedPourer, randomizePositions: false);
+            source = SpawnObjectsLT.createLiquidContainer(source, this.gameObject, sources, name, solidObjectPhysicsMaterial, clickedPourer, randomizePositions: false);
         }
         else if (name == "TargetObject_" + gameObject.name)
         {
             target = SpawnObjectsLT.createLiquidContainer(target, this.gameObject, targets, name, solidObjectPhysicsMaterial, null, randomizePositions: false, true);
         }
         else print(name + " not configured for flex solid actor..");
-        }
+    }
 
-        private void ResetLiquidStateInformation() {
-        if (liquidState != null) {
+    private void ResetLiquidStateInformation()
+    {
+        if (liquidState != null)
+        {
             liquidState = null;
         }
 
         liquidState = new Dictionary<string, float>();
     }
 
-    
     /// <summary>
     /// Called once when ML agents training start. Initializes academy parameters and starts the scene.
     /// </summary>
@@ -194,44 +183,46 @@ public class PouringAgentAINoPSLT : Agent {
         if (isTest)
         {
             print("RUNNING INFERENCE EXPERIMENTS ON TRAINED AGENT!!!");
-            if (experiment_indexer == 20)
+            if (experiment_indexer == 10)
             {
-                //print("Completed 5 experiments!");
+                print("completed " + experiment_indexer + " experiments!");
                 //Application.Quit();
-            } else
+
+            }
+            else
             {
-                //target_to_fill = fill_targets[experiment_indexer];
-                //experiment_indexer++;
+                target_to_fill = fill_targets[experiment_indexer];
+                experiment_indexer++;
                 float density = 1.0f;
                 //Color color = Color.clear;
 
                 switch (liquid_flex_container.name)
                 {
                     case "Water":
-                            density = 1.0f;
-                            // color = colors[choice];
-                            //color = new Color(0.0549019608f, 0.529411765f, 0.8f);
-                            break;
+                        density = 1.0f;
+                        // color = colors[choice];
+                        //color = new Color(0.0549019608f, 0.529411765f, 0.8f);
+                        break;
                     case "Ink":
-                            density = 1.0081f;
-                            //color = new Color(0.0274509804f, 0.0509803922f, 0.0509803922f);
-                            break;
+                        density = 1.0081f;
+                        //color = new Color(0.0274509804f, 0.0509803922f, 0.0509803922f);
+                        break;
                     case "Oil":
-                            density = 0.917f;
-                            //color = new Color(1f, 0.996078431f, 0.250980392f);
-                            break;
+                        density = 0.917f;
+                        //color = new Color(1f, 0.996078431f, 0.250980392f);
+                        break;
                     case "Honey":
-                            density = 1.42f;
-                            //color = new Color(255, 255, 255);
-                            break;
+                        density = 1.42f;
+                        //color = new Color(255, 255, 255);
+                        break;
                     case "Glycerin":
-                            density = 1.26f;
-                            //color = new Color(0.847058824f, 0.862745098f, 0.839215686f);
-                            break;
+                        density = 1.26f;
+                        //color = new Color(0.847058824f, 0.862745098f, 0.839215686f);
+                        break;
                     case "Ketchup":
-                            density = 1.092f;
-                            //color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
-                            break;
+                        density = 1.092f;
+                        //color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
+                        break;
                     case "Milk":
                         density = 1.0f;
                         //color = new Color(0.925490196f, 0.176470588f, 0.00392156863f);
@@ -254,8 +245,8 @@ public class PouringAgentAINoPSLT : Agent {
         }
         else
         {
-            int choice = Random.Range(0, 8);
-            target_to_fill = Random.Range(0.05f, 0.25f);
+            // int choice = Random.Range(0, 8);
+            target_to_fill = Random.Range(0.05f, 0.25f); //5 g to 250 g
             float density = Academy.Instance.EnvironmentParameters.GetWithDefault("density", 0.0f);
             liquid = SpawnObjectsLT.createLiquid(liquid, robotHandForSource, this.gameObject, liquid_flex_container, liquidAsset, sourceStartVolume, density);
             liquid.getFlexParticleContainer().fluidRest = Academy.Instance.EnvironmentParameters.GetWithDefault("fluid_rest_distance", 0.0f);
@@ -274,18 +265,6 @@ public class PouringAgentAINoPSLT : Agent {
         // 6. 
         Statics.movo_mini_ref.right_gripper = robotHandForSource.getRobotHand();
         Statics.movo_mini_ref.left_gripper = robotHandForTarget.getRobotHand();
-
-        // 7. Behavior Type Mode
-
-        //if (behaviorMode == true ) {
-
-        //     MovoParameters.BehaviorType = BehaviorType.Default;
-        // } 
-
-        // if (behaviorMode == false) {
-        //     MovoParameters.BehaviorType = BehaviorType.HeuristicOnly;
-        // }
-
 
     }
 
@@ -324,7 +303,7 @@ public class PouringAgentAINoPSLT : Agent {
             sensor.AddObservation(liquid.getFlexParticleContainer().surfaceTension); // 1 observation for surface tension of fluid.
             sensor.AddObservation(liquid.getFlexParticleContainer().viscosity); // 1 observation for normalised viscosity of fluid.
             sensor.AddObservation(liquid.getFlexParticleContainer().adhesion); // 1 observation for adhesion of the fluid.
-            
+
             sensor.AddObservation(target_to_fill); // 1 objservation for target weight to fill.
             sensor.AddObservation(0); // 1 observation for weight of the liquid in source container.
             sensor.AddObservation(0); // 1 observation for mass flow rate. 
@@ -368,10 +347,13 @@ public class PouringAgentAINoPSLT : Agent {
     float discharge = 0.0f;
     bool retract = false;
     float retractTimer = 0;
-    private void performPouringAction(ActionBuffers actionBuffers) {
+    private void performPouringAction(ActionBuffers actionBuffers)
+    {
         bool isReset = (target == null) || (source == null);
-        if (!isReset) {
-            if (target.getSolidObject().transform.position.y < workspace.transform.position.y) {
+        if (!isReset)
+        {
+            if (target.getSolidObject().transform.position.y < workspace.transform.position.y)
+            {
                 print("Workspace does not contain target. Ending!!");
                 EndEpisode();
             }
@@ -389,23 +371,26 @@ public class PouringAgentAINoPSLT : Agent {
             float filledLevel = (float)weightOfLiquid / target_to_fill;
             float similarity = Vector3.Dot(source.getSolidObject().transform.up, target.getSolidObject().transform.up);
 
-            if (originalWeight == 0.0f) {
-                originalWeight =  robotHandForSource.getRobotHand().GetComponent<ForceInformationLT>().getMeasuredWeight();;
-                if (originalWeight < target_to_fill) {
+            if (originalWeight == 0.0f)
+            {
+                originalWeight = robotHandForSource.getRobotHand().GetComponent<ForceInformationLT>().getMeasuredWeight(); ;
+                if (originalWeight < target_to_fill)
+                {
                     float targetOffset = Random.Range(0.01f, 0.025f);
                     target_to_fill = originalWeight - targetOffset;
-                    if (target_to_fill < 0.01f) {
+                    if (target_to_fill < 0.01f)
+                    {
                         target_to_fill = targetOffset;
                     }
                 }
             }
-            
-            
+
+
 
             // if (previousStepSourceLevel > 0.0f) {
             //     discharge = previousStepSourceLevel - liquidInSource;
             // }
-            
+
             // if (previousStepSourceLevel != liquidInSource) {
             //     previousStepSourceLevel = liquidInSource;
             // }
@@ -414,13 +399,13 @@ public class PouringAgentAINoPSLT : Agent {
 
             Vector3 effectCenter = 0.5f * (robotHandForSource.getRobotHand().transform.TransformPoint(robotHandForSource.getFingerA().transform.localPosition) +
                                            robotHandForSource.getRobotHand().transform.TransformPoint(robotHandForSource.getFingerB().transform.localPosition));
-            
+
             float distance = Vector3.Distance(source.getSolidObject().transform.position, robotHandForSource.getRobotHand().transform.position);
             bool withinTargetRim = (source.getSolidObject().transform.position.x > targetBounds.min.x &&
                                     source.getSolidObject().transform.position.x < targetBounds.max.x &&
                                     source.getSolidObject().transform.position.z > targetBounds.min.z &&
                                     source.getSolidObject().transform.position.z < targetBounds.max.z);
-            
+
             if (!isActionDone)
             {
                 // If positive angular velocity action and not pouring, pour.
@@ -432,7 +417,9 @@ public class PouringAgentAINoPSLT : Agent {
                     {
                         float deltaDistance = robotMovingSpeed > 0.0f ? (robotMovingSpeed * Time.deltaTime) : 0.0f;
                         newSourceLocation = deltaDistance * directionOfMovement;
-                    } else {
+                    }
+                    else
+                    {
                         directionOfMovement = (new Vector3(target.getSolidObject().transform.position.x,
                                                           source.getSolidObject().transform.position.y,
                                                           target.getSolidObject().transform.position.z) -
@@ -451,7 +438,7 @@ public class PouringAgentAINoPSLT : Agent {
                     // float absDischarge = Mathf.Abs(discharge);
 
                     deltaRotation = sourceTurningSpeed > 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
-            
+
                     // if (absDischarge > 0.0002f)
                     // {
                     //     deltaRotation = sourceTurningSpeed < 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
@@ -473,7 +460,8 @@ public class PouringAgentAINoPSLT : Agent {
 
             if (isActionDone)
             {
-                if (!retract) {
+                if (!retract)
+                {
                     retractTimer += Time.deltaTime;
                     if (retractTimer < 5.0f)
                     {
@@ -482,7 +470,9 @@ public class PouringAgentAINoPSLT : Agent {
                             robotHandForSource.getRobotHand().transform.RotateAround(effectCenter, Vector3.forward, sourceTurningSpeed * Time.deltaTime);
                             sourceTilt += sourceTurningSpeed * Time.deltaTime;
                         }
-                    } else {
+                    }
+                    else
+                    {
                         retract = true;
                     }
                 }
@@ -495,7 +485,8 @@ public class PouringAgentAINoPSLT : Agent {
                     if (weightOfLiquid > 0.01f && differenceFillLevel <= (toleranceInPouringDeviation + 0.0025f))
                     {
                         AddReward(1.0f);
-                        if ((error / numCompletedEpisodes) < 0.02f) {
+                        if ((error / numCompletedEpisodes) < 0.02f)
+                        {
                             AddReward(1.0f);
                         }
                     }
@@ -550,11 +541,12 @@ public class PouringAgentAINoPSLT : Agent {
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var continuousActionsOut = actionsOut.ContinuousActions;
-        
+
         float rotationAngle = 25f * Input.GetAxis("Horizontal");
         continuousActionsOut[0] = rotationAngle;
-        
-        if (Input.GetKey(KeyCode.None)) {
+
+        if (Input.GetKey(KeyCode.None))
+        {
             continuousActionsOut[0] = 0.0f;
         }
     }
