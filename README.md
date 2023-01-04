@@ -86,7 +86,7 @@ ros launch mpc real_movo_sc.launch
     
 # For RL and Gym Training (No need to ROS Side)
 ```
-open the Training\Assets\Scenes\NoParticleState.unity
+open the Assets\Scenes\PourNetTraining.unity
 ```
 
 ## Virtual Environment  
@@ -97,13 +97,6 @@ source ~/python-envs/sample-env/bin/activate
 pip3 install --upgrade pip
 pip3 install --upgrade setuptools
 deactivate 
-```
-
-## ML-Agent Installation 
-```
-pip3 install torch -f https://download.pytorch.org/whl/torch_stable.html
-pip3 install -e ./ml-agents-envs
-pip3 install -e ./ml-agents
 ```
 
 ## Tensor Board 
