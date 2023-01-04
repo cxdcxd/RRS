@@ -7,12 +7,12 @@
 | Ubuntu 18.04.06 LTS | 5.4.0-58-generic | ROS Melodic | 460.27.04 | 11.2 | Unity 2020.3.22f1 | Release_17
 
 ## Package Version
--com.unity.ml-agents (C#)	v2.0.0
--com.unity.ml-agents.extensions (C#)	v0.4.0-preview
--ml-agents (Python)	v0.26.0
--ml-agents-envs (Python)	v0.26.0
--gym-unity (Python)	v0.26.0
--Communicator (C#/Python)	v1.5.0
+- com.unity.ml-agents (C#)	v2.0.0
+- com.unity.ml-agents.extensions (C#)	v0.4.0-preview
+- ml-agents (Python)	v0.26.0
+- ml-agents-envs (Python)	v0.26.0
+- gym-unity (Python)	v0.26.0
+- Communicator (C#/Python)	v1.5.0
 
 <!--# Unity Version
     Unity 2020.3.22f1-->
