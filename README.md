@@ -6,7 +6,7 @@
 | --- | ----------| ----------- | ------------ | ------------ | ------------ | ------------ 
 | Ubuntu 18.04.06 LTS | 5.4.0-58-generic | ROS Melodic | 460.27.04 | 11.2 | Unity 2020.3.22f1 | Release_17
 
-## Ml Agents Package Detail
+## Ml Agents 17 Package Detail
 - com.unity.ml-agents (C#)	v2.0.0
 - com.unity.ml-agents.extensions (C#)	v0.4.0-preview
 - ml-agents (Python)	v0.26.0
