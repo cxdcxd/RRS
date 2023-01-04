@@ -7,6 +7,7 @@ using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using Unity.Barracuda;
+using System;
 
 public class PouringAgentAINoPSLT : Agent
 {
@@ -30,7 +31,6 @@ public class PouringAgentAINoPSLT : Agent
     /// <summary>
     /// The objects below are created and used internally during the runtime.
     /// </summary>
-
     private SolidLT source; // Source container that holds the liquid.
     private SolidLT target; // Target container which receives the liquid.
     private LiquidLT liquid; // Liquid object with domain randomized properties.
@@ -44,7 +44,7 @@ public class PouringAgentAINoPSLT : Agent
     private string sourceName; // Unique name to identify source liquid container.
     private string targetName; // Unique name to identify target liquid container.
     public float target_to_fill; // Target amount of liquid to fill.
-    private float differenceFillLevel; // Fill level in the target container as a ratio of the desired target.
+    private float differenceFillLevel = float.MaxValue; // Fill level in the target container as a ratio of the desired target.
     private float originalWeight; // Original quantity of liquid in source liquid container.
     Dictionary<string, float> liquidState = new Dictionary<string, float>();
     private int numEpisodes = 0; // Counter to track number of episodes.
@@ -147,7 +147,7 @@ public class PouringAgentAINoPSLT : Agent
     public void ResetScene()
     {
         // Initialise goals
-        differenceFillLevel = 0.0f;
+        differenceFillLevel = float.MaxValue;
         timer = 0.0f;
         isActionDone = false;
         liquidInSource = 0.0f;
@@ -246,7 +246,7 @@ public class PouringAgentAINoPSLT : Agent
         else
         {
             // int choice = Random.Range(0, 8);
-            target_to_fill = Random.Range(0.05f, 0.25f); //5 g to 250 g
+            target_to_fill = UnityEngine.Random.Range(0.05f, 0.25f); //5 g to 250 g
             float density = Academy.Instance.EnvironmentParameters.GetWithDefault("density", 0.0f);
             liquid = SpawnObjectsLT.createLiquid(liquid, robotHandForSource, this.gameObject, liquid_flex_container, liquidAsset, sourceStartVolume, density);
             liquid.getFlexParticleContainer().fluidRest = Academy.Instance.EnvironmentParameters.GetWithDefault("fluid_rest_distance", 0.0f);
@@ -357,11 +357,11 @@ public class PouringAgentAINoPSLT : Agent
                 print("Workspace does not contain target. Ending!!");
                 EndEpisode();
             }
-            // Get actions from agent's action buffer. Overall 4 actions. Move in x, y, z and rotate speed while pouring.
-            int actionIndex = -1;
 
-            sourceTurningSpeed = 50.0f * Mathf.Clamp(actionBuffers.ContinuousActions[++actionIndex], -1f, 1f); // rotate source by this angle about axis of rotation defined by relative position between source and target.
-            robotMovingSpeed = 2.0f * Mathf.Clamp(actionBuffers.ContinuousActions[++actionIndex], -1f, 1f); // Move robotic hand by this speed.
+            // Get actions from agent's action buffer. Overall 2 actions. Move in x, y, z and rotate speed while pouring.
+          
+            sourceTurningSpeed = 50.0f * Mathf.Clamp(actionBuffers.ContinuousActions[0], -1f, 1f); // rotate source by this angle about axis of rotation defined by relative position between source and target.
+            robotMovingSpeed = 2.0f * Mathf.Clamp(actionBuffers.ContinuousActions[1], -1f, 1f); // Move robotic hand by this speed.
 
             weightOfLiquid = robotHandForTarget.getRobotHand().GetComponent<ForceInformationLT>().getMeasuredWeight();
 
@@ -369,49 +369,44 @@ public class PouringAgentAINoPSLT : Agent
                 differenceFillLevel = Mathf.Abs(target_to_fill - weightOfLiquid);
 
             float filledLevel = (float)weightOfLiquid / target_to_fill;
-            float similarity = Vector3.Dot(source.getSolidObject().transform.up, target.getSolidObject().transform.up);
 
             if (originalWeight == 0.0f)
             {
-                originalWeight = robotHandForSource.getRobotHand().GetComponent<ForceInformationLT>().getMeasuredWeight(); ;
-                if (originalWeight < target_to_fill)
-                {
-                    float targetOffset = Random.Range(0.01f, 0.025f);
-                    target_to_fill = originalWeight - targetOffset;
-                    if (target_to_fill < 0.01f)
-                    {
-                        target_to_fill = targetOffset;
-                    }
-                }
+                originalWeight = robotHandForSource.getRobotHand().GetComponent<ForceInformationLT>().getMeasuredWeight(); 
             }
 
+            if (originalWeight < target_to_fill)
+            {
+                print("Invalid requested liquid weight, please make sure the original liquid in the source is higher than target to fill");
+                return;
+            }
 
-
-            // if (previousStepSourceLevel > 0.0f) {
-            //     discharge = previousStepSourceLevel - liquidInSource;
-            // }
-
-            // if (previousStepSourceLevel != liquidInSource) {
-            //     previousStepSourceLevel = liquidInSource;
-            // }
-
-            Bounds targetBounds = target.getSolidObject().GetComponent<Renderer>().bounds;
+            //Bounds targetBounds = target.getSolidObject().GetComponent<Renderer>().bounds;
 
             Vector3 effectCenter = 0.5f * (robotHandForSource.getRobotHand().transform.TransformPoint(robotHandForSource.getFingerA().transform.localPosition) +
                                            robotHandForSource.getRobotHand().transform.TransformPoint(robotHandForSource.getFingerB().transform.localPosition));
 
             float distance = Vector3.Distance(source.getSolidObject().transform.position, robotHandForSource.getRobotHand().transform.position);
-            bool withinTargetRim = (source.getSolidObject().transform.position.x > targetBounds.min.x &&
-                                    source.getSolidObject().transform.position.x < targetBounds.max.x &&
-                                    source.getSolidObject().transform.position.z > targetBounds.min.z &&
-                                    source.getSolidObject().transform.position.z < targetBounds.max.z);
+            float rim_distance = Vector2.Distance(new Vector2(source.getSolidObject().transform.position.x,source.getSolidObject().transform.position.z),new Vector2(target.getSolidObject().transform.position.x,target.getSolidObject().transform.position.z));
+
+            bool withinTargetRim = false;
+
+            if ( Mathf.Abs(rim_distance) < 1f)
+            withinTargetRim = true;
+
+            print("rim distance " + rim_distance );
+
+            isActionDone = (differenceFillLevel < 0.020f) || (weightOfLiquid >= target_to_fill); //it means the pouring was correct in error margin or over flow happened
 
             if (!isActionDone)
             {
+                //print("Action is not done");
+
                 // If positive angular velocity action and not pouring, pour.
                 Vector3 directionOfMovement = (target.getSolidObject().transform.position - source.getSolidObject().transform.position).normalized;
                 if (!withinTargetRim)
                 {
+                     print("Not in the rim");
                     Vector3 newSourceLocation = Vector3.zero;
                     if (source.getSolidObject().transform.position.y - target.getSolidObject().transform.position.y >= 2.5f)
                     {
@@ -431,28 +426,32 @@ public class PouringAgentAINoPSLT : Agent
                     }
                     robotHandForSource.getRobotHand().transform.position += newSourceLocation;
                 }
-
                 else
                 {
                     float deltaRotation = 0.0f;
                     // float absDischarge = Mathf.Abs(discharge);
 
-                    deltaRotation = -1 * sourceTurningSpeed * Time.deltaTime;
+                    deltaRotation =  sourceTurningSpeed * Time.deltaTime;
 
                     // if (absDischarge > 0.0002f)
                     // {
                     //     deltaRotation = sourceTurningSpeed < 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
-                    float a = robotHandForSource.getRobotHand().transform.rotation.eulerAngles.z;
-                    if (a < 0) a = a + 360;
-
+                    float current_rotation = robotHandForSource.getRobotHand().transform.localRotation.eulerAngles.z;
+                 
                     // }
-                    print(a + " " + sourceTurningSpeed);
-
-                    //if ((sourceTurningSpeed <= 0 && a < 220) )
-                    //{
-                        robotHandForSource.getRobotHand().transform.RotateAround(effectCenter, Vector3.forward, deltaRotation);
-                        sourceTilt += deltaRotation;
-                   // }
+                    print("Rotation: " + current_rotation);
+                    //Console.WriteLine("Rotation: " + a + " Speed: " + sourceTurningSpeed);
+                    
+                    if (sourceTurningSpeed > 0 && current_rotation < 210)
+                    {
+                      robotHandForSource.getRobotHand().transform.RotateAround(effectCenter, Vector3.forward, deltaRotation);
+                      sourceTilt += deltaRotation;
+                    }
+                    else if (sourceTurningSpeed < 0 && current_rotation > 90)
+                    {
+                      robotHandForSource.getRobotHand().transform.RotateAround(effectCenter, Vector3.forward, deltaRotation);
+                      sourceTilt += deltaRotation;
+                    }
 
 
                 }
@@ -464,55 +463,52 @@ public class PouringAgentAINoPSLT : Agent
                 // }
             }
 
-
-            isActionDone = (weightOfLiquid <= originalWeight) && ((weightOfLiquid > 0.01f && differenceFillLevel < 0.020f) || (weightOfLiquid >= target_to_fill));
+            
 
             if (isActionDone)
             {
-                if (!retract)
-                {
-                    retractTimer += Time.deltaTime;
-                    if (retractTimer < 5.0f)
-                    {
-                        if (sourceTurningSpeed < 0)
-                        {
-                            robotHandForSource.getRobotHand().transform.RotateAround(effectCenter, Vector3.forward, sourceTurningSpeed * Time.deltaTime);
-                            sourceTilt += sourceTurningSpeed * Time.deltaTime;
-                        }
-                    }
-                    else
-                    {
-                        retract = true;
-                    }
-                }
-                else
-                {
-                    print("Episode " + numEpisodes + ": Target: " + target_to_fill + " Filled: " + weightOfLiquid + " Difference: " + differenceFillLevel);
-                    numCompletedEpisodes += 1;
-                    error += differenceFillLevel;
-                    float averagePouringError = ((error / numCompletedEpisodes) * 1000);
-                    if (weightOfLiquid > 0.01f && differenceFillLevel <= (toleranceInPouringDeviation + 0.0025f))
-                    {
-                        AddReward(1.0f);
-                        if ((error / numCompletedEpisodes) < 0.02f)
-                        {
-                            AddReward(1.0f);
-                        }
-                    }
-                    print("Average Pouring Error: " + averagePouringError + " grams");
-                    print("Episode " + numEpisodes + ": Final Reward: " + GetCumulativeReward());
-                    EndEpisode();
-                    if (!isTest)
-                    {
-                        var statsRecorder = Academy.Instance.StatsRecorder;
-                        statsRecorder.Add("Avg. Pouring Error (grams)", averagePouringError);
-                    }
-                }
+               if (!retract)
+               {
+                   retractTimer += Time.deltaTime;
+                   if (retractTimer < 5.0f)
+                   {
+                       if (sourceTurningSpeed < 0)
+                       {
+                           robotHandForSource.getRobotHand().transform.RotateAround(effectCenter, Vector3.forward, sourceTurningSpeed * Time.deltaTime);
+                           sourceTilt += sourceTurningSpeed * Time.deltaTime;
+                       }
+                   }
+                   else
+                   {
+                       retract = true;
+                   }
+               }
+               else
+               {
+                   print("Episode " + numEpisodes + ": Target: " + target_to_fill + " Filled: " + weightOfLiquid + " Difference: " + differenceFillLevel);
+                   numCompletedEpisodes += 1;
+                   error += differenceFillLevel;
+                   float averagePouringError = ((error / numCompletedEpisodes) * 1000);
+                   if (weightOfLiquid > 0.01f && differenceFillLevel <= (toleranceInPouringDeviation + 0.0025f))
+                   {
+                       AddReward(1.0f);
+                       if ((error / numCompletedEpisodes) < 0.02f)
+                       {
+                           AddReward(1.0f);
+                       }
+                   }
+                   print("Average Pouring Error: " + averagePouringError + " grams");
+                   print("Episode " + numEpisodes + ": Final Reward: " + GetCumulativeReward());
+                   EndEpisode();
+                   if (!isTest)
+                   {
+                       var statsRecorder = Academy.Instance.StatsRecorder;
+                       statsRecorder.Add("Avg. Pouring Error (grams)", averagePouringError);
+                   }
+               }
             }
         }
     }
-
-
 
     /// <summary>
     /// Configures the agent. Given an integer config, brain will switch from heuristics 
@@ -559,4 +555,5 @@ public class PouringAgentAINoPSLT : Agent
             continuousActionsOut[0] = 0.0f;
         }
     }
+
 }

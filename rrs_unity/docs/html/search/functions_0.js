@@ -1,0 +1,5 @@
+var searchData=
+[
+  ['_5faddinstance_0',['_AddInstance',['../class_r_r_s_1_1_tools_1_1_network_1_1_net2_1_1_net2_handler_base.html#aacdf0f8aab8a18230b0a874b1363316b',1,'RRS.Tools.Network.Net2.Net2HandlerBase._AddInstance()'],['../class_r_r_s_1_1_tools_1_1_network_1_1_net2_1_1_net2_handler_client.html#a89f9d751cd4eed1e4816bcb470698c8c',1,'RRS.Tools.Network.Net2.Net2HandlerClient._AddInstance()'],['../class_r_r_s_1_1_tools_1_1_network_1_1_net2_1_1_net2_handler_subscriber.html#a193ff63ee8705a15f4f594324aa2268e',1,'RRS.Tools.Network.Net2.Net2HandlerSubscriber._AddInstance()']]],
+  ['_5freleaseinstance_1',['_ReleaseInstance',['../class_r_r_s_1_1_tools_1_1_network_1_1_net2_1_1_net2_handler_base.html#ab728294f3b3e33e59d150285dfbbc8ab',1,'RRS.Tools.Network.Net2.Net2HandlerBase._ReleaseInstance()'],['../class_r_r_s_1_1_tools_1_1_network_1_1_net2_1_1_net2_handler_client.html#a515237358e00e20e2a7cb35d22f0d862',1,'RRS.Tools.Network.Net2.Net2HandlerClient._ReleaseInstance()'],['../class_r_r_s_1_1_tools_1_1_network_1_1_net2_1_1_net2_handler_subscriber.html#a8c6943f18fd89a58ed8556f5ec0e3576',1,'RRS.Tools.Network.Net2.Net2HandlerSubscriber._ReleaseInstance()']]]
+];
