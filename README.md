@@ -39,17 +39,9 @@ cd rrs_ros
 
 4) Open Unity Hub and go to `Projects`, click `ADD` and then browse the folder `rrs_unity` from the downloaded repository and launch it. Make sure the `Unity Version` is set to `2020.3.22f1` or above
 
-5) Install Ml-agent release 17 package (for RL)
-```
-wget https://github.com/Unity-Technologies/ml-agents/archive/refs/tags/release_17.zip
-unzip release_17.zip -d ml-agent
-open unity package manager and select the package.json from com.unity.ml-agents
-open unity package manager and select the package.json from com.unity.ml-agents.extensions
-```
+5) Open the repository in a new terminal and type `cd rrs_ros` and build the workspace: `catkin_make`
 
-6) Open the repository in a new terminal and type `cd rrs_ros` and build the workspace: `catkin_make`
-
-7) Source the workspace: 
+6) Source the workspace: 
 ```
 setup ~/rrs_ros/devel/setup.bash
 ```
