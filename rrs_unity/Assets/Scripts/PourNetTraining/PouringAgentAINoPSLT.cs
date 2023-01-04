@@ -437,15 +437,24 @@ public class PouringAgentAINoPSLT : Agent
                     float deltaRotation = 0.0f;
                     // float absDischarge = Mathf.Abs(discharge);
 
-                    deltaRotation = sourceTurningSpeed > 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
+                    deltaRotation = -1 * sourceTurningSpeed * Time.deltaTime;
 
                     // if (absDischarge > 0.0002f)
                     // {
                     //     deltaRotation = sourceTurningSpeed < 0 ? sourceTurningSpeed * Time.deltaTime : 0.0f;
-                    // }
+                    float a = robotHandForSource.getRobotHand().transform.rotation.eulerAngles.z;
+                    if (a < 0) a = a + 360;
 
-                    robotHandForSource.getRobotHand().transform.RotateAround(effectCenter, Vector3.forward, deltaRotation);
-                    sourceTilt += deltaRotation;
+                    // }
+                    print(a + " " + sourceTurningSpeed);
+
+                    //if ((sourceTurningSpeed <= 0 && a < 220) )
+                    //{
+                        robotHandForSource.getRobotHand().transform.RotateAround(effectCenter, Vector3.forward, deltaRotation);
+                        sourceTilt += deltaRotation;
+                   // }
+
+
                 }
 
                 // if (weightOfLiquid >= 2.0f * originalWeight) {
