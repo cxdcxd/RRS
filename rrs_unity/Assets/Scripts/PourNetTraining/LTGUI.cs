@@ -54,17 +54,20 @@ public class LTGUI : MonoBehaviour
         GUI.skin.label.fontSize = 15;
         stringToEdit = GUI.TextArea(new Rect(20, -50 + 200 , 100, 20), stringToEdit);
         
-        if (GUI.Button(new Rect(20, 0 + 200, 100, 50),"Init"))
+        if (GUI.Button(new Rect(20, 0 + 200, 100, 50),"Next"))
         {
-            print("Starting!!!!");
-            controller.setTargetToPour(stringToEdit);
+            //print("Starting!!!!");
+            //controller.setTargetToPour(stringToEdit);
             //controller.ConfigureAgent(1);
-            controller.Initialize();
             //selectedLiquid = controller.liquid.getFlexParticleContainer();
             //print(selectedLiquid);
             // bool isInference = GetComponent<BehaviorParameters>().BehaviorType == BehaviorType.HeuristicOnly;
             //print(isInference);
-           
+            MovoMini.last_gripper_command_left = null;
+            MovoMini.last_gripper_command_right = null;
+            controller.startNextDemo();
+            controller.Initialize();
+
 
         }
 
@@ -72,6 +75,7 @@ public class LTGUI : MonoBehaviour
         {
             MovoMini.last_gripper_command_left = null;
             MovoMini.last_gripper_command_right = null;
+            controller.setTargetToPour(stringToEdit);
             //controller.ConfigureAgent(-1);
             print("Restarting!!!");
             controller.ResetScene();

@@ -699,6 +699,7 @@ GameObject:
   - component: {fileID: 2123271930}
   - component: {fileID: 2123271929}
   - component: {fileID: 2123271932}
+  - component: {fileID: 2123271933}
   m_Layer: 0
   m_Name: PouringAgent
   m_TagString: Untagged
@@ -749,11 +750,11 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 80000
+  MaxStep: 60000
   robot: {fileID: 3462205319118736533}
   sources: {fileID: 955130997}
   targets: {fileID: 1997148514}
-  liquid_flex_container: {fileID: 11400000, guid: 1c7baedc23a12e248b0add9ba774a96d, type: 2}
+  liquid_flex_container: {fileID: 11400000, guid: ae36a27cd9b0c034d807c13c4c1bbfa9, type: 2}
   liquidAsset: {fileID: 11400000, guid: 8288073472bf17243a2543d3714f9f0c, type: 2}
   solidObjectPhysicsMaterial: {fileID: 13400000, guid: dff8b7a0a57e62744a7ba381ed6e2fa0, type: 2}
   robotPhysicsMaterial: {fileID: 13400000, guid: 0c4ce76aabcc5324cb849680c358b2c0, type: 2}
@@ -762,7 +763,6 @@ MonoBehaviour:
   model: {fileID: 0}
   calibration_target_offset: 0
   target_to_fill: 50
-  behaviorMode: 0
 --- !u!114 &2123271931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -776,7 +776,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 14
+    VectorObservationSize: 12
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -785,7 +785,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 7c920bae2140d0849953654785ce52d4, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 1
   m_BehaviorType: 0
   m_BehaviorName: NoPSModel
@@ -808,7 +808,23 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 80000
+  MaxStep: 60000
+--- !u!114 &2123271933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123271927}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2902496c0120472b90269f94a0aec7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Record: 0
+  NumStepsToRecord: 0
+  DemonstrationName: WaterDemo3
+  DemonstrationDirectory: Assets\PourDemo
 --- !u!1 &2143207561
 GameObject:
   m_ObjectHideFlags: 0

@@ -34,15 +34,15 @@ MonoBehaviour:
   m_simpleFluidMaxScale: 1
   m_maxParticles: 10000
   m_maxDiffuse: 0
-  m_maxNeighbors: 1000
-  m_maxContacts: 1000
+  m_maxNeighbors: 100
+  m_maxContacts: 6
   m_recreateSolver: 0
   m_substepCount: 3
   m_iterationCount: 5
   m_gravity: {x: 0, y: -9.81, z: 0}
   m_radius: 0.15
-  m_solidRest: 0.005
-  m_fluidRest: 0.12
+  m_solidRest: 0.1
+  m_fluidRest: 0.1
   m_staticFriction: 0.1
   m_dynamicFriction: 0.1
   m_particleFriction: 1
