@@ -754,7 +754,7 @@ MonoBehaviour:
   robot: {fileID: 3462205319118736533}
   sources: {fileID: 955130997}
   targets: {fileID: 1997148514}
-  liquid_flex_container: {fileID: 11400000, guid: ae36a27cd9b0c034d807c13c4c1bbfa9, type: 2}
+  liquid_flex_container: {fileID: 11400000, guid: afcf250c6a0fc3b4fa0fac1f96f1d7eb, type: 2}
   liquidAsset: {fileID: 11400000, guid: 8288073472bf17243a2543d3714f9f0c, type: 2}
   solidObjectPhysicsMaterial: {fileID: 13400000, guid: dff8b7a0a57e62744a7ba381ed6e2fa0, type: 2}
   robotPhysicsMaterial: {fileID: 13400000, guid: 0c4ce76aabcc5324cb849680c358b2c0, type: 2}
@@ -816,14 +816,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2123271927}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f2902496c0120472b90269f94a0aec7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Record: 0
+  Record: 1
   NumStepsToRecord: 0
-  DemonstrationName: WaterDemo3
+  DemonstrationName: WaterKetchup
   DemonstrationDirectory: Assets\PourDemo
 --- !u!1 &2143207561
 GameObject:

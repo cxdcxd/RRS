@@ -58,8 +58,8 @@ public class PouringAgentAINoPSLT : Agent
     float weightOfLiquid = 0.0f;
     private static List<float> fill_targets = new List<float>();
     bool isTest = false;
-    bool recordDemo = false;
-    bool nextDemo = false;
+    bool recordDemo = false; // True if we want to do record teleoperation demonstrations. 
+    bool nextDemo = false;  // Variable use for record teleoperation demonstrations logic. 
     int experiment_indexer = 0;
     private GameObject clickedPourer;
     private static float sourceStartVolume = 250f;
